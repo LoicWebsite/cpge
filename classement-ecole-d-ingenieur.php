@@ -101,14 +101,16 @@
 				<button class="nav-link" id="tab-figaro" data-bs-toggle="tab" data-bs-target="#figaro" type="button" role="tab" aria-controls="figaro" aria-selected="false">Le Figaro<br>2024</button>
 			</div>
 		</nav>
+		
+		<!-- ouverture du 1er onglet -->		
 		<div class="tab-content" id="nav-tabContent">
 			<div class="tab-pane fade show active" id="etudiant-2022" role="tabpanel" aria-labelledby="tab-etudiant-2022">
 
-	<?php
+<?php
 	
-		// conexion à la base cpge
+		// conexion à la base concours (user = concours)
 		try {
-			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
+			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "cpge", "cpge");
 		}
 		catch(PDOException $erreur)	{
 			die('Erreur connexion base : ' . $erreur->getMessage());
@@ -128,8 +130,10 @@
 			$result = $db->query($sql);
 
 			// affichage de l'en tête du tableau
-			echo "<table id='tableau'>";
-			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.</small></caption>";
+			echo "<table id='tableau-etudiant-2022'>";
+			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.";
+			$idTableau = '"#tableau-etudiant-2022"';
+			echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='fa-solid fa-download'></i> csv</button></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";
 			echo "<th>&nbsp;Groupe&nbsp;<br><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Le Groupe d&apos;appartenance de l&apos;école est défini par le magasine L&apos;Etudiant selon le nombre de points obtenus par l&apos;école dans leur classement.<br>En 2022<br>A+ : 42 à 58 points<br>A : 34 à 41 points<br>B : 24 à 33 points<br>C : 0 à 23 points<br>En 2023<br>A+ : 97 à 63 points<br>A : 62 à 51 points<br>B : 50 à 44 points<br>C : 0 à 43 points'></i></th>";
@@ -184,9 +188,9 @@
 
 	<?php
 	
-		// conexion à la base cpge
+		// conexion à la base concours (user = concours)
 		try {
-			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
+			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "cpge", "cpge");
 		}
 		catch(PDOException $erreur)	{
 			die('Erreur connexion base : ' . $erreur->getMessage());
@@ -206,8 +210,10 @@
 			$result = $db->query($sql);
 
 			// affichage de l'en tête du tableau
-			echo "<table id='tableau'>";
-			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.</small></caption>";
+			echo "<table id='tableau-etudiant-2023'>";
+			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.";
+			$idTableau = '"#tableau-etudiant-2023"';
+			echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='fa-solid fa-download'></i> csv</button></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";
 			echo "<th>&nbsp;Groupe&nbsp;<br><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Le Groupe d&apos;appartenance de l&apos;école en 2023 est désormais défini par le magasine L&apos;Etudiant comme étant un simple quartile.<br>A+ : 97 à 63 points<br>A : 62 à 51 points<br>B : 50 à 44 points<br>C : 0 à 43 points'></i></th>";
@@ -275,8 +281,10 @@
 			$result = $db->query($sql);
 
 			// affichage de l'en tête du tableau
-			echo "<table id='tableau'>";
-			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.</small></caption>";
+			echo "<table id='tableau-DAUR-2022'>";
+			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.";
+			$idTableau = '"#tableau-DAUR-2022"';
+			echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='fa-solid fa-download'></i> csv</button></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";
 			echo "<th>&nbsp;Notation&nbsp;<br><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='La notation de l&apos;école en 2022 est défini par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 70<br>AA : 69 à 56<br>A : 55 à 49 points<br>BBB : 48 à 44<br>BB : 43 à 39<br>B : 39 à 35<br>CCC : 34 à 32<br>CC : 31 à 29<br>C : 29 à 0'></i></th>";
@@ -343,8 +351,10 @@
 			$result = $db->query($sql);
 
 			// affichage de l'en tête du tableau
-			echo "<table id='tableau'>";
-			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.</small></caption>";
+			echo "<table id='tableau-DAUR-2023'>";
+			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.";
+			$idTableau = '"#tableau-DAUR-2023"';
+			echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='fa-solid fa-download'></i> csv</button></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";
 			echo "<th>&nbsp;Notation&nbsp;<br><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='La notation de l&apos;école en 2023 est défini par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 70<br>AA : 69 à 54<br>A : 53 à 47 points<br>BBB : 46 à 41<br>BB : 40 à 37<br>B : 36 à 34<br>CCC : 33 à 31<br>CC : 30 à 28<br>C : 27 à 0'></i></th>";
@@ -410,8 +420,10 @@
 			$result = $db->query($sql);
 
 			// affichage de l'en tête du tableau
-			echo "<table id='tableau'>";
-			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.</small></caption>";
+			echo "<table id='tableau-figaro-2024'>";
+			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.";
+			$idTableau = '"#tableau-figaro-2024"';
+			echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='fa-solid fa-download'></i> csv</button></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";
 			echo "<th>&nbsp;Rang&nbsp;<br><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 87).'></i></th>";
@@ -490,6 +502,12 @@
 				bouton.innerText = "-  Masquer l'explication";
 			}
 		}
-	</script>		
+	</script>
+	
+	<?php
+		// fonction d'export des tableaus HTML en CSV
+		include "js/tableToCSV.js";
+	?>
+
   </body>
 </html>
