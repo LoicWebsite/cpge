@@ -108,9 +108,9 @@
 
 <?php
 	
-		// conexion à la base concours (user = concours)
+		// conexion à la base cpge
 		try {
-			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "cpge", "cpge");
+			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
 		}
 		catch(PDOException $erreur)	{
 			die('Erreur connexion base : ' . $erreur->getMessage());
@@ -188,9 +188,9 @@
 
 	<?php
 	
-		// conexion à la base concours (user = concours)
+		// conexion à la base cpge
 		try {
-			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "cpge", "cpge");
+			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
 		}
 		catch(PDOException $erreur)	{
 			die('Erreur connexion base : ' . $erreur->getMessage());
