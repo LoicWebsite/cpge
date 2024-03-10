@@ -132,7 +132,7 @@
 			// affichage de l'en tête du tableau
 			echo "<table id='tableau-etudiant-2022'>";
 			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.";
-			$idTableau = '"#tableau-etudiant-2022"';
+			$idTableau = '"#tableau-etudiant-2022","groupe,rang,point,école,site web"';
 			echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='fa-solid fa-download'></i> csv</button></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";
@@ -201,7 +201,7 @@
 			// affichage de l'en tête du tableau
 			echo "<table id='tableau-etudiant-2023'>";
 			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.";
-			$idTableau = '"#tableau-etudiant-2023"';
+			$idTableau = '"#tableau-etudiant-2023","groupe,rang,point,école,site web"';
 			echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='fa-solid fa-download'></i> csv</button></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";
@@ -272,7 +272,7 @@
 			// affichage de l'en tête du tableau
 			echo "<table id='tableau-DAUR-2022'>";
 			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.";
-			$idTableau = '"#tableau-DAUR-2022"';
+			$idTableau = '"#tableau-DAUR-2022","notation,rang,note finale,école,site web"';
 			echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='fa-solid fa-download'></i> csv</button></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";
@@ -342,7 +342,7 @@
 			// affichage de l'en tête du tableau
 			echo "<table id='tableau-DAUR-2023'>";
 			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.";
-			$idTableau = '"#tableau-DAUR-2023"';
+			$idTableau = '"#tableau-DAUR-2023","notation,rang,note finale,école,site web"';
 			echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='fa-solid fa-download'></i> csv</button></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";
@@ -411,7 +411,7 @@
 			// affichage de l'en tête du tableau
 			echo "<table id='tableau-figaro-2024'>";
 			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.";
-			$idTableau = '"#tableau-figaro-2024"';
+			$idTableau = '"#tableau-figaro-2024","rang,note,école,descriptif Le Figaro"';
 			echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='fa-solid fa-download'></i> csv</button></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";

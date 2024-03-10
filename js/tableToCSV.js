@@ -1,7 +1,7 @@
 <script>
 
 // transforme la table HTML au format CSV
-function tableToCSV(idTableau) {
+function tableToCSV(idTableau, enTete) {
 
     // Variable to store the final csv data
     let csv_data = [];
@@ -9,7 +9,14 @@ function tableToCSV(idTableau) {
     // Get each row data
     const tableau = document.querySelector(idTableau);
     let rows = tableau.getElementsByTagName('tr');
-    for (let i = 0; i < rows.length; i++) {
+
+    // traitement de l'entête du tableau
+    if (enTete != "") {
+        csv_data.push(enTete);
+    }
+
+    // traitement du reste du tableau
+    for (let i = 1; i < rows.length; i++) {
 
         // Get each column data
         let cols = rows[i].querySelectorAll('td');
