@@ -66,7 +66,7 @@
 						<input list="ecoles" name="ecole" id="ecole" type="search" class="form-control ecole" placeholder="sélectionner une école" autocomplete="off"/>
 						<datalist id="ecoles">
 							<?php
-								// conexion à la base cpge
+								// conexion à la base concours cpge
 								try {
 									$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
 								}

@@ -65,7 +65,7 @@
 		// section principale de la page
 		echo "<main class='container-fluid'>";
 
-		// conexion à la base cpge
+		// conexion à la base concours cpge
 		try {
 			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
 		}
@@ -92,9 +92,11 @@
 			$result = $db->query($sql);
 
 			// affichage de l'en tête du tableau
-			echo "<table class='table-hover' style='width:100%;'>";
+			echo "<table class='table-hover' style='width:100%;' id='tableau-par-ecole'>";
 			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une ligne pour voir le détail de cette école.<br/>
-				<span style='color:darkslategray;'>En <strong>noir</strong> le rang médian</span>, <span style='color:#0000FF'>en <strong>bleu</strong> le rang du dernier</span>.</small></caption>";
+				<span style='color:darkslategray;'>En <strong>noir</strong> le rang médian</span>, <span style='color:#0000FF'>en <strong>bleu</strong> le rang du dernier</span>.";
+			$idTableau = '"#tableau-par-ecole","école,filière,concours,2023,2022,2021,2020,2019,2018,2017,2016"';
+			echo "<br>Cliquer sur le bouton pour télécharger le tableau au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='fa-solid fa-download'></i> csv</button></small></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";
 			echo "<th  style='position:static;' colspan=3></th>";
@@ -386,6 +388,12 @@
 				echo 'window.location.href="statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php?ecole=' . $ecole . '&recherche=' . $recherche . '";';
 			?>
 		}
-	</script>	
+	</script>
+
+	<?php
+		// fonction d'export des tableaus HTML en CSV
+		include "js/tableToCSV.js";
+	?>
+
   </body>
 </html>

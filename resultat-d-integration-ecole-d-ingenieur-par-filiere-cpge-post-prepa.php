@@ -61,7 +61,7 @@
 		echo "<header class='container'>";
 		echo "<h1 class='h3'><i class='fa-solid fa-building-columns'></i>&nbsp;&nbsp;&nbsp;Statistiques d'admissions " . strtoupper($filiere);
 
-		// conexion à la base cpge
+		// conexion à la base concours cpge
 		try {
 			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
 		}
@@ -150,8 +150,10 @@
 			echo "</div><br/>";
 
 			// affichage de l'en tête du tableau
-			echo "<table id='tableau'>";
-			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une ligne pour voir le détail de cette école.</small></caption>";
+			echo "<table id='tableau-par-filiere'>";
+			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une ligne pour voir le détail de cette école.";
+			$idTableau = '"#tableau-par-filiere","concours,école,année,places,inscrits,intégrés,rang médian,sélectivité médiane,rang dernier,sélectivité"';
+			echo "<br>Cliquer sur le bouton pour télécharger le tableau au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='fa-solid fa-download'></i> csv</button></small></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";
 			if (($filiere == "toute") or ($filiere == "")) {
@@ -308,6 +310,12 @@
 				echo "window.location.href='statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php?reference=" . $reference . "&filiere=" . $filiere . "&concours=" . $concours . "&ecole=" . supprimerApostrophe($ecole) . "'";
 			?>
 		}
-	</script>		
+	</script>
+
+	<?php
+		// fonction d'export des tableaus HTML en CSV
+		include "js/tableToCSV.js";
+	?>
+
   </body>
 </html>
