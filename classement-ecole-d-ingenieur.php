@@ -110,7 +110,7 @@
 	
 		// conexion à la base concours cpge
 		try {
-			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
+			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "cpge", "cpge");
 		}
 		catch(PDOException $erreur)	{
 			die('Erreur connexion base : ' . $erreur->getMessage());
@@ -120,7 +120,7 @@
 		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 		// exécution de la requête SQL pour le classement de l'Etudiant
-		$sql = "SELECT DISTINCT Classement.Ecole, Classement.Rang, Classement.Point, Classement.Groupe, Classement.UrlEcole
+		$sql = "SELECT DISTINCT Classement.Ecole, Classement.Rang, Classement.Point, Classement.Groupe, Classement.UrlEtudiant, Classement.UrlEcole
 				FROM Classement
 				INNER JOIN Ecole ON Ecole.Ecole LIKE CONCAT('%', Classement.Ecole,'%')
 				WHERE Classement.Ecole IS NOT NULL AND Classement.An = '2022'
@@ -141,6 +141,7 @@
 			echo "<th>&nbsp;Point&nbsp;<br><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Le nombre de Points attribués est au maximum de 58 en 2022. Il résulte de l&apos;évaluation d&apos;une cinquantaine de critères.'></i></th>";
 			echo "<th>&nbsp;Ecole&nbsp;</th>";
 			echo "<th>&nbsp;Site web&nbsp;</th>";
+			echo "<th>&nbsp;Fiche info de L'Etudiant&nbsp;</th>";
 			echo "</tr></thead>";
 
 			$groupeCourant = "";
@@ -166,6 +167,7 @@
 				echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
 				echo "<td ".$class." style='padding-left:10px'><strong>" . $Ecole . "</strong></td>";
 				echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEcole . "' target=_blank>" . $UrlEcole . "</a></td>";
+				echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEtudiant . "' target=_blank>Fiche " . $Ecole . "</a></td>";
  				echo "</tr>";	
 
 				$groupeCourant = $Groupe;
@@ -189,7 +191,7 @@
 	<?php
 	
 		// exécution de la requête SQL pour le classement de l'Etudiant
-		$sql = "SELECT DISTINCT Classement.Ecole, Classement.Rang, Classement.Point, Classement.Groupe, Classement.UrlEcole
+		$sql = "SELECT DISTINCT Classement.Ecole, Classement.Rang, Classement.Point, Classement.Groupe, Classement.UrlEtudiant, Classement.UrlEcole
 				FROM Classement
 				INNER JOIN Ecole ON Ecole.Ecole LIKE CONCAT('%', Classement.Ecole,'%')
 				WHERE Classement.Ecole IS NOT NULL AND Classement.An = '2023'
@@ -210,6 +212,7 @@
 			echo "<th>&nbsp;Point&nbsp;<br><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Le nombre de Points attribués est au maximum de 111 en 2023. Il résulte de l&apos;évaluation de 11 critères.'></i></th>";
 			echo "<th>&nbsp;Ecole&nbsp;</th>";
 			echo "<th>&nbsp;Site web&nbsp;</th>";
+			echo "<th>&nbsp;Fiche info de L'Etudiant&nbsp;</th>";
 			echo "</tr></thead>";
 
 			$groupeCourant = "";
@@ -235,7 +238,8 @@
 				echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
 				echo "<td ".$class." style='padding-left:10px'><strong>" . $Ecole . "</strong></td>";
 				echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEcole . "' target=_blank>" . $UrlEcole . "</a></td>";
- 				echo "</tr>";	
+				echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEtudiant . "' target=_blank>Fiche " . $Ecole . "</a></td>";
+				echo "</tr>";	
 
 				$groupeCourant = $Groupe;
 				$firstRecord = false;
