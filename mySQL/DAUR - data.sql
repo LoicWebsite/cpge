@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost
--- Généré le : ven. 08 mars 2024 à 14:53
--- Version du serveur : 5.5.61-38.13-log
--- Version de PHP : 8.0.12
+-- Hôte : localhost:8889
+-- Généré le : jeu. 24 oct. 2024 à 16:48
+-- Version du serveur : 5.7.39
+-- Version de PHP : 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `cpge`
+-- Base de données : `CPGE`
 --
 
 --
@@ -44,7 +44,7 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEcole`) VALUES
 (2022, 170, 'C', 'ECAM Rennes', 21, 'https://www.ecam-rennes.fr'),
 (2022, 128, 'CC', 'ECAM-EPMI Cergy-Pontoise', 31, 'https://www.ecam-epmi.fr'),
 (2022, 90, 'B', 'ECE', 37, 'https://www.ece.fr'),
-(2022, 1, 'AAA', 'École Polytechnique', 100, 'https://programmes.polytechnique.edu/'),
+(2022, 1, 'AAA', 'Ecole Polytechnique', 100, 'https://programmes.polytechnique.edu/'),
 (2022, 21, 'AA', 'ECPM Strasbourg', 57, 'https://ecpm.unistra.fr'),
 (2022, 39, 'BBB', 'EEIGM', 47, 'https://www.eeigm.univ-lorraine.fr'),
 (2022, 65, 'BB', 'EFREI Paris', 43, 'https://www.efrei.fr'),
@@ -205,7 +205,7 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEcole`) VALUES
 (2023, 171, 'C', 'ECAM-EPMI Cergy-Pontoise', 22, 'https://www.ecam-epmi.fr'),
 (2023, 91, 'B', 'ECE', 36, 'https://www.ece.fr'),
 (2023, 77, 'BB', 'ECOLE Météorologie', 38, 'http://ecole-meteo.fr'),
-(2023, 1, 'AAA', 'École Polytechnique', 95, 'https://programmes.polytechnique.edu/'),
+(2023, 1, 'AAA', 'Ecole Polytechnique', 95, 'https://programmes.polytechnique.edu/'),
 (2023, 15, 'AA', 'ECPM Strasbourg', 64, 'https://ecpm.unistra.fr'),
 (2023, 70, 'BB', 'EEIGM', 40, 'https://www.eeigm.univ-lorraine.fr'),
 (2023, 98, 'B', 'EFREI Paris', 34, 'https://www.efrei.fr'),

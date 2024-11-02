@@ -79,7 +79,8 @@
 		// construction de la clause WHERE
 		$where = "";
 		if (($ecole <> "") and ($ecole <> "toutes")) {
-			$where = ' WHERE Ecole="' . $ecole . '"';
+// 			$where = ' WHERE Ecole="' . $ecole . '"';
+			$where = ' WHERE Ecole LIKE "%'.$ecole.'%"';
 		} elseif ($recherche <> "") {
 			$where = ' WHERE Ecole LIKE "%'.$recherche.'%"';				
 		}
@@ -100,7 +101,7 @@
 			echo "<thead class='text-center'>";
 			echo "<tr>";
 			echo "<th  style='position:static;' colspan=3></th>";
-			echo "<th  style='position:static;' colspan=6>Intégrés : Rang médian / Inscrits&nbsp;&nbsp;<span style='font-weight:normal'>(en noir)</span><br/>Intégrés : Rang dernier / Inscrits&nbsp;&nbsp;<span style='font-weight:normal'>(en bleu)</span><br/>
+			echo "<th  style='position:static;' colspan=7>Intégrés : Rang médian / Inscrits&nbsp;&nbsp;<span style='font-weight:normal'>(en noir)</span><br/>Intégrés : Rang dernier / Inscrits&nbsp;&nbsp;<span style='font-weight:normal'>(en bleu)</span><br/>
 								<i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Lorsque le rang du dernier admis est connu c&apos;est celui-ci qui est affiché (en bleu).<br/>
 								<br/>&bull; Sinon c&apos;est le rang médian qui est affiché (en noir).<br/>
 								<br/>&bull; Le rang du dernier appelé a été supprimé des statistiques SCEI à partir de 2018. Il a été remplacé par le rang médian et le rang moyen.<br/>
@@ -114,6 +115,7 @@
 								<br/>&bull; A noter que le nom affiché est celui qui apparaît dans SCEI.'></i></th>";
 			echo "<th>&nbsp;Filière&nbsp;</th>";
 			echo "<th>Concours<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Lorsqu&apos;un concours a changé de nom, c&apos;est le nom le plus récent qui est affiché.<br/>Exemple CCP devenu CCINP en 2019.'></i></th>";
+			echo "<th>2024</th>";
 			echo "<th>2023</th>";
 			echo "<th>2022</th>";
 			echo "<th>2021</th>";
@@ -147,6 +149,28 @@
 				echo "<td".$class.">" . $Ecole . "</td>";
 				echo "<td".$class." style='text-align:center'><strong>". strtoupper($Filiere) ."</strong></td>";
 				echo "<td".$class.">".$Concours ."</td>";
+
+				// affichage des stats 2024
+				$sqlNote = 'SELECT Inscrit, Integre, RangMedian, Dernier FROM Note WHERE Ecole="'.$Ecole.'" AND Filiere="'.$Filiere.'" AND Concours="'.$Concours.'" AND An="2024";';
+				if ($debug) {echo "SQL Note = " . $sqlNote;}
+				try {
+					$resultNote = $db->query($sqlNote);
+					if ($resultNote->rowCount() == 0) {
+						echo "<td".$class." style='text-align:center'></td>";
+					} else {
+						while ($rowNote = $resultNote->fetch(PDO::FETCH_ASSOC)) {
+							extract($rowNote);
+							if (($Dernier <> 0) and ($Dernier <> "")) {
+								echo "<td".$class." style='text-align:center; color:#0000FF'><span style='font-size:120%'>".$Integre." : <strong>".$Dernier."</strong></span> / ".$Inscrit."</td>";
+							} else {
+								echo "<td".$class." style='text-align:center'><span style='font-size:120%'>".$Integre." : <strong>".$RangMedian."</strong></span> / ".$Inscrit."</td>";
+							}
+						}
+					}
+				}
+				catch(PDOException $erreur)	{
+					echo "Erreur SELECT Note 2024 : " . $erreur->getMessage();
+				}
 
 				// affichage des stats 2023
 				$sqlNote = 'SELECT Inscrit, Integre, RangMedian, Dernier FROM Note WHERE Ecole="'.$Ecole.'" AND Filiere="'.$Filiere.'" AND Concours="'.$Concours.'" AND An="2023";';

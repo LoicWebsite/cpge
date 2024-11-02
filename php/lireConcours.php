@@ -14,7 +14,7 @@
 	// fonctions communes du site
 	include "fonctionConcours.php";
 	
-	// conexion à la base cpge
+	// conexion à la base concours cpge
 	try {
 		$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
 	}

@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost
--- Généré le : ven. 08 mars 2024 à 14:53
--- Version du serveur : 5.5.61-38.13-log
--- Version de PHP : 8.0.12
+-- Hôte : localhost:8889
+-- Généré le : jeu. 24 oct. 2024 à 16:48
+-- Version du serveur : 5.7.39
+-- Version de PHP : 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `cpge`
+-- Base de données : `CPGE`
 --
 
 --
@@ -26,15 +26,16 @@ SET time_zone = "+00:00";
 --
 
 INSERT INTO `Concours` (`Filiere`, `Concours`) VALUES
-('bcpst', 'A BIO'),
-('bcpst', 'A ENV'),
 ('bcpst', 'ARCH BIO'),
+('bcpst', 'Concours ECOLE POLYTECHNIQUE Etr.'),
 ('bcpst', 'Concours POLYTECH'),
+('bcpst', 'CPGE BCPST AGRO'),
+('bcpst', 'CPGE BCPST VETO'),
+('bcpst', 'CPGE PC AGRO'),
 ('bcpst', 'ENS'),
 ('bcpst', 'G2E'),
 ('bcpst', 'Groupe INSA'),
 ('bcpst', 'Lorraine INP - ENSTIB'),
-('bcpst', 'PC BIO'),
 ('bcpst', 'X BIO'),
 ('mp', 'Autres écoles E3A'),
 ('mp', 'Avenir Prépas'),
@@ -46,11 +47,13 @@ INSERT INTO `Concours` (`Filiere`, `Concours`) VALUES
 ('mp', 'Concours Commun INP'),
 ('mp', 'Concours Commun MINES-PONTS'),
 ('mp', 'CONCOURS COMMUN TPE'),
+('mp', 'Concours ECOLE POLYTECHNIQUE Etr.'),
 ('mp', 'CONCOURS ENSAM'),
 ('mp', 'CONCOURS ESTP'),
 ('mp', 'Concours Ingeni’Up'),
 ('mp', 'Concours Mines - Télécom'),
 ('mp', 'Concours POLYTECH Inter-Filière'),
+('mp', 'E3A - Inter-Filière'),
 ('mp', 'EPITA'),
 ('mp', 'Groupe INSA'),
 ('mp', 'Puissance Alpha'),
@@ -59,11 +62,15 @@ INSERT INTO `Concours` (`Filiere`, `Concours`) VALUES
 ('mpi', 'Banque CENTRALE-SUPELEC'),
 ('mpi', 'Banque ECOLE POLYTECHNIQUE - interENS'),
 ('mpi', 'Banque épreuves CCINP'),
+('mpi', 'Banque épreuves CCINP  Inter-Filière'),
 ('mpi', 'CESI'),
 ('mpi', 'Concours Commun INP'),
 ('mpi', 'Concours Commun MINES-PONTS'),
+('mpi', 'Concours ECOLE POLYTECHNIQUE Etr.'),
+('mpi', 'Concours Ingeni’Up'),
 ('mpi', 'Concours Mines - Télécom'),
 ('mpi', 'Concours POLYTECH'),
+('mpi', 'E3A - Inter-Filière'),
 ('mpi', 'EPITA'),
 ('mpi', 'Groupe INSA'),
 ('mpi', 'Puissance Alpha'),
@@ -79,11 +86,13 @@ INSERT INTO `Concours` (`Filiere`, `Concours`) VALUES
 ('pc', 'CESI'),
 ('pc', 'Concours Commun MINES-PONTS'),
 ('pc', 'CONCOURS COMMUN TPE'),
+('pc', 'Concours ECOLE POLYTECHNIQUE Etr.'),
 ('pc', 'CONCOURS ENSAM'),
 ('pc', 'CONCOURS ESTP'),
 ('pc', 'Concours Ingeni’Up'),
 ('pc', 'Concours Mines - Télécom'),
 ('pc', 'Concours POLYTECH Inter-Filière'),
+('pc', 'E3A - Inter-Filière'),
 ('pc', 'EPITA'),
 ('pc', 'Groupe INSA'),
 ('pc', 'Puissance Alpha'),
@@ -97,11 +106,13 @@ INSERT INTO `Concours` (`Filiere`, `Concours`) VALUES
 ('psi', 'Concours Commun INP'),
 ('psi', 'Concours Commun MINES-PONTS'),
 ('psi', 'CONCOURS COMMUN TPE'),
+('psi', 'Concours ECOLE POLYTECHNIQUE Etr.'),
 ('psi', 'CONCOURS ENSAM'),
 ('psi', 'CONCOURS ESTP'),
 ('psi', 'Concours Ingeni’Up'),
 ('psi', 'Concours Mines - Télécom'),
 ('psi', 'Concours POLYTECH Inter-Filière'),
+('psi', 'E3A - Inter-Filière'),
 ('psi', 'EPITA'),
 ('psi', 'Groupe INSA'),
 ('psi', 'Puissance Alpha'),
@@ -120,10 +131,10 @@ INSERT INTO `Concours` (`Filiere`, `Concours`) VALUES
 ('pt', 'EPITA'),
 ('pt', 'Groupe INSA'),
 ('pt', 'Puissance Alpha'),
-('tb', 'Concours A TB BIO'),
 ('tb', 'Concours A TB ENS'),
-('tb', 'Concours A TB ENV'),
 ('tb', 'Concours POLYTECH A TB'),
+('tb', 'CPGE TB AGRO'),
+('tb', 'CPGE TB VETO'),
 ('tb', 'Groupe INSA'),
 ('tb', 'Lorraine INP - ENSTIB'),
 ('tpc', 'Concours Commun INP'),
@@ -136,8 +147,9 @@ INSERT INTO `Concours` (`Filiere`, `Concours`) VALUES
 ('tsi', 'Concours Commun ENSAM'),
 ('tsi', 'Concours Commun INP'),
 ('tsi', 'Concours Commun MINES-PONTS'),
+('tsi', 'Concours Ecole Polytechnique'),
+('tsi', 'Concours Ingeni’Up'),
 ('tsi', 'Concours Mines - Télécom'),
-('tsi', 'Concours Polytechnique'),
 ('tsi', 'EPITA'),
 ('tsi', 'Groupe INSA'),
 ('tsi', 'Réseau Polytech');

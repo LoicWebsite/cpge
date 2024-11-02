@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost
--- Généré le : ven. 08 mars 2024 à 14:54
--- Version du serveur : 5.5.61-38.13-log
--- Version de PHP : 8.0.12
+-- Hôte : localhost:8889
+-- Généré le : jeu. 24 oct. 2024 à 16:48
+-- Version du serveur : 5.7.39
+-- Version de PHP : 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `cpge`
+-- Base de données : `CPGE`
 --
 
 --

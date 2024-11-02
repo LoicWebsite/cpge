@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost
--- Généré le : ven. 08 mars 2024 à 14:53
--- Version du serveur : 5.5.61-38.13-log
--- Version de PHP : 8.0.12
+-- Hôte : localhost:8889
+-- Généré le : jeu. 24 oct. 2024 à 16:47
+-- Version du serveur : 5.7.39
+-- Version de PHP : 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `cpge`
+-- Base de données : `CPGE`
 --
 
 --
@@ -47,7 +47,7 @@ INSERT INTO `Classement` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant
 (2022, 150, 'C', 'ECAM-EPMI Cergy-Pontoise', 21, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecam-epmi-7982.html', 'https://www.ecam-epmi.fr'),
 (2022, 37, 'A', 'ECE', 36, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ece-paris-6870.html', 'https://www.ece.fr'),
 (2022, 167, 'C', 'ECOLE Météorologie', 15, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-de-la-meteorologie-4408.html', 'https://www.enm.meteo.fr'),
-(2022, 1, 'A+', 'École Polytechnique', 55, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-polytechnique-7681.html', 'https://programmes.polytechnique.edu/'),
+(2022, 1, 'A+', 'Ecole Polytechnique', 55, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-polytechnique-7681.html', 'https://programmes.polytechnique.edu/'),
 (2022, 26, 'A', 'ECPM Strasbourg', 39, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-europeenne-de-chimie-polymeres-et-materiaux-de-strasbourg-6168.html', 'https://ecpm.unistra.fr'),
 (2022, 55, 'B', 'EEIGM', 32, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-europeenne-d-ingenieurs-en-genie-des-materiaux-5529.html', 'https://www.eeigm.univ-lorraine.fr'),
 (2022, 45, 'A', 'EFREI Paris', 34, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-d-ingenieurs-generaliste-en-informatique-et-technologies-du-numerique-7950.html', 'https://www.efrei.fr'),
@@ -203,7 +203,7 @@ INSERT INTO `Classement` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant
 (2023, 164, 'C', 'ECAM-EPMI Cergy-Pontoise', 29, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecam-epmi-7982.html', 'https://www.ecam-epmi.fr'),
 (2023, 50, 'A', 'ECE', 60, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ece-paris-6870.html', 'https://www.ece.fr'),
 (2023, 168, 'C', 'ECOLE Météorologie', 27, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-de-la-meteorologie-4408.html', 'https://www.enm.meteo.fr'),
-(2023, 1, 'A+', 'École Polytechnique', 97, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-polytechnique-7681.html', 'https://programmes.polytechnique.edu/'),
+(2023, 1, 'A+', 'Ecole Polytechnique', 97, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-polytechnique-7681.html', 'https://programmes.polytechnique.edu/'),
 (2023, 19, 'A+', 'ECPM Strasbourg', 75, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-europeenne-de-chimie-polymeres-et-materiaux-de-strasbourg-6168.html', 'https://ecpm.unistra.fr'),
 (2023, 51, 'A', 'EEIGM', 60, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-europeenne-d-ingenieurs-en-genie-des-materiaux-5529.html', 'https://www.eeigm.univ-lorraine.fr'),
 (2023, 45, 'A', 'EFREI Paris', 62, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-d-ingenieurs-generaliste-en-informatique-et-technologies-du-numerique-7950.html', 'https://www.efrei.fr'),
