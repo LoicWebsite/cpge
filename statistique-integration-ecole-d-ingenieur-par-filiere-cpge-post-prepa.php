@@ -88,6 +88,10 @@
 							<label class="form-check-label" for="all">toutes</label>
 						</div>
 						<div class="form-check form-check-inline">
+							<input type="radio" id="an2024" name="reference" class="form-check-input" value="2024">
+							<label class="form-check-label" for="an2024">2024</label>
+						</div>
+						<div class="form-check form-check-inline">
 							<input type="radio" id="an2023" name="reference" class="form-check-input" value="2023">
 							<label class="form-check-label" for="an2023">2023</label>
 						</div>
@@ -138,7 +142,7 @@
 							<?php
 								// conexion à la base concours cpge
 								try {
-									$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
+									$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PSWD");
 								}
 								catch(PDOException $erreur)	{
 									die('Erreur connexion base : ' . $erreur->getMessage());
