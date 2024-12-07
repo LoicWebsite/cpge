@@ -46,7 +46,8 @@
 		<div id="actualite" class="container ancre">
 			<br/>
 			<p class="text-center">
-				<mark style="color:#808080;"><strong>Actualité</strong> : les résultats des <strong>concours 2024</strong> sont pris en compte.<br>
+				<mark style="color:#808080;"><strong>Actualité</strong> : les rangs des derniers admis aux concours 2024 <strong>Mines-Ponts</strong>, <strong>Polytechnique</strong>,
+											 <strong>Mines-Télécom</strong>, <strong>AGRO</strong>, <strong>VETO</strong>, <strong>PC BIO</strong> et <strong>G2E</strong> sont désormais publiés.<br>
 				</mark>
 			</p>
 			<br/>
