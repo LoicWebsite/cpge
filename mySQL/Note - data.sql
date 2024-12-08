@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : sam. 07 déc. 2024 à 16:24
+-- Généré le : dim. 08 déc. 2024 à 09:03
 -- Version du serveur : 5.7.39
 -- Version de PHP : 8.2.0
 
@@ -15016,12 +15016,12 @@ INSERT INTO `Note` (`Filiere`, `An`, `Concours`, `Ecole`, `Inscrit`, `Admissible
 ('tsi', 2024, 'Concours Commun INP', 'Toulouse INP - ENSEEIHT - Electronique-Energie-Automatique (EEA)', 1156, 589, 398, 3, 121, 106, 2, NULL),
 ('tsi', 2024, 'Concours Commun INP', 'Toulouse INP - ENSEEIHT - Mécanique des Fluides-Energetique-Environnement (MFEE)', 1156, 589, 398, 1, 80, 80, 1, 80),
 ('tsi', 2024, 'Concours Commun INP', 'Toulouse INP - ENSEEIHT - Sciences du Numérique', 1156, 589, 398, 1, 39, 39, 1, 39),
-('tsi', 2024, 'Concours Commun MINES-PONTS', 'ENSTA Paris', 625, 60, 60, 2, 14, 14, 3, NULL),
-('tsi', 2024, 'Concours Commun MINES-PONTS', 'ENSTA Paris - apprentissage', 625, 60, 60, 2, 32, 32, 4, NULL),
+('tsi', 2024, 'Concours Commun MINES-PONTS', 'ENSTA Paris', 625, 60, 60, 2, 14, 14, 3, 14),
+('tsi', 2024, 'Concours Commun MINES-PONTS', 'ENSTA Paris - apprentissage', 625, 60, 60, 2, 32, 32, 4, 40),
 ('tsi', 2024, 'Concours Commun MINES-PONTS', 'IMT Atlantique', 625, 60, 60, 2, 42, 42, 2, NULL),
 ('tsi', 2024, 'Concours Commun MINES-PONTS', 'ISAE - SUPAERO Toulouse', 625, 60, 60, 1, 5, 5, 2, 5),
 ('tsi', 2024, 'Concours Commun MINES-PONTS', 'MINES de NANCY', 625, 60, 60, 1, 46, 46, 1, 46),
-('tsi', 2024, 'Concours Commun MINES-PONTS', 'MINES Paris', 625, 60, 60, 2, 9, 9, 2, NULL),
+('tsi', 2024, 'Concours Commun MINES-PONTS', 'MINES Paris', 625, 60, 60, 2, 9, 9, 2, 15),
 ('tsi', 2024, 'Concours Commun MINES-PONTS', 'MINES SAINT-ETIENNE', 625, 60, 60, 3, 54, 48, 2, NULL),
 ('tsi', 2024, 'Concours Commun MINES-PONTS', 'PONTS ParisTech', 625, 60, 60, 0, 0, 0, 1, NULL),
 ('tsi', 2024, 'Concours Commun MINES-PONTS', 'TELECOM Paris', 625, 60, 60, 1, 21, 21, 1, 21),
