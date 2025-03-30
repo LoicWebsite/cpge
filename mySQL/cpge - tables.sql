@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost
--- Généré le : ven. 08 mars 2024 à 14:53
--- Version du serveur : 5.5.61-38.13-log
--- Version de PHP : 8.0.12
+-- Hôte : localhost:8889
+-- Généré le : dim. 30 mars 2025 à 16:26
+-- Version du serveur : 5.7.39
+-- Version de PHP : 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `cpge`
+-- Base de données : `CPGE`
 --
 
 -- --------------------------------------------------------
@@ -55,7 +55,7 @@ CREATE TABLE `Concours` (
 --
 
 CREATE TABLE `DAUR` (
-  `An` int(11) NOT NULL,
+  `An` int(4) NOT NULL,
   `Rang` int(3) DEFAULT NULL,
   `Groupe` varchar(3) DEFAULT NULL,
   `Ecole` varchar(50) NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE `Figaro` (
   `An` int(4) NOT NULL,
   `Rang` int(3) DEFAULT NULL,
   `Ecole` varchar(50) NOT NULL,
-  `Point` int(2) DEFAULT NULL,
+  `Point` float DEFAULT NULL,
   `UrlFigaro` varchar(250) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -132,10 +132,22 @@ ALTER TABLE `Classement`
   ADD PRIMARY KEY (`An`,`Ecole`);
 
 --
+-- Index pour la table `Concours`
+--
+ALTER TABLE `Concours`
+  ADD PRIMARY KEY (`Filiere`,`Concours`);
+
+--
 -- Index pour la table `DAUR`
 --
 ALTER TABLE `DAUR`
   ADD PRIMARY KEY (`An`,`Ecole`);
+
+--
+-- Index pour la table `Ecole`
+--
+ALTER TABLE `Ecole`
+  ADD PRIMARY KEY (`Filiere`,`Concours`,`Ecole`);
 
 --
 -- Index pour la table `Figaro`
@@ -148,6 +160,12 @@ ALTER TABLE `Figaro`
 --
 ALTER TABLE `Filiere`
   ADD PRIMARY KEY (`Filiere`);
+
+--
+-- Index pour la table `Note`
+--
+ALTER TABLE `Note`
+  ADD PRIMARY KEY (`Filiere`,`An`,`Concours`,`Ecole`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
