@@ -8,7 +8,7 @@
 	// récupération de l'ordre de tri
 	$tri="ecole";
 	if (isset($_GET['tri']))  {
-		if (($_GET['tri'] == "selectivite") or ($_GET['tri'] == "ecole")) {
+		if (($_GET['tri'] == "selectiviteMediane") or ($_GET['tri'] == "ecole") or ($_GET['tri'] == "concours") or ($_GET['tri'] == "selectiviteDernier")) {
 			$tri = trim($_GET['tri']);
 		}
 	}
@@ -56,7 +56,7 @@
 	<!-- en tête du tableau -->
 
 	<?php
-	
+
 		// titre de la page
 		echo "<header class='container'>";
 		echo "<h1 class='h3'><i class='fa-solid fa-building-columns'></i>&nbsp;&nbsp;&nbsp;Statistiques d'admissions " . strtoupper($filiere);
@@ -89,8 +89,16 @@
 
 		// construction de la clause ORDER
 		$order = " ORDER BY Filiere ASC, Concours ASC, Ecole ASC, An DESC;";
-		if ($tri == "selectivite") {
-			$order = " ORDER BY Selectivite ASC, SelectiviteMediane ASC, Concours ASC, Ecole ASC;";
+		if ($tri == "selectiviteMediane") {
+			$order = " ORDER BY (RangMedian IS NULL OR Inscrit IS NULL OR RangMedian = 0 OR Inscrit = 0) ASC,
+							 	 RangMedian / Inscrit ASC, Ecole ASC, An DESC;";
+		} elseif ($tri == "ecole") {
+			$order = " ORDER BY Ecole ASC, An DESC;";
+		} elseif ($tri == "concours") {
+			$order = " ORDER BY Concours ASC, Ecole ASC, An DESC;";
+		} elseif ($tri == "selectiviteDernier") {
+			$order = " ORDER BY (Dernier IS NULL OR Inscrit IS NULL OR Dernier = 0 OR Inscrit = 0) ASC,
+							 	 Dernier / Inscrit ASC, Ecole ASC, An DESC;";
 		}
 		
 		// exécution de la requête SQL
@@ -104,8 +112,8 @@
 						Integre,
 						RangMedian,						
 						Dernier,
-						Dernier / Inscrit AS Selectivite,
-						RangMedian / Inscrit AS SelectiviteMediane
+						ROUND(Dernier / Inscrit, 1) AS SelectiviteDernier,
+						ROUND(RangMedian / Inscrit, 1) AS SelectiviteMediane
 				FROM Note" . $where . $order;
 		if ($debug) echo "SQL = " . $sql ."<br/>";
 		try {
@@ -122,14 +130,14 @@
 				if (($reference <> "toutes") and ($reference <> 0) and ($reference <> '')) {
 					echo " en " . $reference;
 				} else {
-					echo " de 2016 à 2023";
+					echo " de 2016 à 2024";
 				}
 			} else {
 				echo "<br/>";
 				if (($reference <> "toutes") and ($reference <> 0) and ($reference <> '')) {
 					echo " en " . $reference;
 				} else {
-					echo " de 2016 à 2023";
+					echo " de 2016 à 2024";
 				}
 			}
 			echo "</h1><br/>";
@@ -140,13 +148,6 @@
 
 			// boutons de tri
 			echo "<div class='d-flex justify-content-between'>";
-			if ($tri == 'ecole') {
-				echo "<button id='ecole' type='button' class='btn btn-secondary btn-sm' disabled onclick='triEcole()'>Trier par école &darr;</button>";
-				echo "<button id='selectivite' type='button' class='btn btn-secondary btn-sm' onclick='triSelectivite()'>Trier par sélectivité &darr;</button>";
-			} else {
-				echo "<button id='ecole' type='button' class='btn btn-secondary btn-sm' onclick='triEcole()'>Trier par école &darr;</button>";
-				echo "<button id='selectivite' type='button' class='btn btn-secondary btn-sm' disabled onclick='triSelectivite()'>Trier par sélectivité &darr;</button>";
-			}
 			echo "</div><br/>";
 
 			// affichage de l'en tête du tableau
@@ -160,9 +161,10 @@
 				echo "<th>&nbsp;Filiere&nbsp;</th>";
 			}
 			if (($concours == "tous") or ($concours == "")) {
-				echo "<th>&nbsp;Concours&nbsp;<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Lorsqu&apos;un concours a changé de nom, c&apos;est le nom le plus récent qui est affiché.<br/>Exemple CCP devenu CCINP en 2019.'></i></th>";
+				echo "<th>&nbsp;<button id='concours' type='button' class='btn btn-secondary btn-sm' title='Trier par concours' onclick='triConcours()'>&darr;</button>&nbsp;&nbsp;Concours&nbsp;<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Lorsqu&apos;un concours a changé de nom, c&apos;est le nom le plus récent qui est affiché.<br/>Exemple CCP devenu CCINP en 2019.'></i></th>";
 			}
-			echo "<th>&nbsp;Ecole&nbsp;<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Lorsqu&apos;une école a changé de nom, c&apos;est le nom le plus récent qui est affiché.<br/>
+			echo "<th>&nbsp;<button id='ecole' type='button' class='btn btn-secondary btn-sm' title='Trier par école' onclick='triEcole()'>&darr;</button>&nbsp;&nbsp;Ecole&nbsp;<br>
+											<i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Lorsqu&apos;une école a changé de nom, c&apos;est le nom le plus récent qui est affiché.<br/>
 											<br/>&bull; Lorsque plusieurs écoles ont fusionné, les différentes écoles apparaissent séparément avant la fusion.<br/>
 											<br/>&bull; Lorsqu&apos;une école change de concours, elle apparaît soit dans le nouveau concours soit dans l&apos;ancien suivant la date.<br/>
 											<br/>&bull; A noter que le nom affiché est celui qui apparaît dans SCEI.'></i></th>";
@@ -171,10 +173,10 @@
 			echo "<th>&nbsp;Inscrits&nbsp;<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-html='true' title='Le nombre d&apos;inscrits est soit celui de l&apos;école soit par défaut celui du concours.'></i></th>";
 			echo "<th>&nbsp;Integrés&nbsp;</th>";
 			echo "<th>&nbsp;Rang median&nbsp;<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Depuis 2018 les statistiques SCEI affichent le rang médian et le rang moyen. Pour simplifier la lecture ici, seul le rang médian est affiché.'></i></th>";
-			echo "<th>&nbsp;Sélectivité médiane&nbsp;<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Sélectivité médiane = Rang médian des admis / Nombre d&apos;inscrits'></i></th>";
+			echo "<th>&nbsp;<button id='selectivite' type='button' class='btn btn-secondary btn-sm' title='Trier par sélectivité médiane croissante' onclick='triSelectiviteMediane()'>&darr;</button>&nbsp;&nbsp;Sélectivité médiane&nbsp;<br><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Sélectivité médiane = Rang médian des admis / Nombre d&apos;inscrits'></i></th>";
 			echo "<th>&nbsp;Rang dernier&nbsp;<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Le rang du dernier appelé a été supprimé des statistiques SCEI à partir de 2018.<br/>Il a été remplacé par le rang médian et le rang moyen.<br/>
 					<br/>&bull; Seuls certains concours continuent à publier le rang du dernier admis par école (voir la note d&apos;information &#x24D8; en page d&apos;accueil pour plus de détails).'></i></th>";
-			echo "<th>&nbsp;Sélectivité&nbsp;<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Sélectivité = Rang du dernier admis / Nombre d&apos;inscrits'></i></th>";
+			echo "<th>&nbsp;<button id='dernier' type='button' class='btn btn-secondary btn-sm' title='Trier par sélectivité croissante' onclick='triSelectiviteDernier()'>&darr;</button>&nbsp;&nbsp;Sélectivité&nbsp;<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Sélectivité = Rang du dernier admis / Nombre d&apos;inscrits'></i></th>";
 			echo "</tr></thead>";
 
 			$ecoleCourante = "";
@@ -229,13 +231,13 @@
 					$selectiviteMediane = 0;
 				}
 				if ($selectiviteMediane <> 0) {
-					echo "<td".$class." style='text-align:right;'>" . formater($selectiviteMediane, 0) . "%&nbsp;</td>";
+					echo "<td".$class." style='text-align:right;'>" . formater($selectiviteMediane, 1) . "%&nbsp;</td>";
 				} else {
 					echo "<td".$class." style='text-align:right;'>&nbsp;</td>";
 				}
 				echo "<td".$class." style='text-align:right;'>" . formater($Dernier, 0) . "&nbsp;</td>";
 				if ($selectivite <> 0) {
-					echo "<td".$class." style='text-align:right;'>" . formater($selectivite, 0) . "%&nbsp;</td>";
+					echo "<td".$class." style='text-align:right;'>" . formater($selectivite, 1) . "%&nbsp;</td>";
 				} else {
 					echo "<td".$class." style='text-align:right;'>&nbsp;</td>";
 				}
@@ -293,14 +295,24 @@
 		}
 
 		// fonctions pour appeler la même page mais avec critère de tri
-		function triSelectivite() {
+		function triSelectiviteMediane() {
 			<?php
-				echo "window.location.href='resultat-d-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php?reference=" . $reference . "&filiere=" . $filiere . "&concours=" . $concours . "&ecole=" . supprimerApostrophe($ecole) . "&tri=selectivite'";
+				echo "window.location.href='resultat-d-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php?reference=" . $reference . "&filiere=" . $filiere . "&concours=" . $concours . "&ecole=" . supprimerApostrophe($ecole) . "&tri=selectiviteMediane'";
+			?>
+		}
+		function triSelectiviteDernier() {
+			<?php
+				echo "window.location.href='resultat-d-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php?reference=" . $reference . "&filiere=" . $filiere . "&concours=" . $concours . "&ecole=" . supprimerApostrophe($ecole) . "&tri=selectiviteDernier'";
 			?>
 		}
 		function triEcole() {
 			<?php
 				echo "window.location.href='resultat-d-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php?reference=" . $reference . "&filiere=" . $filiere . "&concours=" . $concours . "&ecole=" . supprimerApostrophe($ecole) . "&tri=ecole'";
+			?>
+		}
+		function triConcours() {
+			<?php
+				echo "window.location.href='resultat-d-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php?reference=" . $reference . "&filiere=" . $filiere . "&concours=" . $concours . "&ecole=" . supprimerApostrophe($ecole) . "&tri=concours'";
 			?>
 		}
 
