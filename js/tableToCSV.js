@@ -31,7 +31,7 @@ function tableToCSV(idTableau, enTete) {
         }
 
         // Combine each column value with comma
-        csv_data.push(csvrow.join(","));
+        csv_data.push(csvrow.join(";"));
     }
 
     // Combine each row data with new line character
