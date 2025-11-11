@@ -45,7 +45,12 @@
 		<div class="row" style='margin-top:80px;'>
 			<div class="col-sm" aria-label="breadcrumb">
 			  <ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php"><i class="fas fa-home"></i></a></li>
+				<li class="breadcrumb-item">
+					<a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php">
+<!--			 		<i class="fas fa-home"></i> -->
+						<i class="bi bi-house-door-fill"></i>
+					</a>
+				</li>
 				<li class="breadcrumb-item"><a href="#" onclick="questionnaire()">Filière</a></li>
 				<li class="breadcrumb-item active" aria-current="page">Statistiques</li>
 			  </ol>
@@ -59,11 +64,12 @@
 
 		// titre de la page
 		echo "<header class='container'>";
-		echo "<h1 class='h3'><i class='fa-solid fa-building-columns'></i>&nbsp;&nbsp;&nbsp;Statistiques d'admissions " . strtoupper($filiere);
+		echo "<h1 class='h3'><i class='bi bi-bank2'></i>&nbsp;&nbsp;&nbsp;Statistiques d'admissions " . strtoupper($filiere);
+
 
 		// conexion à la base concours cpge
 		try {
-			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PSWD");
+			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
 		}
 		catch(PDOException $erreur)	{
 			die('Erreur connexion base : ' . $erreur->getMessage());
@@ -130,14 +136,14 @@
 				if (($reference <> "toutes") and ($reference <> 0) and ($reference <> '')) {
 					echo " en " . $reference;
 				} else {
-					echo " de 2016 à 2024";
+					echo " de 2016 à 2025";
 				}
 			} else {
 				echo "<br/>";
 				if (($reference <> "toutes") and ($reference <> 0) and ($reference <> '')) {
 					echo " en " . $reference;
 				} else {
-					echo " de 2016 à 2024";
+					echo " de 2016 à 2025";
 				}
 			}
 			echo "</h1><br/>";
@@ -153,7 +159,7 @@
 			// affichage de l'en tête du tableau
 			echo "<table id='tableau-par-filiere'>";
 			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une ligne pour voir le détail de cette école.";
-			$idTableau = '"#tableau-par-filiere","concours,école,année,places,inscrits,intégrés,rang médian,sélectivité médiane,rang dernier,sélectivité"';
+			$idTableau = '"#tableau-par-filiere","concours;école;année;places;inscrits;intégrés;rang médian;sélectivité médiane;rang dernier;sélectivité"';
 			echo "<br>Cliquer sur le bouton pour télécharger le tableau au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='fa-solid fa-download'></i> csv</button></small></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";

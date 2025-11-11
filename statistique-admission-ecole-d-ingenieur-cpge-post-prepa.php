@@ -46,7 +46,7 @@
 		<div id="actualite" class="container ancre">
 			<br/>
 			<p class="text-center">
-				<mark style="color:#808080;"><strong>Actualité</strong> : ajout du classement 2025 du Figaro magazine.<br>
+				<mark style="color:#808080;"><strong>Actualité</strong> : les statistiques des concours 2025 sont en ligne !<br>
 				</mark>
 			</p>
 			<br/>
@@ -55,9 +55,9 @@
 		<section>
 
 			<div>
-				<p class="text-center"><i class="fa-solid fa-building-columns"></i>&nbsp;&nbsp;<a href="statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php">Statistiques d'admissions <strong>par filière</strong> et concours</a></p>
-				<p class="text-center"><i class="fa-solid fa-graduation-cap"></i>&nbsp;&nbsp;<a href="statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php">Statistiques d'admissions <strong>pour une école</strong></a></p>
-				<p class="text-center"><i class="fa-solid fa-ranking-star"></i>&nbsp;&nbsp;<a href="classement-ecole-d-ingenieur.php"><strong>Classement</strong> des écoles</a></p>
+				<p class="text-center"><i class="bi bi-bank2"></i>&nbsp;&nbsp;<a href="statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php">Statistiques d'admissions <strong>par filière</strong> et concours</a></p>
+				<p class="text-center"><i class="bi bi-mortarboard-fill"></i>&nbsp;&nbsp;<a href="statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php">Statistiques d'admissions <strong>pour une école</strong></a></p>
+				<p class="text-center"><i class="bi bi-clipboard-data"></i>&nbsp;&nbsp;<a href="classement-ecole-d-ingenieur.php"><strong>Classement</strong> des écoles</a></p>
 			</div>
 			<br/><hr>
 			<h2 class="h4">A quoi sert ce site ?</h2>
@@ -69,7 +69,7 @@
 						<br/>&bull;  Pour les concours Polytechnique et Mines-Telecom, le rang du dernier admis par école est connu pour toutes les filières.<br/>
 						<br/>&bull;  Pour les concours de la filière BCPST G2E, A ENV, A BIO et A PC BIO, le rang du dernier admis est connu pour toutes les années.<br/>
 						<br/>&bull;  Pour tous les autres concours, le rang du dernier admis est connu uniquement pour les années 2016 et 2017.'></i></p>
-				<p>Les données accessibles sont celles de 2016 à 2023. Les différentes années sont visibles en même temps sur un seul et même tableau.</p>
+				<p>Les données accessibles sont celles de 2016 à 2025. Les différentes années sont visibles en même temps sur un seul et même tableau.</p>
 			</div>
 			<br/>
 		</section>
@@ -78,20 +78,20 @@
 			<div class="row gy-4 justify-content-md-center">
 			    <div class="col-md">
 					<div class="p-3 border bg-light">
-						<h2 class="h4 pb-2">Par filière et concours</h2>
+						<h2 class="h4 pb-2"><i class="bi bi-bank2"></i>&nbsp;&nbsp;Par filière et concours</h2>
 						<p>Vous pouvez visualiser les statistiques d'admissions en choisissant la filière (MP, PC, PT...), puis le concours et éventuellement l'école.
 						  Il est également possible de sélectionner une année particulière.</p>
-						<p><i class="fa-solid fa-building-columns"></i>&nbsp;&nbsp;<a href="statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php">Voir les statistiques d'admissions <strong>par filière</strong> et concours<br/><br/>
+						<p><i class="bi bi-bank2"></i>&nbsp;&nbsp;<a href="statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php">Voir les statistiques d'admissions <strong>par filière</strong> et concours<br/><br/>
 							<img src="image/statistiques-filiere-CPGE.png" class="img-fluid img-thumbnail" alt="tableau statistiques des résultats d'admissions d'une école d'ingénieur post prépa pour une filière">
 						</a></p>
 					</div>
 				</div>
 				<div class="col-md">
 					<div class="p-3 border bg-light">
-						<h2 class="h4 pb-2">Par école</h2>
+						<h2 class="h4 pb-2"><i class="bi bi-mortarboard-fill"></i>&nbsp;&nbsp;Par école</h2>
 						<p>Vous pouvez aussi visualiser les statistiques pour une école donnée, quelque soit le concours et la filière (MP, PC, PT...).
-						  Toutes les années de 2016 à 2023 seront alors affichées pour cette école.</p>
-						<p><i class="fa-solid fa-graduation-cap"></i>&nbsp;&nbsp;<a href="statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php">Voir les statistiques d'admissions <strong>pour une école</strong><br/><br/>
+						  Toutes les années de 2016 à 2025 seront alors affichées pour cette école.</p>
+						<p><i class="bi bi-mortarboard-fill"></i>&nbsp;&nbsp;<a href="statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php">Voir les statistiques d'admissions <strong>pour une école</strong><br/><br/>
 							<img src="image/statistiques-ecole-CPGE.png" class="img-fluid img-thumbnail" alt="tableau statistiques des résultats d'admissions d'une école d'ingénieur pour toutes ses filières d'admissions'">
 						</a></p>
 					</div>
@@ -101,9 +101,9 @@
 			<div class="row justify-content-md-center">
 			    <div class="col-md-6">
 					<div class="p-3 border bg-light">
-						<h2 class="h4 pb-2">Classement des écoles</h2>
+						<h2 class="h4 pb-2"><i class="bi bi-clipboard-data"></i>&nbsp;&nbsp;Classement des écoles</h2>
 						<p>Vous pouvez également regarder les classements des écoles (issus du magazine L'Etudiant, du site DAUR Rankings et du magazine Le Figaro étudiant). Cette page liste pour chacun des 3 classements, toutes les écoles post prépa sans avoir à paginer. En cliquant sur une école pour pouvez voir ses statistiques d'admissions. Et le site web des écoles est indiqué directement sur cette page sans avoir à zoomer.</p>
-						<p><i class="fa-solid fa-ranking-star"></i>&nbsp;&nbsp;<a href="classement-ecole-d-ingenieur.php">Voir le <strong>classement des écoles</strong><br/><br/>
+						<p><i class="bi bi-clipboard-data"></i>&nbsp;&nbsp;<a href="classement-ecole-d-ingenieur.php">Voir le <strong>classement des écoles</strong><br/><br/>
 							<img src="image/classement-ecole-ingenieur.png" class="img-fluid img-thumbnail" alt="classement des écoles d'ingénieurs selon L'Etudiant">
 						</a></p>
 					</div>
@@ -128,7 +128,7 @@
 			<br/>
 			<h2 class='h4'>Contact</h2>
 			<p>N'hésitez pas à me contacter par mail pour me faire part de vos remarques, suggestions, demandes d'évolution ou bug rencontré. Je m'efforcerai de traiter votre demande dans la mesure de mon temps disponible. Je vous remercie par avance.</p>
-			<p><a href="mailto:contact@loic.website?subject=Demande&nbsp;d&apos;information&nbsp;concours&nbsp;CPGE"><i class="fa fa-envelope">&nbsp;&nbsp;</i>Contactez-moi par email</a></p>
+			<p><a href="mailto:contact@loic.website?subject=Demande&nbsp;d&apos;information&nbsp;concours&nbsp;CPGE"><i class="bi bi-envelope-fill">&nbsp;&nbsp;</i>Contactez-moi par email</a></p>
 			<br/>
 		</section>	
 	

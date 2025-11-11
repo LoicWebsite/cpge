@@ -3,11 +3,11 @@
 		
 		// titre de la page
 		echo "<header class='container'>";
-		echo "<h1 class='h3'><i class='fa-solid fa-building-columns'></i>&nbsp;&nbsp;&nbsp;Statistiques d'admissions " . strtoupper($filiere) . "<br/>";
+		echo "<h1 class='h3'><i class='bi bi-bank2'></i>&nbsp;&nbsp;&nbsp;Statistiques d'admissions " . strtoupper($filiere) . "<br/>";
 
 		// conexion à la base concours cpge
 		try {
-			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSWORD");
+			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
 		}
 		catch(PDOException $erreur)	{
 			die('Erreur connexion base : ' . $erreur->getMessage());
@@ -60,14 +60,14 @@
 				if (($an <> "toutes") and ($an <> 0) and ($an <> '')) {
 					echo " en " . $an;
 				} else {
-					echo " de 2016 à 2024";
+					echo " de 2016 à 2025";
 				}
 			} else {
 				echo "<br/>";
 				if (($an <> "toutes") and ($an <> 0) and ($an <> '')) {
 					echo " en " . $reference;
 				} else {
-					echo " de 2016 à 2024";
+					echo " de 2016 à 2025";
 				}
 			}
 			echo "</h1><br/>";
@@ -135,7 +135,7 @@
 				}
 			}
 			catch(PDOException $erreur)	{
-				echo "Erreur SELECT Figaro 2024 : " . $erreur->getMessage();
+				echo "Erreur SELECT Figaro 2025 : " . $erreur->getMessage();
 			}
 
 			// recherche du groupe et du rang de l'école dans le classement Le Figaro 2024

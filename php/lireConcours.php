@@ -1,71 +1,67 @@
 <?php
+/******
+* Script appelé en AJAX pour récupérer la liste des concours
+* d'une filière et d'une année donnée.
+* La liste des concours est renvoyé dans un fichier JSON au format Option d'un Select HTML.
+******/
 
-	/******
-	*	ce script est appelé (en ajax) depuis une page web pour charger
-	*	les  concours d'une filière passée en paramètre.
-	*	La liste des concours est renvoyée dans un fichier JSON au format Option d'un Select HTML.
-	******/
+include "controleParametre.php";   // récupère $filiere, $an
+include "fonctionConcours.php";     // fonctions utilitaires
 
-	$nbConcours = 0;
+header('Content-Type: application/json; charset=utf-8');
 
-	// récupération-contrôle des paramètres, dont le concours
-	include "controleParametre.php";
-//error_log("script php - filiere =".$filiere."- concours =".$concours.".",0);		
-	// fonctions communes du site
-	include "fonctionConcours.php";
-	
-	// conexion à la base concours cpge
-	try {
-		$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
-	}
-	catch(PDOException $erreur)	{
-		die('Erreur connexion base : ' . $erreur->getMessage());
-	}
+try {
+    // connexion PDO
+    $db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-	// passage au mode exception pour les erreurs
-	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // construction clause WHERE
+    $conditions = [];
+    if (!empty($filiere) && $filiere != "toutes") {
+        $conditions[] = "Filiere = :filiere";
+    }
+    if (!empty($an) && $an != "toutes") {
+        $conditions[] = "An = :an";
+    }
 
-	// construction de la clause WHERE
-	if (($filiere <> "") and ($filiere <> "toutes")) {
-		$where = " where Filiere='" . $filiere . "'";
-	} else {
-		$where = "";
-	}
-	
-	// exécution de la requête SQL
-	$sql = "SELECT Concours FROM Concours" . $where . " ORDER BY Concours ASC;";
-	if ($debug) echo "SQL = " . $sql ."<br/>";
-//error_log("requête =".$sql.".");
-	try {
-		$result = $db->query($sql);
+    $where = '';
+    if (count($conditions) > 0) {
+        $where = " WHERE " . implode(" AND ", $conditions);
+    }
 
-		// création de l'entête du fichier JSON
-		$json = '{';
-		$json = $json . '"options": [';
-		$json = $json . '{"value": "tous", "text": "tous"},';
-				
-		// affichage de chaque école dans la liste déroulante nommée ecole
-		while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-			extract($row);
-			$nbConcours += 1;
-			$libelleConcours = supprimerRetour(supprimerApostrophe($Concours));
-			if ($nbConcours < $result->rowCount()) {
-				$json = $json . '{"value": "' . $libelleConcours . '", "text": "' . $libelleConcours . '"},';
-			} else {
-				$json = $json . '{"value": "' . $libelleConcours . '", "text": "' . $libelleConcours . '"}';
-			}
-		}
-		$json = $json . ']';
-		$json = $json . '}';
-	}
-	catch(PDOException $erreur)	{
-		echo "Erreur SELECT Concours : " . $erreur->getMessage();
-	}
+    $sql = "SELECT DISTINCT(Concours) FROM Note" . $where . " ORDER BY Concours ASC";
+    $stmt = $db->prepare($sql);
 
-	// fermeture de la base
-	if (isset($result)) {$result->closeCursor();}
-	$db = null;
+    if (!empty($filiere) && $filiere != "toutes") {
+        $stmt->bindParam(':filiere', $filiere, PDO::PARAM_STR);
+    }
+    if (!empty($an) && $an != "toutes") {
+        $stmt->bindParam(':an', $an, PDO::PARAM_INT);
+    }
 
-//error_log("json =".$json.".");	
-	echo $json;
+    $stmt->execute();
+
+    $concoursArray = [];
+    // option par défaut
+    $concoursArray[] = ['value' => 'tous', 'text' => 'tous'];
+
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $libelleConcours = supprimerRetour(supprimerApostrophe($row['Concours']));
+        $concoursArray[] = ['value' => $libelleConcours, 'text' => $libelleConcours];
+    }
+
+    $json = ['options' => $concoursArray];
+    echo json_encode($json, JSON_UNESCAPED_UNICODE);
+
+    // log pour debug
+    //error_log("JSON envoyé = " . json_encode($json, JSON_UNESCAPED_UNICODE));
+
+} catch(PDOException $e) {
+    error_log("Erreur SELECT Concours : " . $e->getMessage());
+    echo json_encode(['options' => [['value' => 'tous', 'text' => 'tous']]], JSON_UNESCAPED_UNICODE);
+}
+
+// fermeture base
+$stmt = null;
+$db = null;
 ?>

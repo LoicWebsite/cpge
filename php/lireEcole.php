@@ -1,72 +1,79 @@
 <?php
+/******
+* Script appelé en AJAX pour récupérer la liste des écoles
+* selon la filière, le concours et l’année sélectionnés.
+* La liste des écoles est renvoyé dans un fichier JSON au format Option d'un Select HTML.
+******/
 
-	/******
-	*	ce script est appelé (en ajax) depuis une page web pour charger
-	*	les écoles d'un concours passé en paramètre.
-	*	La liste des écoles est renvoyé dans un fichier JSON au format Option d'un Select HTML.
-	******/
+include "controleParametre.php";   // récupère $filiere, $concours, $an
+include "fonctionConcours.php";     // fonctions utilitaires
 
-	$nbEcole = 0;
+header('Content-Type: application/json; charset=utf-8');
 
-	// récupération-contrôle des paramètres, dont le concours
-	include "controleParametre.php";
+try {
+    // connexion PDO
+    $db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-	// fonctions communes du site
-	include "fonctionConcours.php";
-	
-	// conexion à la base concours cpge
-	try {
-		$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
-	}
-	catch(PDOException $erreur)	{
-		die('Erreur connexion base : ' . $erreur->getMessage());
-	}
+    // construction dynamique de la clause WHERE
+    $conditions = [];
+    if (!empty($filiere) && $filiere != "toutes") {
+        $conditions[] = "Filiere = :filiere";
+    }
+    if (!empty($concours) && $concours != "tous") {
+        $conditions[] = "Concours = :concours";
+    }
+    if (!empty($an) && $an != "toutes") {
+        $conditions[] = "An = :an";
+    }
 
-	// passage au mode exception pour les erreurs
-	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $where = '';
+    if (count($conditions) > 0) {
+        $where = " WHERE " . implode(" AND ", $conditions);
+    }
 
-	// construction de la clause WHERE
-	$where = "";
-	if (($filiere <> "") and ($filiere <> "toutes")) {
-		$where = " WHERE Filiere='" . $filiere . "'";
-		if (($concours <> "") and ($concours <> "tous")) {
-			$where = $where . " AND Concours='" . $concours . "'";
-		}
-	}
+    $sql = "SELECT DISTINCT(Ecole) FROM Note" . $where . " ORDER BY Ecole ASC";
+    $stmt = $db->prepare($sql);
 
-	// exécution de la requête SQL
-	$sql = "SELECT Ecole FROM Ecole" . $where . " ORDER BY Ecole ASC;";
-	if ($debug) echo "SQL = " . $sql ."<br/>";
-	try {
-		$result = $db->query($sql);
+    // liaison sécurisée des paramètres
+    if (!empty($filiere) && $filiere != "toutes") {
+        $stmt->bindParam(':filiere', $filiere, PDO::PARAM_STR);
+    }
+    if (!empty($concours) && $concours != "tous") {
+        $stmt->bindParam(':concours', $concours, PDO::PARAM_STR);
+    }
+    if (!empty($an) && $an != "toutes") {
+        $stmt->bindParam(':an', $an, PDO::PARAM_INT);
+    }
 
-		// création de l'entête du fichier JSON
-		$json = '{';
-		$json = $json . '"options": [';
-		$json = $json . '{"value": "toutes", "text": "toutes"},';
-				
-		// affichage de chaque école dans la liste déroulante nommée ecole
-		while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-			extract($row);
-			$nbEcole += 1;
-			if ($nbEcole < $result->rowCount()) {
-//				$json = $json . '{"value": "' . $Ecole . '", "text": "' . $Ecole . '"},';
-				$json = $json . '{"value": "' . supprimerRetour($Ecole) . '", "text": "' . supprimerRetour($Ecole) . '"},';
-			} else {
-				$json = $json . '{"value": "' . supprimerRetour($Ecole) . '", "text": "' . supprimerRetour($Ecole) . '"}';
-//				$json = $json . '{"value": "' . $Ecole . '", "text": "' . $Ecole . '"}';
-			}
-		}
-		$json = $json . ']';
-		$json = $json . '}';
-	}
-	catch(PDOException $erreur)	{
-		echo "Erreur SELECT Ecole : " . $erreur->getMessage();
-	}
-	
-	echo $json;
-	
-	// fermeture de la base
-	if (isset($result)) {$result->closeCursor();}
-	$db = null;
+    $stmt->execute();
+
+    // création du tableau de sortie
+    $ecolesArray = [];
+    // option par défaut
+    $ecolesArray[] = ['value' => 'toutes', 'text' => 'toutes'];
+
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $libelleEcole = supprimerRetour(supprimerApostrophe($row['Ecole']));
+        $ecolesArray[] = ['value' => $libelleEcole, 'text' => $libelleEcole];
+    }
+
+    $json = ['options' => $ecolesArray];
+
+    // envoi du JSON
+    echo json_encode($json, JSON_UNESCAPED_UNICODE);
+
+    // log pour debug (affiche le JSON envoyé)
+    //error_log("JSON envoyé = " . json_encode($json, JSON_UNESCAPED_UNICODE));
+
+} catch (PDOException $e) {
+    error_log("Erreur SELECT Ecole : " . $e->getMessage());
+
+    // renvoie un JSON minimal pour éviter un plantage JS
+    echo json_encode(['options' => [['value' => 'toutes', 'text' => 'toutes']]], JSON_UNESCAPED_UNICODE);
+}
+
+// fermeture base
+$stmt = null;
+$db = null;
 ?>

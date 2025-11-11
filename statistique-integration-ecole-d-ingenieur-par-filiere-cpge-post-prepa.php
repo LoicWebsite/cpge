@@ -34,13 +34,22 @@
 
 	<nav class="container" style='margin-top:80px;' aria-label="breadcrumb">
 	  <ol class="breadcrumb">
-		<li class="breadcrumb-item"><a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php"><i class="fas fa-home"></i></a></li>
+		<li class="breadcrumb-item">
+			<a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php">
+<!--	 		<i class="fas fa-home"></i> -->
+				<i class="bi bi-house-door-fill"></i>
+			</a>
+		</li>
 		<li class="breadcrumb-item active" aria-current="page">Filière</li>
 	  </ol>
 	</nav>
 
 	<header class="container">
-		<h1 class="h3"><i class="fa-solid fa-building-columns"></i>&nbsp;&nbsp;&nbsp;Statistiques par filière et concours</h1>
+		<h1 class="h3">
+<!--		<i class="fa-solid fa-building-columns"></i>	-->
+			<i class="bi bi-bank2"></i>
+			&nbsp;&nbsp;&nbsp;Statistiques par filière et concours
+		</h1>
 		<br/>
 	</header>
 
@@ -84,43 +93,47 @@
 					</div>
 					<div class="col-md-7">	
 						<div class="form-check form-check-inline">
-							<input type="radio" id="all" name="reference" class="form-check-input" value="toutes" checked>
+							<input type="radio" id="all" name="reference" class="form-check-input" value="toutes" checked onchange="listerConcours(this.value,'','')">
 							<label class="form-check-label" for="all">toutes</label>
 						</div>
 						<div class="form-check form-check-inline">
-							<input type="radio" id="an2024" name="reference" class="form-check-input" value="2024">
+							<input type="radio" id="an2025" name="reference" class="form-check-input" value="2025" onchange="listerConcours(this.value,'','')">
+							<label class="form-check-label" for="an2025">2025</label>
+						</div>
+						<div class="form-check form-check-inline">
+							<input type="radio" id="an2024" name="reference" class="form-check-input" value="2024" onchange="listerConcours(this.value,'','')">
 							<label class="form-check-label" for="an2024">2024</label>
 						</div>
 						<div class="form-check form-check-inline">
-							<input type="radio" id="an2023" name="reference" class="form-check-input" value="2023">
+							<input type="radio" id="an2023" name="reference" class="form-check-input" value="2023" onchange="listerConcours(this.value,'','')">
 							<label class="form-check-label" for="an2023">2023</label>
 						</div>
 						<div class="form-check form-check-inline">
-							<input type="radio" id="an2022" name="reference" class="form-check-input" value="2022">
+							<input type="radio" id="an2022" name="reference" class="form-check-input" value="2022" onchange="listerConcours(this.value,'','')">
 							<label class="form-check-label" for="an2022">2022</label>
 						</div>
 						<div class="form-check form-check-inline">
-							<input type="radio" id="an2021" name="reference" class="form-check-input" value="2021">
+							<input type="radio" id="an2021" name="reference" class="form-check-input" value="2021" onchange="listerConcours(this.value,'','')">
 							<label class="form-check-label" for="an2021">2021</label>
 						</div>
 						<div class="form-check form-check-inline">
-							<input type="radio" id="an2020" name="reference" class="form-check-input" value="2020">
+							<input type="radio" id="an2020" name="reference" class="form-check-input" value="2020" onchange="listerConcours(this.value,'','')">
 							<label class="form-check-label" for="an2020">2020</label>
 						</div>
 						<div class="form-check form-check-inline">
-							<input type="radio" id="an2019" name="reference" class="form-check-input" value="2019">
+							<input type="radio" id="an2019" name="reference" class="form-check-input" value="2019" onchange="listerConcours(this.value,'','')">
 							<label class="form-check-label" for="an2019">2019</label>
 						</div>
 						<div class="form-check form-check-inline">
-							<input type="radio" id="an2018" name="reference" class="form-check-input" value="2018">
+							<input type="radio" id="an2018" name="reference" class="form-check-input" value="2018" onchange="listerConcours(this.value,'','')">
 							<label class="form-check-label" for="an2018">2018</label>
 						</div>
 						<div class="form-check form-check-inline">
-							<input type="radio" id="an2017" name="reference" class="form-check-input" value="2017">
+							<input type="radio" id="an2017" name="reference" class="form-check-input" value="2017" onchange="listerConcours(this.value,'','')">
 							<label class="form-check-label" for="an2017">2017</label>
 						</div>
 						<div class="form-check form-check-inline">
-							<input type="radio" id="an2016" name="reference" class="form-check-input" value="2016">
+							<input type="radio" id="an2016" name="reference" class="form-check-input" value="2016" onchange="listerConcours(this.value,'','')">
 							<label class="form-check-label" for="an2016">2016</label>
 						</div>
 					</div>
@@ -137,12 +150,12 @@
 						<label for="filiere" class="form-label">Filière<sup>*</sup> :</label>
 					</div>
 					<div class="col-md-7">
-						<select class="form-select" id="filiere" name="filiere" onchange="listerConcours(this.value,'');" required="required">
+						<select class="form-select" id="filiere" name="filiere" onchange="listerConcours('',this.value,'');" required="required">
 							<option id="toutes" value="" disabled selected hidden>sélectionner une filière</option>
 							<?php
 								// conexion à la base concours cpge
 								try {
-									$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PSWD");
+									$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
 								}
 								catch(PDOException $erreur)	{
 									die('Erreur connexion base : ' . $erreur->getMessage());
@@ -180,7 +193,7 @@
 						<label for="concours" class="form-label">Concours :</label>
 					</div>
 					<div class="col-md-7">
-						<select class="form-select" id="concours" name="concours" onchange="listerEcole(this.value,'');">
+						<select class="form-select" id="concours" name="concours" onchange="listerEcole('',this.value,'');">
 						</select>
 					</div>
 					<div class="col-md-1">
@@ -246,15 +259,14 @@
 
 			// wait 1 seconde nécessaire, sinon le call back lireEcole n'a pas le temps de répondre
  			if (($concours <> "") and ($concours <> "tous")) {
- 				echo "setTimeout(function(){listerEcole('".$concours."','".supprimerApostrophe($ecole)."')},500);\n";
+ 				echo "setTimeout(function(){listerEcole('".$an."','".$concours."','".supprimerApostrophe($ecole)."')},500);\n";
  			}
 
  			if (($filiere <> "") and ($filiere <> "toutes")) {
  				echo "document.getElementById('" . $filiere . "').selected = true;\n";
- 				echo "listerConcours('".$filiere."','".$concours."');\n";
+ 				echo "listerConcours('".$an."','".$filiere."','".$concours."');\n";
  			}
  
-
  		?>
  		}
 	</script>
@@ -262,108 +274,152 @@
 	<!-- requêtes AJAX pour charger les concours et les écoles -->	
 	<script>
 
-		// chargement des concours pour la filière sélectionnée en appelant un script sur le serveur via AJAX
-		function listerConcours(filiereChoisi, concoursChoisi) {
+		// chargement des concours pour l'année et la filière sélectionnée en appelant un script sur le serveur via AJAX
+		function listerConcours(anChoisi, filiereChoisi, concoursChoisi) {
 
-            // remise à blanc de l'éventuel message d'erreur sur la filière
-            critere.filiere.setCustomValidity('');
-			critere.filiere.reportValidity();
+			// récupérer la filière si pas passée en paramètre
+			if (!filiereChoisi) filiereChoisi = document.getElementById('filiere').value || '';
 
-//console.log("filière ="+filiereChoisi+"- concours="+concoursChoisi+".");
-			// création de la requête AJAX
-	  		httpRequest = new XMLHttpRequest();
-			if (!httpRequest) {
-			  alert('Abandon :( Impossible de créer une instance de XMLHTTP pour les concours');
-			  return false;
+			// récupérer l'année si pas passée en paramètre
+			if (!anChoisi) {
+				const radios = document.getElementsByName('reference');
+				for (let radio of radios) {
+					if (radio.checked) {
+						anChoisi = radio.value;
+						break;
+					}
+				}
+				if (!anChoisi) anChoisi = 'toutes';
 			}
 
-			// fonction qui traite le retour de la requête
-	  		httpRequest.onreadystatechange = function() {
+			// si aucune filière sélectionnée → pas d'appel AJAX
+			if (!filiereChoisi) return;
 
-//console.log("fonction appelée");
-				// si la requête est terminée et qu'elle s'est bien passée
-				if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+			// remise à blanc du message d'erreur
+			const filiereSelect = document.getElementById('filiere');
+			filiereSelect.setCustomValidity('');
+			filiereSelect.reportValidity();
 
-					// effacement des anciens concours présents dans le SELECT Concours
-					var listeConcours = document.getElementById('concours');
-					listeConcours.options.length=0;
-				
-					// effacement des anciennes écoles présentes dans le SELECT Ecole
-					var listeEcole = document.getElementById('ecole');
-					listeEcole.options.length=0;
-				
-					// chargement des nouveaux concours correspondants à la filière sélectionnée
-					try {
-						var lesConcours = JSON.parse(httpRequest.responseText);
-					} catch(erreur) {
-						alert('erreur parse : ' + erreur);
-					}
-					var indexConcours = 0;
-					for (index = 0; index < lesConcours.options.length; ++index) {
-						option = lesConcours.options[index];
-						if (concoursChoisi != '') {
-							if (option.text == concoursChoisi) {
-								indexConcours = index;
-							}
+			const httpRequest = new XMLHttpRequest();
+			if (!httpRequest) {
+				alert('Impossible de créer une instance de XMLHTTP');
+				return;
+			}
+
+			httpRequest.onreadystatechange = function() {
+				if (httpRequest.readyState === 4) {
+					if (httpRequest.status === 200) {
+						const listeConcours = document.getElementById('concours');
+						const listeEcole = document.getElementById('ecole');
+
+						listeConcours.options.length = 0;
+						listeEcole.options.length = 0;
+
+						try {
+							// parser JSON
+							let lesConcours = JSON.parse(httpRequest.responseText);
+
+							if (!lesConcours.options) return;
+
+							let indexConcours = 0;
+							lesConcours.options.forEach((option, i) => {
+								listeConcours.add(new Option(option.text, option.value), null);
+								if (concoursChoisi && option.text === concoursChoisi) indexConcours = i;
+							});
+
+							listeConcours.options[indexConcours].selected = true;
+
+						} catch (erreur) {
+							console.error('Erreur parsing JSON', erreur, httpRequest.responseText);
 						}
-						listeConcours.add(new Option(option.text, option.value),null);
-					}
-					listeConcours.options[indexConcours].selected=true;
-				}
-//console.log("readyState="+httpRequest.readyState+" - status="+httpRequest.status+".");
-	  		};
 
-			// appel de la requête
-	  		httpRequest.open("GET", "php/lireConcours.php?filiere="+filiereChoisi, true);
-	  		httpRequest.send();
+					} else {
+						console.error('Erreur AJAX', httpRequest.status, httpRequest.statusText);
+					}
+				}
+			};
+
+			//console.log(`requête=php/lireConcours.php?filiere=${encodeURIComponent(filiereChoisi)}&an=${encodeURIComponent(anChoisi)}`);
+			httpRequest.open("GET", `php/lireConcours.php?filiere=${encodeURIComponent(filiereChoisi)}&an=${encodeURIComponent(anChoisi)}`, true);
+			httpRequest.send();
 		}
 
 		// chargement des écoles pour le concours sélectionné en appelant un script sur le serveur via AJAX
-		function listerEcole(concoursChoisi,ecoleChoisi) {
-	  		
-			// récupération de la filière pour la passer en paramètre du script PHP
-			var filiereChoisi = document.getElementById('filiere').options[document.getElementById('filiere').selectedIndex].value;			
-			
-			// création de la requête AJAX
-	  		httpRequest = new XMLHttpRequest();
-			if (!httpRequest) {
-			  alert('Abandon :( Impossible de créer une instance de XMLHTTP pour les écoles');
-			  return false;
+		function listerEcole(anChoisi, concoursChoisi, ecoleChoisi) {
+			// récupération de la filière sélectionnée
+			let filiereChoisi = document.getElementById('filiere').value || '';
+
+			// si aucune filière sélectionnée, on ne fait rien
+			if (!filiereChoisi || filiereChoisi === 'toutes') {
+				//console.log("Aucune filière sélectionnée → pas d’appel au script PHP.");
+				return;
 			}
 
-			// fonction qui traite le retour de la requête
-	  		httpRequest.onreadystatechange = function () {
-
-				// si la requête est terminée et qu'elle s'est bien passée
-				if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-
-					// effacement des anciennes écoles présentes dans le SELECT
-					var listeEcole = document.getElementById('ecole');
-					listeEcole.options.length=0;
-
-					// chargement des nouvelles écoles correspondantes au concours sélectionné
-					try {
-						var ecoles = JSON.parse(httpRequest.responseText);
-					} catch(erreur) {
-						alert('erreur parse : ' + erreur);
+			// récupération de l'année si elle n'est pas passée en paramètre
+			if (!anChoisi) {
+				let radios = document.getElementsByName('reference');
+				for (let i = 0; i < radios.length; i++) {
+					if (radios[i].checked) {
+						anChoisi = radios[i].value;
+						break;
 					}
-					var indexEcole = 0;
-					for (index = 0; index < ecoles.options.length; ++index) {
-						option = ecoles.options[index];
-						if (ecoleChoisi != '') {
-							if (option.text == ecoleChoisi) {
-								indexEcole = index;
+				}
+				if (!anChoisi) anChoisi = 'toutes';
+			}
+
+			// valeur par défaut pour concoursChoisi
+			if (!concoursChoisi) concoursChoisi = 'tous';
+
+			// création de la requête AJAX
+			const httpRequest = new XMLHttpRequest();
+			if (!httpRequest) {
+				alert('Abandon :( Impossible de créer une instance de XMLHTTP pour les écoles');
+				return false;
+			}
+
+			httpRequest.onreadystatechange = function() {
+				// requête terminée et réussie
+				if (httpRequest.readyState === 4) {
+					if (httpRequest.status === 200) {
+						const listeEcole = document.getElementById('ecole');
+						listeEcole.options.length = 0; // on vide la liste
+
+						try {
+							const ecoles = JSON.parse(httpRequest.responseText);
+
+							// vérifier que le JSON contient bien un tableau d'options
+							if (!ecoles || !Array.isArray(ecoles.options)) {
+								console.warn("Réponse JSON inattendue :", httpRequest.responseText);
+								return;
 							}
-						}
-						listeEcole.add(new Option(option.text, option.value),null);
-					}
-					listeEcole.options[indexEcole].selected=true;
-				}	  		
-	  		};
 
-			// appel de la requête
-	  		httpRequest.open("GET", "php/lireEcole.php?filiere="+filiereChoisi+"&concours="+concoursChoisi, true);
-	  		httpRequest.send();
+							let indexEcole = 0;
+							ecoles.options.forEach((option, index) => {
+								listeEcole.add(new Option(option.text, option.value), null);
+								if (option.text === ecoleChoisi) {
+									indexEcole = index;
+								}
+							});
+
+							listeEcole.options[indexEcole].selected = true;
+
+						} catch (erreur) {
+							console.error("Erreur JSON parse :", erreur, httpRequest.responseText);
+						}
+
+					} else {
+						console.error("Erreur AJAX : statut HTTP " + httpRequest.status);
+					}
+				}
+			};
+
+			const url = "php/lireEcole.php?filiere=" + encodeURIComponent(filiereChoisi)
+					  + "&concours=" + encodeURIComponent(concoursChoisi)
+					  + "&an=" + encodeURIComponent(anChoisi);
+
+			//console.log("Requête =", url);
+			httpRequest.open("GET", url, true);
+			httpRequest.send();
 		}
 
 	</script>
