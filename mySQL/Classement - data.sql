@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost:8889
--- Généré le : jeu. 24 oct. 2024 à 16:47
+-- Hôte : localhost
+-- Généré le : mer. 18 fév. 2026 à 16:44
 -- Version du serveur : 5.7.39
 -- Version de PHP : 8.2.0
 
@@ -149,7 +149,7 @@ INSERT INTO `Classement` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant
 (2022, 85, 'B', 'JUNIA HEI', 29, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-hautes-etudes-d-ingenieur-5864.html', 'https://www.hei.fr'),
 (2022, 81, 'B', 'JUNIA ISEN', 30, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-de-l-electronique-et-du-numerique-de-lille-5744.html', 'https://www.isen-lille.fr'),
 (2022, 8, 'A+', 'MINES de NANCY', 47, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-mines-de-nancy-5518.html', 'https://www.mines-nancy.univ-lorraine.fr'),
-(2022, 5, 'A+', 'MINES Paris', 50, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-mines-de-paris-6922.html', 'https://www.mines-paristech.fr'),
+(2022, 5, 'A+', 'MINES Paris', 50, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-mines-de-paris-6922.html', 'https://www.minesparis.psl.eu'),
 (2022, 17, 'A+', 'MINES Saint-Étienne', 43, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-mines-de-saint-etienne-5070.html', 'https://www.mines-stetienne.fr'),
 (2022, 89, 'B', 'Montpellier Sup Agro', 29, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-montpellier-supagro-4710.html', 'https://www.montpellier-supagro.fr'),
 (2022, 159, 'C', 'ONIRIS Nantes', 19, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-veterinaire-agroalimentaire-et-de-l-alimentation-nantes-atlantique-5171.html', 'https://www.oniris-nantes.fr'),
@@ -304,7 +304,7 @@ INSERT INTO `Classement` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant
 (2023, 85, 'B', 'JUNIA HEI', 50, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-hautes-etudes-d-ingenieur-5864.html', 'https://www.hei.fr'),
 (2023, 114, 'B', 'JUNIA ISEN', 47, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-de-l-electronique-et-du-numerique-de-lille-5744.html', 'https://www.isen-lille.fr'),
 (2023, 8, 'A+', 'MINES de NANCY', 85, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-mines-de-nancy-5518.html', 'https://www.mines-nancy.univ-lorraine.fr'),
-(2023, 9, 'A+', 'MINES Paris', 84, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-mines-de-paris-6922.html', 'https://www.mines-paristech.fr'),
+(2023, 9, 'A+', 'MINES Paris', 84, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-mines-de-paris-6922.html', 'https://www.minesparis.psl.eu'),
 (2023, 11, 'A+', 'MINES Saint-Étienne', 82, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-mines-de-saint-etienne-5070.html', 'https://www.mines-stetienne.fr'),
 (2023, 71, 'A', 'Montpellier Sup Agro', 53, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-montpellier-supagro-4710.html', 'https://www.montpellier-supagro.fr'),
 (2023, 141, 'C', 'ONIRIS Nantes', 41, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-veterinaire-agroalimentaire-et-de-l-alimentation-nantes-atlantique-5171.html', 'https://www.oniris-nantes.fr'),

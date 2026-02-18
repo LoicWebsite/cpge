@@ -36,7 +36,6 @@
 	  <ol class="breadcrumb">
 		<li class="breadcrumb-item">
 			<a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php">
-<!--	 		<i class="fas fa-home"></i> -->
 				<i class="bi bi-house-door-fill"></i>
 			</a>
 		</li>
@@ -46,7 +45,6 @@
 
 	<header class="container">
 		<h1 class="h3">
-<!--		<i class="fa-solid fa-building-columns"></i>	-->
 			<i class="bi bi-bank2"></i>
 			&nbsp;&nbsp;&nbsp;Statistiques par filière et concours
 		</h1>
@@ -71,7 +69,7 @@
 					<div class="col-md-3">
 						<label for="rang" class="form-label">
 							Rang visé :
-							<i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-html="true" title="Le <strong>Rang visé</strong> sert à mettre en évidence les écoles dont le rang d'admission est supérieur à celui-ci.<br/>Pour les années 2018 à 2021 la comparaison est effectuée avec le <strong>Rang médian</strong>.<br/>Pour les années 2017 et 2016 la comparaison est effectuée avec le <strong>Rang du dernier appelé</strong>.<br/>Cette saisie est facultative."></i>
+							<i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-html="true" title="Le <strong>Rang visé</strong> sert à mettre en évidence les écoles dont le rang d'admission est supérieur à celui-ci.<br/>Pour les années 2018 à 2021 la comparaison est effectuée avec le <strong>Rang médian</strong>.<br/>Pour les années 2017 et 2016 la comparaison est effectuée avec le <strong>Rang du dernier appelé</strong>.<br/>Cette saisie est facultative."></i>
 						</label>
 					</div>
 					<div class="col-md-7">
@@ -89,7 +87,7 @@
 					</div>
 					<div class="col-md-3">
 						Année de référence : 
-						<i class="fas fa-info-circle" data-bs-toggle="tooltip" data-bs-html="true" title="L'année de référence sert à afficher les résultats d'une année particulière.<br/><strong>'toutes'</strong> permet d'afficher toutes les années. C'est la valeur par défaut."></i>
+						<i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-html="true" title="L'année de référence sert à afficher les résultats d'une année particulière.<br/><strong>'toutes'</strong> permet d'afficher toutes les années. C'est la valeur par défaut."></i>
 					</div>
 					<div class="col-md-7">	
 						<div class="form-check form-check-inline">

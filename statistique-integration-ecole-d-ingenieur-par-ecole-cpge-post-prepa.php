@@ -34,13 +34,19 @@
 
 	<nav class="container" style='margin-top:80px;' aria-label="breadcrumb">
 	  <ol class="breadcrumb">
-		<li class="breadcrumb-item"><a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php"><i class="fas fa-home"></i></a></li>
+		<li class="breadcrumb-item">
+			<a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php">
+				<i class="bi bi-house-door-fill"></i>
+			</a>
+		</li>
 		<li class="breadcrumb-item active" aria-current="page">Ecole</li>
 	  </ol>
 	</nav>
 
 	<header class="container">
-		<h1 class="h3"><i class="fa-solid fa-graduation-cap"></i>&nbsp;&nbsp;&nbsp;Statistiques par école</h1>
+		<h1 class="h3">
+			<i class="bi bi-mortarboard-fill"></i>
+			&nbsp;&nbsp;&nbsp;Statistiques par école</h1>
 		<br/>
 	</header>
 

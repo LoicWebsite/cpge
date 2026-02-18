@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost:8889
--- Généré le : jeu. 24 oct. 2024 à 16:48
+-- Hôte : localhost
+-- Généré le : mer. 18 fév. 2026 à 16:40
 -- Version du serveur : 5.7.39
 -- Version de PHP : 8.2.0
 
@@ -151,7 +151,7 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEcole`) VALUES
 (2022, 171, 'C', 'ISMANS', 20, 'https://ismans.cesi.fr'),
 (2022, 173, 'C', 'ITECH', 20, 'https://www.itech.fr'),
 (2022, 15, 'AA', 'MINES de NANCY', 63, 'https://www.mines-nancy.univ-lorraine.fr'),
-(2022, 2, 'AAA', 'MINES Paris', 86, 'https://www.mines-paristech.fr'),
+(2022, 2, 'AAA', 'MINES Paris', 86, 'https://www.minesparis.psl.eu'),
 (2022, 24, 'AA', 'MINES Saint-Étienne', 56, 'https://www.mines-stetienne.fr'),
 (2022, 30, 'A', 'Montpellier Sup Agro', 53, 'https://www.montpellier-supagro.fr'),
 (2022, 80, 'BB', 'ONIRIS Nantes', 39, 'https://www.oniris-nantes.fr'),
@@ -317,7 +317,7 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEcole`) VALUES
 (2023, 164, 'C', 'JUNIA HEI', 24, 'https://www.junia.com/fr/junia/programme-grande-ecole-hei/'),
 (2023, 170, 'C', 'JUNIA ISEN', 22, 'https://www.junia.com/fr/junia/programme-grande-ecole-isen/'),
 (2023, 12, 'AA', 'MINES de NANCY', 68, 'https://www.mines-nancy.univ-lorraine.fr'),
-(2023, 2, 'AAA', 'MINES Paris', 87, 'https://www.mines-paristech.fr'),
+(2023, 2, 'AAA', 'MINES Paris', 87, 'https://www.minesparis.psl.eu'),
 (2023, 21, 'AA', 'MINES Saint-Étienne', 61, 'https://www.mines-stetienne.fr'),
 (2023, 139, 'CC', 'ONIRIS Nantes', 29, 'https://www.oniris-nantes.fr'),
 (2023, 168, 'C', 'Paoli Tech', 23, 'https://paolitech.universita.corsica'),
@@ -350,7 +350,39 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEcole`) VALUES
 (2023, 30, 'AA', 'Télécom SudParis', 54, 'https://www.telecom-sudparis.eu'),
 (2023, 166, 'C', 'UniLaSalle', 23, 'https://www.unilasalle.fr'),
 (2023, 85, 'BB', 'UTT', 37, 'https://www.utt.fr'),
-(2023, 122, 'CCC', 'VetAgro Sup', 32, 'https://www.vetagrosup.fr');
+(2023, 122, 'CCC', 'VetAgro Sup', 32, 'https://www.vetagrosup.fr'),
+(2024, 18, 'AA', 'AgroParisTech', 53, 'https://www.agroparistech.fr/'),
+(2024, 27, 'AA', 'Arts et Métiers', 48, 'https://artsetmetiers.fr/'),
+(2024, 31, 'AA', 'Bordeaux INP - Enseirb-Matmeca', 47, 'https://enseirb-matmeca.bordeaux-inp.fr/'),
+(2024, 11, 'AA', 'Centrale Lille', 59, 'https://centralelille.fr/'),
+(2024, 10, 'AAA', 'Centrale Lyon', 63, 'https://www.ec-lyon.fr/'),
+(2024, 20, 'AA', 'Centrale Méditerranée', 51, 'https://www.centrale-marseille.fr/'),
+(2024, 3, 'AAA', 'CentraleSupélec', 73, 'https://www.centralesupelec.fr/'),
+(2024, 13, 'AA', 'Chimie ParisTech', 57, 'https://www.chimieparistech.psl.eu/'),
+(2024, 32, 'AA', 'Ecole Météorologie', 47, 'https://meteofrance.fr/enm'),
+(2024, 6, 'AAA', 'Ecole Nationale des Ponts et Chaussées', 66, 'https://ecoledesponts.fr'),
+(2024, 1, 'AAA', 'Ecole polytechnique', 91, 'https://programmes.polytechnique.edu/'),
+(2024, 8, 'AAA', 'ENSAE Paris', 64, 'https://www.ensae.fr/'),
+(2024, 23, 'AA', 'ENSC Montpellier', 50, 'https://www.enscm.fr/'),
+(2024, 26, 'AA', 'ENSG Nancy', 48, 'https://www.ensg.univ-lorraine.fr/'),
+(2024, 16, 'AA', 'ENSTA Bretagne', 55, 'https://www.ensta-bretagne.fr'),
+(2024, 5, 'AAA', 'ENSTA Paris', 66, 'https://www.ensta-paris.fr/'),
+(2024, 30, 'AA', 'ENSTBB Bordeaux', 47, 'https://enstbb.bordeaux-inp.fr/'),
+(2024, 4, 'AAA', 'ESPCI Paris', 70, 'https://www.espci.psl.eu.fr'),
+(2024, 19, 'AA', 'Grenoble INP - Ensimag', 51, 'https://ensimag.grenoble-inp.fr/'),
+(2024, 24, 'AA', 'Grenoble INP - Phelma', 50, 'https://phelma.grenoble-inp.fr/'),
+(2024, 17, 'AA', 'IMT Atlantique', 55, 'https://www.imt-atlantique.fr/'),
+(2024, 25, 'AA', 'IMT Mines Albi', 48, 'https://www.imt-mines-albi.fr/'),
+(2024, 28, 'AA', 'IMT Mines Alès', 47, 'https://www.mines-ales.fr/'),
+(2024, 22, 'AA', 'INSA Lyon', 50, 'https://www.insa-lyon.fr/'),
+(2024, 14, 'AA', 'Institut d\'Optique Graduate School', 57, 'https://www.institutoptique.fr/'),
+(2024, 7, 'AAA', 'ISAE-Supaéro', 65, 'https://www.isae-supaero.fr/'),
+(2024, 15, 'AA', 'Mines Nancy', 57, 'https://www.mines-nancy.univ-lorraine.fr/'),
+(2024, 2, 'AAA', 'Mines Paris', 77, 'https://www.minesparis.psl.fr'),
+(2024, 12, 'AA', 'Mines Saint-Etienne', 58, 'https://www.mines-stetienne.fr/'),
+(2024, 9, 'AAA', 'Télécom Paris', 63, 'https://www.telecom-paristech.fr/'),
+(2024, 21, 'AA', 'Télécom SudParis', 51, 'https://www.telecom-sudparis.eu/'),
+(2024, 29, 'AA', 'Toulouse INP - Enseeiht', 47, 'https://www.enseeiht.fr/');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

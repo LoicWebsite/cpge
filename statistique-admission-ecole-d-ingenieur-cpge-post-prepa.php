@@ -47,6 +47,7 @@
 			<br/>
 			<p class="text-center">
 				<mark style="color:#808080;"><strong>Actualité</strong> : les statistiques des concours 2025 sont en ligne !<br>
+				Le rang du dernier admis par école en 2025 est désormais renseigné pour les concours Polytechnique, Mines-Ponts, Mines-Télécom, Agro-Veto-Bio et G2E.
 				</mark>
 			</p>
 			<br/>
@@ -64,7 +65,7 @@
 			<br/>
 			<div>
 				<p>Ce site est <strong>un <em>visualisateur</em> des statistiques SCEI</strong>. Il permet d'explorer les résultats d'admissions aux écoles d'ingénieurs post CPGE par filière, par concours ou par école. Les données sont issues du SCEI et enrichies du rang des derniers admis provenant des rapports des concours notamment Polytechnique, CentraleSupelec, Mines-Telecom et Mines-Ponts. 
-						<i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Pour le concours CentraleSupelec, le rang du dernier admis par école est connu uniquement pour les années de 2019 à 2022 pour les filières MP, PC, PSI et TSI. A partir de 2023 le concours ne publie plus le rang du dernier admis dans son rapport du jury.<br/>
+						<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Pour le concours CentraleSupelec, le rang du dernier admis par école est connu uniquement pour les années de 2019 à 2022 pour les filières MP, PC, PSI et TSI. A partir de 2023 le concours ne publie plus le rang du dernier admis dans son rapport du jury.<br/>
 						<br/>&bull;  Pour le concours Mines-Ponts, le rang du dernier admis par école est connu pour les filières MP, PC et PSI depuis 2022, et MPI depuis 2023.<br/>
 						<br/>&bull;  Pour les concours Polytechnique et Mines-Telecom, le rang du dernier admis par école est connu pour toutes les filières.<br/>
 						<br/>&bull;  Pour les concours de la filière BCPST G2E, A ENV, A BIO et A PC BIO, le rang du dernier admis est connu pour toutes les années.<br/>

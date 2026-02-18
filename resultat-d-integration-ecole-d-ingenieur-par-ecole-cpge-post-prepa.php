@@ -40,7 +40,6 @@
 			  <ol class="breadcrumb">
 				<li class="breadcrumb-item">
 					<a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php">
-<!--			 		<i class="fas fa-home"></i> -->
 						<i class="bi bi-house-door-fill"></i>
 					</a>
 				</li>
@@ -97,27 +96,27 @@
 
 			// affichage de l'en tête du tableau
 			echo "<table class='table-hover' style='width:100%;' id='tableau-par-ecole'>";
-			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une ligne pour voir le détail de cette école.<br/>
+			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='bi bi-cursor-fill' aria-hidden='true'></i>&nbsp; sur une ligne pour voir le détail de cette école.<br/>
 				<span style='color:darkslategray;'>En <strong>noir</strong> le rang médian</span>, <span style='color:#0000FF'>en <strong>bleu</strong> le rang du dernier</span>.";
 			$idTableau = '"#tableau-par-ecole","école;filière;concours;2023;2022;2021;2020;2019;2018;2017;2016"';
-			echo "<br>Cliquer sur le bouton pour télécharger le tableau au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='fa-solid fa-download'></i> csv</button></small></caption>";
+			echo "<br>Cliquer sur le bouton pour télécharger le tableau au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='bi bi-download'></i> csv</button></small></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";
 			echo "<th  style='position:static;' colspan=3></th>";
 			echo "<th  style='position:static;' colspan=8>Intégrés : Rang médian / Inscrits&nbsp;&nbsp;<span style='font-weight:normal'>(en noir)</span><br/>Intégrés : Rang dernier / Inscrits&nbsp;&nbsp;<span style='font-weight:normal'>(en bleu)</span><br/>
-								<i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Lorsque le rang du dernier admis est connu c&apos;est celui-ci qui est affiché (en bleu).<br/>
+								<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Lorsque le rang du dernier admis est connu c&apos;est celui-ci qui est affiché (en bleu).<br/>
 								<br/>&bull; Sinon c&apos;est le rang médian qui est affiché (en noir).<br/>
 								<br/>&bull; Le rang du dernier appelé a été supprimé des statistiques SCEI à partir de 2018. Il a été remplacé par le rang médian et le rang moyen.<br/>
 								<br/>&bull; Seuls certains concours continuent à publier le rang du dernier admis par école (voir la note d&apos;information &#x24D8; en page d&apos;accueil pour plus de détails).'></i></th>";
-			echo "<th  style='position:static;' colspan=2>Intégrés : Rang dernier / Inscrits<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='En 2017 et 2016 le rang du dernier appelé est sytématiquement renseigné dans SCEI. C&apos;est lui qui est affiché.'></i></th>";
+			echo "<th  style='position:static;' colspan=2>Intégrés : Rang dernier / Inscrits<br/><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='En 2017 et 2016 le rang du dernier appelé est sytématiquement renseigné dans SCEI. C&apos;est lui qui est affiché.'></i></th>";
 			echo "</tr>";
 			echo "<tr>";
-			echo "<th>Ecole<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='&bull;Lorsqu&apos;une école a changé de nom, c&apos;est le nom le plus récent qui est affiché.<br/>
+			echo "<th>Ecole<br/><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='&bull;Lorsqu&apos;une école a changé de nom, c&apos;est le nom le plus récent qui est affiché.<br/>
 								<br/>&bull; Lorsque plusieurs écoles ont fusionné, les différentes écoles apparaissent séparément avant la fusion.<br/>
 								<br/>&bull; Lorsqu&apos;une école change de concours, elle apparaît soit dans le nouveau concours soit dans l&apos;ancien suivant la date.<br/>
 								<br/>&bull; A noter que le nom affiché est celui qui apparaît dans SCEI.'></i></th>";
 			echo "<th>&nbsp;Filière&nbsp;</th>";
-			echo "<th>Concours<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Lorsqu&apos;un concours a changé de nom, c&apos;est le nom le plus récent qui est affiché.<br/>Exemple CCP devenu CCINP en 2019.'></i></th>";
+			echo "<th>Concours<br/><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Lorsqu&apos;un concours a changé de nom, c&apos;est le nom le plus récent qui est affiché.<br/>Exemple CCP devenu CCINP en 2019.'></i></th>";
 			echo "<th>2025</th>";
 			echo "<th>2024</th>";
 			echo "<th>2023</th>";

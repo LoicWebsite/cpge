@@ -7,7 +7,7 @@
 
 		// conexion à la base concours cpge
 		try {
-			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
+			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "cpge", "cpge");
 		}
 		catch(PDOException $erreur)	{
 			die('Erreur connexion base : ' . $erreur->getMessage());
@@ -99,7 +99,7 @@
 				echo "Erreur SELECT Etudiant 2023 : " . $erreur->getMessage();
 			}
 
-			// recherche du groupe et du rang de l'école dans le classement DAUR 2022
+			// recherche du groupe et du rang de l'école dans le classement DAUR 2023 (data de 2022)
 			$sqlEcole = "SELECT Rang AS RangDAUR2022, Groupe AS GroupeDAUR2022 FROM DAUR WHERE Ecole=(SELECT DISTINCT(EcoleClassement) FROM Ecole WHERE Ecole.Ecole='" . remettreEsperluete(supprimerApostrophe($ecole)) . "') AND An='2022';";
 			if ($debug) echo "SQLEcole = " . $sqlEcole ."<br/>";
 			try {
@@ -112,7 +112,7 @@
 				echo "Erreur SELECT DAUR 2022 : " . $erreur->getMessage();
 			}
 
-			// recherche du groupe et du rang de l'école dans le classement DAUR 2023
+			// recherche du groupe et du rang de l'école dans le classement DAUR 2024 (data de 2023)
 			$sqlEcole = "SELECT Rang AS RangDAUR2023, Groupe AS GroupeDAUR2023 FROM DAUR WHERE Ecole=(SELECT DISTINCT(EcoleClassement) FROM Ecole WHERE Ecole.Ecole='" . remettreEsperluete(supprimerApostrophe($ecole)) . "') AND An='2023';";
 			if ($debug) echo "SQLEcole = " . $sqlEcole ."<br/>";
 			try {
@@ -123,6 +123,19 @@
 			}
 			catch(PDOException $erreur)	{
 				echo "Erreur SELECT DAUR 2023 : " . $erreur->getMessage();
+			}
+
+			// recherche du groupe et du rang de l'école dans le classement DAUR 2025 (data de 2024)
+			$sqlEcole = "SELECT Rang AS RangDAUR2024, Groupe AS GroupeDAUR2024 FROM DAUR WHERE Ecole=(SELECT DISTINCT(EcoleClassement) FROM Ecole WHERE Ecole.Ecole='" . remettreEsperluete(supprimerApostrophe($ecole)) . "') AND An='2024';";
+			if ($debug) echo "SQLEcole = " . $sqlEcole ."<br/>";
+			try {
+				$resultEcole = $db->query($sqlEcole);
+				while ($rowEcole = $resultEcole->fetch(PDO::FETCH_ASSOC)) {
+					extract($rowEcole);
+				}
+			}
+			catch(PDOException $erreur)	{
+				echo "Erreur SELECT DAUR 2024 : " . $erreur->getMessage();
 			}
 
 			// recherche du groupe et du rang de l'école dans le classement Le Figaro 2025
@@ -205,7 +218,24 @@
 
 			echo "<div class='row'>";
 			echo "<div class='col-5 text-secondary'>";
-			echo "&bull; DAUR 2024 &nbsp;&nbsp;<i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='La notation de l&apos;école en 2024 est définie par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 70<br>AA : 69 à 54<br>A : 53 à 47 points<br>BBB : 46 à 41<br>BB : 40 à 37<br>B : 36 à 34<br>CCC : 33 à 31<br>CC : 30 à 28<br>C : 27 à 0<br>Le Rang est le résultat du classement par note finale décroissante (de 1 à 185)<br>La note finale est attribuée à partie de 5 critères détaillés sur le site de DAUR Rankings.'></i>";
+			echo "&bull; DAUR 2025 &nbsp;&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La notation de l&apos;école en 2025 est définie par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 60<br>AA : 59 à 47<br>Le Rang est le résultat du classement par note finale décroissante (de 1 à 32)<br>La note finale est attribuée à partir de 6 critères détaillés sur le site de DAUR Rankings.'></i>";
+			echo "</div>";
+			echo "<div class='col-7 text-primary'>";
+			if (isset($GroupeDAUR2024)) {
+				echo $GroupeDAUR2024;
+			}
+			echo " &nbsp; ";
+			if (isset($RangDAUR2024)) {
+				if ($RangDAUR2024 != "") {
+					echo $RangDAUR2024 . " / 32";
+				}
+			}
+			echo "</div>";
+			echo "</div>";
+
+			echo "<div class='row'>";
+			echo "<div class='col-5 text-secondary'>";
+			echo "&bull; DAUR 2024 &nbsp;&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La notation de l&apos;école en 2024 est définie par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 70<br>AA : 69 à 54<br>A : 53 à 47 points<br>BBB : 46 à 41<br>BB : 40 à 37<br>B : 36 à 34<br>CCC : 33 à 31<br>CC : 30 à 28<br>C : 27 à 0<br>Le Rang est le résultat du classement par note finale décroissante (de 1 à 185)<br>La note finale est attribuée à partir de 5 critères détaillés sur le site de DAUR Rankings.'></i>";
 			echo "</div>";
 			echo "<div class='col-7 text-primary'>";
 			if (isset($GroupeDAUR2023)) {
@@ -222,7 +252,7 @@
 				
 			echo "<div class='row'>";
 			echo "<div class='col-5 text-secondary'>";
-			echo "&bull; DAUR 2023 &nbsp;&nbsp;<i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='La notation de l&apos;école en 2023 est définie par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 70<br>AA : 69 à 56<br>A : 55 à 49 points<br>BBB : 48 à 44<br>BB : 43 à 39<br>B : 39 à 35<br>CCC : 34 à 32<br>CC : 31 à 29<br>C : 29 à 0<br>Le Rang est le résultat du classement par note finale décroissante (de 1 à 176)<br>La note finale est attribuée à partie de 5 critères détaillés sur le site de DAUR Rankings.'></i>";
+			echo "&bull; DAUR 2023 &nbsp;&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La notation de l&apos;école en 2023 est définie par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 70<br>AA : 69 à 56<br>A : 55 à 49 points<br>BBB : 48 à 44<br>BB : 43 à 39<br>B : 39 à 35<br>CCC : 34 à 32<br>CC : 31 à 29<br>C : 29 à 0<br>Le Rang est le résultat du classement par note finale décroissante (de 1 à 176)<br>La note finale est attribuée à partir de 5 critères détaillés sur le site de DAUR Rankings.'></i>";
 			echo "</div>";
 			echo "<div class='col-7 text-primary'>";
 			if (isset($GroupeDAUR2022)) {
@@ -239,7 +269,7 @@
 
 			echo "<div class='row'>";
 			echo "<div class='col-5 text-secondary'>";
-			echo "&bull; Le Figaro 2025 &nbsp;&nbsp;<i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 87).<br>Les écoles sont notées en 2025 de 0 à 20. C&apos;est la moyenne pondérée de trois notes évaluant leur excellence académique (coefficient 2), leur ouverture à l’international (coefficient 1) et l’emploi, ou réussite professionnelle des diplômés (coefficient 3).'></i>";
+			echo "&bull; Le Figaro 2025 &nbsp;&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 87).<br>Les écoles sont notées en 2025 de 0 à 20. C&apos;est la moyenne pondérée de trois notes évaluant leur excellence académique (coefficient 2), leur ouverture à l’international (coefficient 1) et l’emploi, ou réussite professionnelle des diplômés (coefficient 3).'></i>";
 			echo "</div>";
 			echo "<div class='col-7 text-primary'>";
 			if (isset($RangFigaro2025)) {
@@ -252,7 +282,7 @@
 
 			echo "<div class='row'>";
 			echo "<div class='col-5 text-secondary'>";
-			echo "&bull; Le Figaro 2024 &nbsp;&nbsp;<i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 87).<br>Les écoles sont notées en 2024 de 0 à 20. Cette note résulte de l&apos;évaluation de 14 critères.'></i>";
+			echo "&bull; Le Figaro 2024 &nbsp;&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 87).<br>Les écoles sont notées en 2024 de 0 à 20. Cette note résulte de l&apos;évaluation de 14 critères.'></i>";
 			echo "</div>";
 			echo "<div class='col-7 text-primary'>";
 			if (isset($RangFigaro2024)) {
@@ -265,7 +295,7 @@
 
 			echo "<div class='row'>";
 			echo "<div class='col-5 text-secondary'>";
-			echo "&bull; l'Etudiant 2023 &nbsp;&nbsp;<i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Le nombre de Points attribués est au maximum de 111 en 2023. Il résulte de l&apos;évaluation de 11 critères.<br>Le Rang est le résultat du classement par points (de 1 à 169).<br>Le Groupe d&apos;appartenance de l&apos;école en 2023 est désormais défini par le magasine L&apos;Etudiant comme étant un simple quartile.<br>A+ : 97 à 63 points<br>A : 62 à 51 points<br>B : 50 à 44 points<br>C : 0 à 43 points'></i>";
+			echo "&bull; l'Etudiant 2023 &nbsp;&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le nombre de Points attribués est au maximum de 111 en 2023. Il résulte de l&apos;évaluation de 11 critères.<br>Le Rang est le résultat du classement par points (de 1 à 169).<br>Le Groupe d&apos;appartenance de l&apos;école en 2023 est désormais défini par le magasine L&apos;Etudiant comme étant un simple quartile.<br>A+ : 97 à 63 points<br>A : 62 à 51 points<br>B : 50 à 44 points<br>C : 0 à 43 points'></i>";
 			echo "</div>";
 			echo "<div class='col-7 text-primary'>";
 			if (isset($GroupeEtudiant2023)) {
@@ -282,7 +312,7 @@
 
 			echo "<div class='row'>";
 			echo "<div class='col-5 text-secondary'>";
-			echo "&bull; l'Etudiant 2022 &nbsp;&nbsp;<i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Le classement du magasine L&apos;Etudiant en 2022 est réalisé en comptabilisant le nombre de points sur une cinquantaine de critères. 172 écoles y sont notées.<br>Le Groupe d&apos;appartenance de l&apos;école en 2022 est défini par le magasine L&apos;Etudiant selon la note obtenue par l&apos;école dans leur classement.<br/>A+ : 42 à 58 points<br/>A : 34 à 41 points<br/>B : 24 à 33 points<br/>C : 0 à 23 points'></i>";
+			echo "&bull; l'Etudiant 2022 &nbsp;&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le classement du magasine L&apos;Etudiant en 2022 est réalisé en comptabilisant le nombre de points sur une cinquantaine de critères. 172 écoles y sont notées.<br>Le Groupe d&apos;appartenance de l&apos;école en 2022 est défini par le magasine L&apos;Etudiant selon la note obtenue par l&apos;école dans leur classement.<br/>A+ : 42 à 58 points<br/>A : 34 à 41 points<br/>B : 24 à 33 points<br/>C : 0 à 23 points'></i>";
 			echo "</div>";
 			echo "<div class='col-7 text-primary'>";
 			if (isset($GroupeEtudiant2022)) {
@@ -412,7 +442,7 @@
 
 				echo "<div class='row'>";
 				echo "<div class='col-5 text-secondary'>";
-				echo "Sélectivité médiane : <i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='La sélectivité médiane est le rapport rang médian divisé par le nombre d&apos;inscrits.'></i>";
+				echo "Sélectivité médiane : <i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La sélectivité médiane est le rapport rang médian divisé par le nombre d&apos;inscrits.'></i>";
 				echo "</div>";
 				echo "<div class='col-7 text-primary'>";
 				if ($selectiviteMediane <> "") {
@@ -423,7 +453,7 @@
 
 				echo "<div class='row'>";
 				echo "<div class='col-5 text-secondary'>";
-				echo "Sélectivité : <i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='La sélectivité est le rapport rang du dernier admis divisé par le nombre d&apos;inscrits.'></i>";
+				echo "Sélectivité : <i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La sélectivité est le rapport rang du dernier admis divisé par le nombre d&apos;inscrits.'></i>";
 				echo "</div>";
 				echo "<div class='col-7 text-primary'>";
 				if ($selectivite <> "") {

@@ -47,7 +47,6 @@
 			  <ol class="breadcrumb">
 				<li class="breadcrumb-item">
 					<a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php">
-<!--			 		<i class="fas fa-home"></i> -->
 						<i class="bi bi-house-door-fill"></i>
 					</a>
 				</li>
@@ -158,31 +157,31 @@
 
 			// affichage de l'en tête du tableau
 			echo "<table id='tableau-par-filiere'>";
-			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='fa fa-mouse-pointer' aria-hidden='true'></i>&nbsp; sur une ligne pour voir le détail de cette école.";
+			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='bi bi-cursor-fill' aria-hidden='true'></i>&nbsp; sur une ligne pour voir le détail de cette école.";
 			$idTableau = '"#tableau-par-filiere","concours;école;année;places;inscrits;intégrés;rang médian;sélectivité médiane;rang dernier;sélectivité"';
-			echo "<br>Cliquer sur le bouton pour télécharger le tableau au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='fa-solid fa-download'></i> csv</button></small></caption>";
+			echo "<br>Cliquer sur le bouton pour télécharger le tableau au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='bi bi-download'></i> csv</button></small></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";
 			if (($filiere == "toute") or ($filiere == "")) {
 				echo "<th>&nbsp;Filiere&nbsp;</th>";
 			}
 			if (($concours == "tous") or ($concours == "")) {
-				echo "<th>&nbsp;<button id='concours' type='button' class='btn btn-secondary btn-sm' title='Trier par concours' onclick='triConcours()'>&darr;</button>&nbsp;&nbsp;Concours&nbsp;<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Lorsqu&apos;un concours a changé de nom, c&apos;est le nom le plus récent qui est affiché.<br/>Exemple CCP devenu CCINP en 2019.'></i></th>";
+				echo "<th>&nbsp;<button id='concours' type='button' class='btn btn-secondary btn-sm' title='Trier par concours' onclick='triConcours()'>&darr;</button>&nbsp;&nbsp;Concours&nbsp;<br/><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Lorsqu&apos;un concours a changé de nom, c&apos;est le nom le plus récent qui est affiché.<br/>Exemple CCP devenu CCINP en 2019.'></i></th>";
 			}
 			echo "<th>&nbsp;<button id='ecole' type='button' class='btn btn-secondary btn-sm' title='Trier par école' onclick='triEcole()'>&darr;</button>&nbsp;&nbsp;Ecole&nbsp;<br>
-											<i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Lorsqu&apos;une école a changé de nom, c&apos;est le nom le plus récent qui est affiché.<br/>
+											<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Lorsqu&apos;une école a changé de nom, c&apos;est le nom le plus récent qui est affiché.<br/>
 											<br/>&bull; Lorsque plusieurs écoles ont fusionné, les différentes écoles apparaissent séparément avant la fusion.<br/>
 											<br/>&bull; Lorsqu&apos;une école change de concours, elle apparaît soit dans le nouveau concours soit dans l&apos;ancien suivant la date.<br/>
 											<br/>&bull; A noter que le nom affiché est celui qui apparaît dans SCEI.'></i></th>";
 			echo "<th>&nbsp;Année&nbsp;</th>";
 			echo "<th>&nbsp;Places&nbsp;</th>";
-			echo "<th>&nbsp;Inscrits&nbsp;<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-html='true' title='Le nombre d&apos;inscrits est soit celui de l&apos;école soit par défaut celui du concours.'></i></th>";
+			echo "<th>&nbsp;Inscrits&nbsp;<br/><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-html='true' title='Le nombre d&apos;inscrits est soit celui de l&apos;école soit par défaut celui du concours.'></i></th>";
 			echo "<th>&nbsp;Integrés&nbsp;</th>";
-			echo "<th>&nbsp;Rang median&nbsp;<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Depuis 2018 les statistiques SCEI affichent le rang médian et le rang moyen. Pour simplifier la lecture ici, seul le rang médian est affiché.'></i></th>";
-			echo "<th>&nbsp;<button id='selectivite' type='button' class='btn btn-secondary btn-sm' title='Trier par sélectivité médiane croissante' onclick='triSelectiviteMediane()'>&darr;</button>&nbsp;&nbsp;Sélectivité médiane&nbsp;<br><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Sélectivité médiane = Rang médian des admis / Nombre d&apos;inscrits'></i></th>";
-			echo "<th>&nbsp;Rang dernier&nbsp;<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Le rang du dernier appelé a été supprimé des statistiques SCEI à partir de 2018.<br/>Il a été remplacé par le rang médian et le rang moyen.<br/>
+			echo "<th>&nbsp;Rang median&nbsp;<br/><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Depuis 2018 les statistiques SCEI affichent le rang médian et le rang moyen. Pour simplifier la lecture ici, seul le rang médian est affiché.'></i></th>";
+			echo "<th>&nbsp;<button id='selectivite' type='button' class='btn btn-secondary btn-sm' title='Trier par sélectivité médiane croissante' onclick='triSelectiviteMediane()'>&darr;</button>&nbsp;&nbsp;Sélectivité médiane&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Sélectivité médiane = Rang médian des admis / Nombre d&apos;inscrits'></i></th>";
+			echo "<th>&nbsp;Rang dernier&nbsp;<br/><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Le rang du dernier appelé a été supprimé des statistiques SCEI à partir de 2018.<br/>Il a été remplacé par le rang médian et le rang moyen.<br/>
 					<br/>&bull; Seuls certains concours continuent à publier le rang du dernier admis par école (voir la note d&apos;information &#x24D8; en page d&apos;accueil pour plus de détails).'></i></th>";
-			echo "<th>&nbsp;<button id='dernier' type='button' class='btn btn-secondary btn-sm' title='Trier par sélectivité croissante' onclick='triSelectiviteDernier()'>&darr;</button>&nbsp;&nbsp;Sélectivité&nbsp;<br/><i class='fas fa-info-circle' data-bs-toggle='tooltip' data-bs-html='true' title='Sélectivité = Rang du dernier admis / Nombre d&apos;inscrits'></i></th>";
+			echo "<th>&nbsp;<button id='dernier' type='button' class='btn btn-secondary btn-sm' title='Trier par sélectivité croissante' onclick='triSelectiviteDernier()'>&darr;</button>&nbsp;&nbsp;Sélectivité&nbsp;<br/><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Sélectivité = Rang du dernier admis / Nombre d&apos;inscrits'></i></th>";
 			echo "</tr></thead>";
 
 			$ecoleCourante = "";
