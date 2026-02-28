@@ -60,6 +60,7 @@
 	<!-- en tête du tableau -->
 
 	<?php
+//echo "ecole = " . $ecole . "<br>";
 
 		// titre de la page
 		echo "<header class='container'>";
@@ -77,19 +78,25 @@
 		// passage au mode exception pour les erreurs
 		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-		// construction de la clause WHERE
+		// 1. Construction de la clause WHERE avec des marqueurs
 		$where = " WHERE An<>'' AND An<>0 ";
+		$params = []; // Tableau pour stocker les valeurs
+
 		if (($filiere <> "") and ($filiere <> "toutes")) {
-			$where = $where . " AND Filiere='" . $filiere . "'";
+			$where .= " AND Filiere = :filiere";
+			$params[':filiere'] = $filiere;
 		}
 		if (($concours <> "") and ($concours <> "tous")) {
-			$where = $where . " AND Concours='" . $concours . "'";
+			$where .= " AND Concours = :concours";
+			$params[':concours'] = $concours;
 		}
 		if (($reference <> "") and ($reference <> "0") and ($reference <> "toutes")) {
-			$where = $where . " AND An='" . $reference . "'" ;
+			$where .= " AND An = :an";
+			$params[':an'] = $reference;
 		}
 		if (($ecole <> "") and ($ecole <> "toutes")) {
-			$where = $where . " AND Ecole='" . supprimerApostrophe($ecole) . "'";
+			$where .= " AND Ecole = :ecole";
+			$params[':ecole'] = $ecole; // ON ENVOIE LA VALEUR BRUTE ICI
 		}
 
 		// construction de la clause ORDER
@@ -122,8 +129,10 @@
 				FROM Note" . $where . $order;
 		if ($debug) echo "SQL = " . $sql ."<br/>";
 		try {
-			$result = $db->query($sql);
-
+			$stmt = $db->prepare($sql);
+			$stmt->execute($params);
+			$result = $stmt; // On remplace l'ancien $result pour que la boucle while continue de fonctionner avec le prepared statement
+			
 			// affichage du titre
 			if (($concours <> "tous") and ($concours <> "")) {
 				if (($ecole <> "") and ($ecole <> "toutes")) {
@@ -329,10 +338,12 @@
 		}
 	</script>
 
+	<script>
 	<?php
 		// fonction d'export des tableaus HTML en CSV
 		include "js/tableToCSV.js";
 	?>
+	</script>
 
   </body>
 </html>

@@ -55,4 +55,37 @@ function supprimerRetour ($chaine) {
 	return $libelle;
 }
 
+// extrait le nom de l'école à utiliser pour la recherche/routing
+// règles :
+// - on considère comme séparateur uniquement " - " (espace tiret espace)
+// - si la chaîne ne contient pas ce séparateur, on renvoie la chaîne complète
+// - sinon on renvoie la première partie sauf si la première partie contient "INP"
+//   dans ce cas on renvoie la concaténation des deux premières parties
+function extraireNomEcolePourRecherche($formation) {
+	$f = trim($formation);
+	// split uniquement sur ' - ' (espace tiret espace)
+	$parts = preg_split('/\s-\s/', $f);
+	if (count($parts) === 1) {
+		$out = $f;
+	} else {
+		$first = $parts[0];
+		if (stripos($first, 'INP') !== false) {
+			if (isset($parts[1])) {
+				$out = $parts[0] . ' - ' . $parts[1];
+			} else {
+				$out = $parts[0];
+			}
+		} else {
+			$out = $parts[0];
+		}
+	}
+
+	// retirer tout contenu entre parenthèses, garder les autres caractères
+	// et normaliser les espaces
+	$out = preg_replace('/\\s*\\(.*?\\)\\s*/u', ' ', $out);
+	$out = trim(preg_replace('/\\s+/', ' ', $out));
+
+	return $out;
+}
+
 ?>

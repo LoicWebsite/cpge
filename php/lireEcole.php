@@ -53,9 +53,19 @@ try {
     // option par défaut
     $ecolesArray[] = ['value' => 'toutes', 'text' => 'toutes'];
 
+    // while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    //     $libelleEcole = supprimerRetour(supprimerApostrophe($row['Ecole']));
+    //     $ecolesArray[] = ['value' => $libelleEcole, 'text' => $libelleEcole];
+    // }
+
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $libelleEcole = supprimerRetour(supprimerApostrophe($row['Ecole']));
-        $ecolesArray[] = ['value' => $libelleEcole, 'text' => $libelleEcole];
+    $ecoleBrute = $row['Ecole'];
+    // On garde le texte PROPRE pour l'affichage
+    // On envoie la valeur brute, c'est le rôle de encodeURIComponent en JS et de PDO en PHP de gérer l'apostrophe
+    $ecolesArray[] = [
+        'value' => $ecoleBrute, 
+        'text'  => $ecoleBrute
+        ];
     }
 
     $json = ['options' => $ecolesArray];

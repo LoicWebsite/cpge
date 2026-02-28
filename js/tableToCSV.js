@@ -1,5 +1,3 @@
-<script>
-
 // transforme la table HTML au format CSV
 function tableToCSV(idTableau, enTete) {
 
@@ -10,9 +8,19 @@ function tableToCSV(idTableau, enTete) {
     const tableau = document.querySelector(idTableau);
     let rows = tableau.getElementsByTagName('tr');
 
-    // traitement de l'entête du tableau
-    if (enTete != "") {
+    // traitement de l'entête du tableau si pas passé en paramètre
+    if (enTete !== "") {
         csv_data.push(enTete);
+    } else {
+        let head = tableau.querySelector('thead');
+        if (head) {
+            let cols = head.querySelectorAll('th');
+            let csvrow = [];
+            for (let col of cols) {
+                csvrow.push(col.textContent.trim());
+            }
+            csv_data.push(csvrow.join(";"));
+        }
     }
 
     // traitement du reste du tableau
@@ -69,4 +77,3 @@ function downloadCSVFile(csv_data, idTableau) {
     temp_link.click();
     document.body.removeChild(temp_link);
 }
-</script>

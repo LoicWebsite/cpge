@@ -1,68 +1,52 @@
 <?php 
 
-		// initialisation des variables
-		$debug = false;
+	// --- DEBUG ---
+	$debug = (isset($_GET['debug']) && $_GET['debug'] === "true");
 
-		// récupération du paramètre pour passer en mode debug (par défaut pas de debug)
-		if (isset($_GET['debug']))  {
-			if ($_GET['debug'] == "true") {
-				$debug=true;
-			}
-		}
+	// --- LISTES BLANCHES ---
+	$allowed_years = ["2025","2024","2023","2022","2021","2020","2019","2018","2017","2016","toutes"];
+	$allowed_filieres = ["mp","pc","psi","tpc","pt","bcpst","tsi","tb","mpi"];
 
-		// récupération du nom de l'école recherchée (en enlevant les caractères spéciaux)
-		$recherche="";
-		if (isset($_GET['recherche']))  {
-			$recherche = trim($_GET['recherche']);
-		}
+	// --- PARAMÈTRES WHITELIST / SECURISES ---
 
-		// récupération du rang visé au concours ('aucun' par défaut)
-// 		$rang="aucun";
-// 		if (isset($_GET['rang']))  {
-// 			if (is_numeric($_GET['rang'])) {
-// 				if (($_GET['rang'] > 0) and ($_GET['rang'] < 5001)) {
-// 					$rang = floor($_GET['rang']);
-// 				}
-// 			}
-// 		}
+	// Filière (16 chars max)
+	$filiere = isset($_GET['filiere']) ? trim($_GET['filiere']) : "";
+	$filiere = preg_replace("/[^a-zA-Z0-9\-]/", "", $filiere);
+	$filiere = substr($filiere, 0, 16);
+	if (!in_array(strtolower($filiere), $allowed_filieres)) {
+		$filiere = "";
+	}
 
-		// récupération de l'année du concours ('toutes' par défaut)
-		$reference="toutes";
-		if (isset($_GET['reference']))  {
-			if (($_GET['reference'] == "2025 ") or ($_GET['reference'] == "2024 ") or ($_GET['reference'] == "2023 ") or ($_GET['reference'] == "2022 ") or ($_GET['reference'] == "2021 ") or ($_GET['reference'] == "2020") or ($_GET['reference'] == "2019") or ($_GET['reference'] == "2018") or ($_GET['reference'] == "2017")
-				or ($_GET['reference'] == "2016") or ($_GET['reference'] == "toutes")) {
-				$reference = trim($_GET['reference']);
-			}
-		}
+	// Année du concours / référence ('toutes' par défaut, 4 chars max ou 'toutes')
+	$reference = isset($_GET['reference']) ? trim($_GET['reference']) : "toutes";
+	$reference = preg_replace("/[^0-9a-zA-Z]/", "", $reference);
+	$reference = substr($reference, 0, 6);
+	if (!in_array($reference, $allowed_years)) {
+		$reference = "toutes";
+	}
 
-		// récupération de l'année des statistiques pour alimenter la base et pour le zoom sur une année (année passée par défaut)
-		$an="2025";
-		if (isset($_GET['an']))  {
-			if (($_GET['an'] == "2025 ") or ($_GET['an'] == "2024 ") or ($_GET['an'] == "2023 ") or ($_GET['an'] == "2022") or ($_GET['an'] == "2021") or ($_GET['an'] == "2020") or ($_GET['an'] == "2019") or ($_GET['an'] == "2018") or ($_GET['an'] == "2017") or ($_GET['an'] == "2016") or ($_GET['an'] == "toutes")) {
-				$an = trim($_GET['an']);
-			}
-		}
+	$an = isset($_GET['an']) ? trim($_GET['an']) : "2025";
+	$an = preg_replace("/[^0-9a-zA-Z]/", "", $an);
+	$an = substr($an, 0, 6);
+	if (!in_array($an, $allowed_years)) {
+		$an = "2025";
+	}
 
-		// récupération de la filière pour alimenter la base ('pt' par défaut). Attention: il faut des minuscules pour trouver la bonne URL.
-		$filiere="";
-		if (isset($_GET['filiere']))  {
-			if (($_GET['filiere'] == "mp") or ($_GET['filiere'] == "pc") or ($_GET['filiere'] == "psi") or ($_GET['filiere'] == "tpc")
-				or ($_GET['filiere'] == "pt") or ($_GET['filiere'] == "bcpst") or ($_GET['filiere'] == "tsi") or ($_GET['filiere'] == "tb")
-				or ($_GET['filiere'] == "mpi")) {
-				$filiere = trim($_GET['filiere']);
-			}
-		}
+	// Paramètres “libres” mais filtrés pour SQL/HTML
+	$recherche  = isset($_GET['recherche']) ? trim($_GET['recherche']) : "";
+	$recherche  = preg_replace("/[^a-zA-Z0-9 \-]/", "", $recherche);
+	$recherche  = substr($recherche, 0, 256);
 
-		// récupération du concours ('tous' par défaut)
-		$concours="";
-		if (isset($_GET['concours']))  {
-			$concours = trim($_GET['concours']);
-		}
+	$specialite = isset($_GET['specialite']) ? trim($_GET['specialite']) : "";
+	$specialite = preg_replace("/[^a-zA-Z0-9 \-]/", "", $specialite);
+	$specialite = substr($specialite, 0, 256);
 
-		// récupération de l'école
-		$ecole="";
-		if (isset($_GET['ecole']))  {
-			$ecole = trim($_GET['ecole']);
-		}
+	// Pour l'école et le concours, on autorise tout, 
+	// car on va utiliser PDO pour le SQL et htmlspecialchars pour l'affichage.
+	$ecole = isset($_GET['ecole']) ? (string)$_GET['ecole'] : "";
+	$ecole = substr($ecole, 0, 256); // On limite juste la taille par sécurité
+
+	$concours = isset($_GET['concours']) ? (string)$_GET['concours'] : "";
+	$concours = substr($concours, 0, 256);	
 
 ?>

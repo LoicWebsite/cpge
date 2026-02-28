@@ -147,7 +147,7 @@
 					echo "<thead class='text-center'>";
 					echo "<tr>";
 					echo "<th>&nbsp;Notation&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La notation de l&apos;école en 2025 est défini par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 60<br>AA : 59 à 47'></i></th>";
-					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 32).'></i></th>";
+					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 28). Lorsque plusieurs écoles ont la même note finale, elles partagent alors le même rang.'></i></th>";
 					echo "<th>&nbsp;Note finale&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La note finale est attribuée à partie de 6 critères détaillés sur le site de DAUR Rankings.'></i></th>";
 					echo "<th>&nbsp;Ecole&nbsp;</th>";
 					echo "<th>&nbsp;Site web&nbsp;</th>";
@@ -213,7 +213,7 @@
 					echo "<thead class='text-center'>";
 					echo "<tr>";
 					echo "<th>&nbsp;Notation&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La notation de l&apos;école en 2024 est défini par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 70<br>AA : 69 à 54<br>A : 53 à 47 points<br>BBB : 46 à 41<br>BB : 40 à 37<br>B : 36 à 34<br>CCC : 33 à 31<br>CC : 30 à 28<br>C : 27 à 0'></i></th>";
-					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 185).'></i></th>";
+					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 166). Lorsque plusieurs écoles ont la même note finale, elles partagent alors le même rang.'></i></th>";
 					echo "<th>&nbsp;Note finale&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La note finale est attribuée à partie de 5 critères détaillés sur le site de DAUR Rankings.'></i></th>";
 					echo "<th>&nbsp;Ecole&nbsp;</th>";
 					echo "<th>&nbsp;Site web&nbsp;</th>";
@@ -279,7 +279,7 @@
 					echo "<thead class='text-center'>";
 					echo "<tr>";
 					echo "<th>&nbsp;Notation&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La notation de l&apos;école en 2023 est défini par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 70<br>AA : 69 à 56<br>A : 55 à 49 points<br>BBB : 48 à 44<br>BB : 43 à 39<br>B : 39 à 35<br>CCC : 34 à 32<br>CC : 31 à 29<br>C : 29 à 0'></i></th>";
-					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 176).'></i></th>";
+					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 159). Lorsque plusieurs écoles ont la même note finale, elles partagent alors le même rang.'></i></th>";
 					echo "<th>&nbsp;Note finale&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La note finale est attribuée à partie de 5 critères détaillés sur le site de DAUR Rankings.'></i></th>";
 					echo "<th>&nbsp;Ecole&nbsp;</th>";
 					echo "<th>&nbsp;Site web&nbsp;</th>";
@@ -344,7 +344,7 @@
 					echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='bi bi-download'></i> csv</button></caption>";
 					echo "<thead class='text-center'>";
 					echo "<tr>";
-					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 87).'></i></th>";
+					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 87). Lorsque plusieurs écoles ont la même note, elles partagent alors le même rang.'></i></th>";
 					echo "<th>&nbsp;Note&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Les écoles sont notées en 2025 de 0 à 20. Cette note résulte de l&apos;évaluation de 14 critères.'></i></th>";
 					echo "<th>&nbsp;Ecole&nbsp;</th>";
 					echo "<th>&nbsp;Descriptif de l'école par Le Figaro</th>";
@@ -396,7 +396,7 @@
 					echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='bi bi-download'></i> csv</button></caption>";
 					echo "<thead class='text-center'>";
 					echo "<tr>";
-					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 87).'></i></th>";
+					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 87). Lorsque plusieurs écoles ont la même note, elles partagent alors le même rang.'></i></th>";
 					echo "<th>&nbsp;Note&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Les écoles sont notées en 2024 de 0 à 20. Cette note résulte de l&apos;évaluation de 14 critères.'></i></th>";
 					echo "<th>&nbsp;Ecole&nbsp;</th>";
 					echo "<th>&nbsp;Descriptif de l'école par Le Figaro</th>";
@@ -448,7 +448,7 @@
 					echo "<thead class='text-center'>";
 					echo "<tr>";
 					echo "<th>&nbsp;Groupe&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Groupe d&apos;appartenance de l&apos;école en 2023 est désormais défini par le magasine L&apos;Etudiant comme étant un simple quartile.<br>A+ : 97 à 63 points<br>A : 62 à 51 points<br>B : 50 à 44 points<br>C : 0 à 43 points'></i></th>";
-					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par points (de 1 à 169).'></i></th>";
+					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par points (de 1 à 153). Lorsque plusieurs écoles ont les mêmes points, elles partagent alors le même rang.'></i></th>";
 					echo "<th>&nbsp;Point&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le nombre de Points attribués est au maximum de 111 en 2023. Il résulte de l&apos;évaluation de 11 critères.'></i></th>";
 					echo "<th>&nbsp;Ecole&nbsp;</th>";
 					echo "<th>&nbsp;Site web&nbsp;</th>";
@@ -516,7 +516,7 @@
 					echo "<thead class='text-center'>";
 					echo "<tr>";
 					echo "<th>&nbsp;Groupe&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Groupe d&apos;appartenance de l&apos;école est défini par le magasine L&apos;Etudiant selon le nombre de points obtenus par l&apos;école dans leur classement.<br>En 2022<br>A+ : 42 à 58 points<br>A : 34 à 41 points<br>B : 24 à 33 points<br>C : 0 à 23 points<br>En 2023<br>A+ : 97 à 63 points<br>A : 62 à 51 points<br>B : 50 à 44 points<br>C : 0 à 43 points'></i></th>";
-					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par points (de 1 à 172).'></i></th>";
+					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par points (de 1 à 156). Lorsque plusieurs écoles ont les mêmes points, elles partagent alors le même rang.'></i></th>";
 					echo "<th>&nbsp;Point&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le nombre de Points attribués est au maximum de 58 en 2022. Il résulte de l&apos;évaluation d&apos;une cinquantaine de critères.'></i></th>";
 					echo "<th>&nbsp;Ecole&nbsp;</th>";
 					echo "<th>&nbsp;Site web&nbsp;</th>";
@@ -611,10 +611,12 @@
 		}
 	</script>
 	
+	<script>
 	<?php
 		// fonction d'export des tableaus HTML en CSV
 		include "js/tableToCSV.js";
 	?>
+	</script>
 
   </body>
 </html>

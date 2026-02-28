@@ -439,10 +439,12 @@
 		}
 	</script>
 
+	<script>
 	<?php
 		// fonction d'export des tableaus HTML en CSV
 		include "js/tableToCSV.js";
 	?>
+	</script>
 
   </body>
 </html>
