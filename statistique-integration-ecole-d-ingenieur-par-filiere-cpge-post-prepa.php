@@ -153,7 +153,7 @@
 							<?php
 								// conexion à la base concours cpge
 								try {
-									$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
+									$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSWORD");
 								}
 								catch(PDOException $erreur)	{
 									die('Erreur connexion base : ' . $erreur->getMessage());
@@ -437,13 +437,13 @@
             if (critere.filiere.value == 'toutes') {
                 critere.filiere.setCustomValidity('Veuillez sélectionner une filière.');
 				critere.filiere.reportValidity();
-                return false;
+                return false;  // on bloque l'envoi du formulaire
             }
             else {
                 critere.filiere.setCustomValidity('');
 				critere.filiere.reportValidity();
-                critere.submit();
-            }
+				return true;  // on autorise l'envoi du formulaire
+			}
         }
 
 		// vider les select au reset du formulaire

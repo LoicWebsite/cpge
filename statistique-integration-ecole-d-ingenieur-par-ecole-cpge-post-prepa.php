@@ -74,7 +74,7 @@
 							<?php
 								// conexion à la base concours cpge
 								try {
-									$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
+									$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSWORD");
 								}
 								catch(PDOException $erreur)	{
 									die('Erreur connexion base : ' . $erreur->getMessage());
@@ -202,17 +202,17 @@
             if (critere.ecole.value == '' && critere.recherche.value == '') {
                 critere.ecole.setCustomValidity('Veuillez sélectionner une école dans ce champ liste.\nOu bien saisir le nom d\'une école dans le champ d\'après.');
 				critere.ecole.reportValidity();
-                return false;
+                return false;	// on bloque l'envoi du formulaire
             }
             else if (critere.ecole.value != '' && !optionFound) {
                 critere.ecole.setCustomValidity('Veuillez sélectionner une école valide dans la liste.');
 				critere.ecole.reportValidity();    
-				return false; 
+				return false; 	// on bloque l'envoi du formulaire
             }
             else {
                 critere.ecole.setCustomValidity('');
 				critere.ecole.reportValidity();
-                critere.submit();
+                return true;  // on autorise l'envoi du formulaire
             }
         }
     </script>	
