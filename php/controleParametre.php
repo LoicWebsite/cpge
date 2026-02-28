@@ -32,17 +32,14 @@
 		$an = "2025";
 	}
 
-	// Paramètres “libres” mais filtrés pour SQL/HTML
+	// Paramètres “libres” : on autorise tout, 
+	// car on va utiliser PDO avec des requêtes préparées pour éviter les injections SQL.
 	$recherche  = isset($_GET['recherche']) ? trim($_GET['recherche']) : "";
-	$recherche  = preg_replace("/[^a-zA-Z0-9 \-]/", "", $recherche);
 	$recherche  = substr($recherche, 0, 256);
 
 	$specialite = isset($_GET['specialite']) ? trim($_GET['specialite']) : "";
-	$specialite = preg_replace("/[^a-zA-Z0-9 \-]/", "", $specialite);
 	$specialite = substr($specialite, 0, 256);
 
-	// Pour l'école et le concours, on autorise tout, 
-	// car on va utiliser PDO pour le SQL et htmlspecialchars pour l'affichage.
 	$ecole = isset($_GET['ecole']) ? (string)$_GET['ecole'] : "";
 	$ecole = substr($ecole, 0, 256); // On limite juste la taille par sécurité
 
