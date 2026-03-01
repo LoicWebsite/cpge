@@ -69,14 +69,11 @@
 
 		// conexion à la base concours cpge
 		try {
-			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
+			$db = openDatabase();
 		}
 		catch(PDOException $erreur)	{
 			die('Erreur connexion base : ' . $erreur->getMessage());
 		}
-
-		// passage au mode exception pour les erreurs
-		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 		// 1. Construction de la clause WHERE avec des marqueurs
 		$where = " WHERE An<>'' AND An<>0 ";

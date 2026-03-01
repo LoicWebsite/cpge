@@ -1,5 +1,17 @@
 <?php 
 
+// ouvre la base de données
+function openDatabase() {
+    static $db = null; // Pour éviter de recréer la connexion à chaque appel
+    if ($db === null) {
+        $db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "cpge", "cpge");
+
+		// passege au mode exception pour les erreurs
+		$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    }
+    return $db;
+}
+
 // encode le nom de l'école dans le cas où il y a un apostrophe '
 // sinon la requête SQL plante
 // on change ' par \'

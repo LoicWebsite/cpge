@@ -153,13 +153,12 @@
 							<?php
 								// conexion à la base concours cpge
 								try {
-									$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSWORD");
+									$db = openDatabase();
 								}
 								catch(PDOException $erreur)	{
 									die('Erreur connexion base : ' . $erreur->getMessage());
 								}
-								// passage au mode exception pour les erreurs
-								$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
 								$sql = "SELECT Filiere FROM Filiere ORDER BY Filiere ASC;";
 								if ($debug) echo "SQL = " . $sql ."<br/>";
 								try {

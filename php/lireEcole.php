@@ -12,8 +12,7 @@ header('Content-Type: application/json; charset=utf-8');
 
 try {
     // connexion PDO
-    $db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSE");
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $db = openDatabase();
 
     // construction dynamique de la clause WHERE
     $conditions = [];
