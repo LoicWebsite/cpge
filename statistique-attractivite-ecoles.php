@@ -26,32 +26,16 @@
         include "php/controleParametre.php";
         include "php/fonctionConcours.php";
 
-        $tri = "attractivite";
-        if (isset($_GET['tri'])) {
-            if (in_array($_GET['tri'], ['ecole', 'attractivite', 'effectif'])) {
-                $tri = $_GET['tri'];
-            }
-        }
-
-        // récupération des données selon l'ordre choisi
+        // récupération des données
         try {
             $db = openDatabase();
 
-            if ($tri == 'ecole') {
-                $order = 'ORDER BY Formation ASC';
-            } elseif ($tri == 'effectif') {
-                $order = 'ORDER BY Effectif DESC';
-            } else {
-                // attractivite
-                $order = 'ORDER BY Attractivite DESC';
-            }
-
-            $sql = "SELECT 
-                        Formation, 
-                        Effectif, 
+            $sql = "SELECT
+                        Formation,
+                        Effectif,
                         Attractivite,
                         Rang
-                    FROM Attractivite " . $order;
+                    FROM Attractivite";
             $result = $db->query($sql);
         } catch (PDOException $e) {
             // table missing or other error
@@ -156,22 +140,101 @@
 	</script>
 
     <script>
+        let etatTri = {
+            colonne: null,
+            direction: 'desc'
+        };
+
+        function majIndicateursTri(colonneActive, direction) {
+            const correspondance = {
+                ecole: 'ecole',
+                effectif: 'effectif',
+                attractivite: 'attr'
+            };
+
+            Object.values(correspondance).forEach(idBouton => {
+                const bouton = document.getElementById(idBouton);
+                if (!bouton) return;
+
+                bouton.textContent = '↓';
+                bouton.classList.remove('btn-primary');
+                bouton.classList.add('btn-secondary');
+            });
+
+            const idActif = correspondance[colonneActive];
+            const boutonActif = idActif ? document.getElementById(idActif) : null;
+            if (!boutonActif) return;
+
+            boutonActif.textContent = direction === 'asc' ? '↑' : '↓';
+            boutonActif.classList.remove('btn-secondary');
+            boutonActif.classList.add('btn-primary');
+        }
+
         // pour zoomer sur une école
         function zoom(ecole) {
             <?php
                 echo "window.location.href='resultat-d-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php?origine=attractivite&recherche=' + ecole";
             ?>
         }
+
+        // Tri local du tableau sans rechargement de page
+        function trierTableau(colonne) {
+            const tbody = document.querySelector('#tableau-attractivite tbody');
+            const lignes = Array.from(tbody.querySelectorAll('tr'));
+
+			let direction;
+			if (etatTri.colonne === colonne) {
+				direction = etatTri.direction === 'asc' ? 'desc' : 'asc';
+			} else {
+				direction = (colonne === 'ecole') ? 'asc' : 'desc';
+			}
+			etatTri = {
+				colonne: colonne,
+				direction: direction
+			};
+			majIndicateursTri(colonne, direction);
+
+            lignes.sort((a, b) => {
+                let valeurA, valeurB;
+
+                if (colonne === 'ecole') {
+                    valeurA = a.cells[1].textContent.trim();
+                    valeurB = b.cells[1].textContent.trim();
+					const comparaison = valeurA.localeCompare(valeurB, 'fr');
+					return direction === 'asc' ? comparaison : -comparaison;
+                } else if (colonne === 'effectif') {
+                    valeurA = parseInt(a.cells[2].textContent) || 0;
+                    valeurB = parseInt(b.cells[2].textContent) || 0;
+					return direction === 'asc' ? (valeurA - valeurB) : (valeurB - valeurA);
+                } else if (colonne === 'attractivite') {
+                    valeurA = parseFloat(a.cells[3].textContent) || 0;
+                    valeurB = parseFloat(b.cells[3].textContent) || 0;
+					return direction === 'asc' ? (valeurA - valeurB) : (valeurB - valeurA);
+                }
+            });
+
+            lignes.forEach(ligne => tbody.appendChild(ligne));
+        }
+
         function triEcole() {
-            window.location.href = 'statistique-attractivite-ecoles.php?tri=ecole';
+            trierTableau('ecole');
         }
         function triEffectif() {
-            window.location.href = 'statistique-attractivite-ecoles.php?tri=effectif';
+            trierTableau('effectif');
         }
         function triAttractivite() {
-            window.location.href = 'statistique-attractivite-ecoles.php?tri=attractivite';
+            trierTableau('attractivite');
         }
-    
+
+        document.addEventListener('DOMContentLoaded', () => {
+            trierTableau('attractivite');
+            etatTri = {
+                colonne: 'attractivite',
+                direction: 'desc'
+            };
+            majIndicateursTri('attractivite', 'desc');
+        });
+
   		// pour changer le texte et le symbole du bouton détail
 		function changerTexte(bouton) {
 			if (bouton.innerText.indexOf("Voir") == -1) {

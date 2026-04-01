@@ -5,14 +5,6 @@
 	// récupération-contrôle des paramètres
 	include "php/controleParametre.php";
 
-	// récupération de l'ordre de tri
-	$tri="ecole";
-	if (isset($_GET['tri']))  {
-		if (($_GET['tri'] == "selectiviteMediane") or ($_GET['tri'] == "ecole") or ($_GET['tri'] == "concours") or ($_GET['tri'] == "selectiviteDernier")) {
-			$tri = trim($_GET['tri']);
-		}
-	}
-
 	// fonctions communes du site
 	include "php/fonctionConcours.php";
 ?>
@@ -96,34 +88,20 @@
 			$params[':ecole'] = $ecole; // ON ENVOIE LA VALEUR BRUTE ICI
 		}
 
-		// construction de la clause ORDER
-		$order = " ORDER BY Filiere ASC, Concours ASC, Ecole ASC, An DESC;";
-		if ($tri == "selectiviteMediane") {
-			$order = " ORDER BY (RangMedian IS NULL OR Inscrit IS NULL OR RangMedian = 0 OR Inscrit = 0) ASC,
-							 	 RangMedian / Inscrit ASC, Ecole ASC, An DESC;";
-		} elseif ($tri == "ecole") {
-			$order = " ORDER BY Ecole ASC, An DESC;";
-		} elseif ($tri == "concours") {
-			$order = " ORDER BY Concours ASC, Ecole ASC, An DESC;";
-		} elseif ($tri == "selectiviteDernier") {
-			$order = " ORDER BY (Dernier IS NULL OR Inscrit IS NULL OR Dernier = 0 OR Inscrit = 0) ASC,
-							 	 Dernier / Inscrit ASC, Ecole ASC, An DESC;";
-		}
-		
-		// exécution de la requête SQL
-		$sql = "SELECT  Filiere,
-						Concours,
-						Ecole,
-						An,
-						Place,
-						Inscrit,
-						Classe,
-						Integre,
-						RangMedian,						
-						Dernier,
-						ROUND(Dernier / Inscrit, 1) AS SelectiviteDernier,
-						ROUND(RangMedian / Inscrit, 1) AS SelectiviteMediane
-				FROM Note" . $where . $order;
+	// exécution de la requête SQL (sans ORDER BY, le tri se fera en JavaScript)
+	$sql = "SELECT  Filiere,
+					Concours,
+					Ecole,
+					An,
+					Place,
+					Inscrit,
+					Classe,
+					Integre,
+					RangMedian,
+					Dernier,
+					ROUND(Dernier / Inscrit, 1) AS SelectiviteDernier,
+					ROUND(RangMedian / Inscrit, 1) AS SelectiviteMediane
+			FROM Note" . $where;
 		if ($debug) echo "SQL = " . $sql ."<br/>";
 		try {
 			$stmt = $db->prepare($sql);
@@ -296,6 +274,36 @@
 
 	<!-- navigation -->
 	<script>
+		let etatTri = {
+			colonne: null,
+			direction: 'asc'
+		};
+
+		function majIndicateursTri(colonneActive, direction) {
+			const correspondance = {
+				ecole: 'ecole',
+				concours: 'concours',
+				selectiviteMediane: 'selectivite',
+				selectiviteDernier: 'dernier'
+			};
+
+			Object.values(correspondance).forEach(idBouton => {
+				const bouton = document.getElementById(idBouton);
+				if (!bouton) return;
+
+				bouton.textContent = '↓';
+				bouton.classList.remove('btn-primary');
+				bouton.classList.add('btn-secondary');
+			});
+
+			const idActif = correspondance[colonneActive];
+			const boutonActif = idActif ? document.getElementById(idActif) : null;
+			if (!boutonActif) return;
+
+			boutonActif.textContent = direction === 'asc' ? '↑' : '↓';
+			boutonActif.classList.remove('btn-secondary');
+			boutonActif.classList.add('btn-primary');
+		}
 
 		// pour zoomer sur une école
 		function zoom(ecole,an) {
@@ -305,27 +313,108 @@
 			?>
 		}
 
-		// fonctions pour appeler la même page mais avec critère de tri
+		// Tri local du tableau sans rechargement de page
+		function trierTableau(typeColonne) {
+			const table = document.querySelector('#tableau-par-filiere');
+			const tbody = table.querySelector('tbody');
+			const lignes = Array.from(tbody.querySelectorAll('tr'));
+
+			let direction = 'asc';
+			if (etatTri.colonne === typeColonne) {
+				direction = etatTri.direction === 'asc' ? 'desc' : 'asc';
+			}
+			etatTri = {
+				colonne: typeColonne,
+				direction: direction
+			};
+			majIndicateursTri(typeColonne, direction);
+
+			// Trouver l'index de la colonne à trier en fonction du texte du header
+			let colonneIndex = -1;
+			const headers = table.querySelectorAll('th');
+
+			for (let i = 0; i < headers.length; i++) {
+				const headerText = headers[i].textContent;
+				if (typeColonne === 'ecole' && headerText.includes('Ecole')) {
+					colonneIndex = i;
+					break;
+				} else if (typeColonne === 'selectiviteMediane' && headerText.includes('Sélectivité médiane')) {
+					colonneIndex = i;
+					break;
+				} else if (typeColonne === 'selectiviteDernier' && headerText.includes('Sélectivité') && !headerText.includes('médiane')) {
+					colonneIndex = i;
+					break;
+				} else if (typeColonne === 'concours' && headerText.includes('Concours')) {
+					colonneIndex = i;
+					break;
+				}
+			}
+
+			if (colonneIndex === -1) return; // Colonne non trouvée
+
+			lignes.sort((a, b) => {
+				let valeurA = a.cells[colonneIndex].textContent.trim();
+				let valeurB = b.cells[colonneIndex].textContent.trim();
+
+				if (typeColonne === 'ecole' || typeColonne === 'concours') {
+					// Tri alphabétique
+					const comparaison = valeurA.localeCompare(valeurB, 'fr');
+					return direction === 'asc' ? comparaison : -comparaison;
+				} else if (typeColonne === 'selectiviteMediane' || typeColonne === 'selectiviteDernier') {
+					// Tri numérique (extraire le nombre avant le %)
+					let numA = parseFloat(valeurA) || 0;
+					let numB = parseFloat(valeurB) || 0;
+					return direction === 'asc' ? (numA - numB) : (numB - numA);
+				}
+			});
+
+			lignes.forEach(ligne => tbody.appendChild(ligne));
+
+		// Mise à jour des séparateurs
+		if (typeColonne === 'ecole') {
+			// Trait plein au changement d'école, pointillés pour la même école
+			let ecolePrec = null;
+			lignes.forEach(ligne => {
+				const ecoleActuelle = ligne.cells[colonneIndex].textContent.trim();
+				Array.from(ligne.cells).forEach(cell => {
+					if (ecoleActuelle !== ecolePrec && ecolePrec !== null) {
+						cell.classList.add('nouvelEcole');
+					} else {
+						cell.classList.remove('nouvelEcole');
+					}
+				});
+				ecolePrec = ecoleActuelle;
+			});
+		} else {
+			// Autres tris : supprimer tous les séparateurs solides
+			lignes.forEach(ligne => {
+				Array.from(ligne.cells).forEach(cell => cell.classList.remove('nouvelEcole'));
+			});
+		}
+		}
+
 		function triSelectiviteMediane() {
-			<?php
-				echo "window.location.href='resultat-d-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php?reference=" . $reference . "&filiere=" . $filiere . "&concours=" . $concours . "&ecole=" . supprimerApostrophe($ecole) . "&tri=selectiviteMediane'";
-			?>
+			trierTableau('selectiviteMediane');
 		}
 		function triSelectiviteDernier() {
-			<?php
-				echo "window.location.href='resultat-d-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php?reference=" . $reference . "&filiere=" . $filiere . "&concours=" . $concours . "&ecole=" . supprimerApostrophe($ecole) . "&tri=selectiviteDernier'";
-			?>
+			trierTableau('selectiviteDernier');
 		}
 		function triEcole() {
-			<?php
-				echo "window.location.href='resultat-d-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php?reference=" . $reference . "&filiere=" . $filiere . "&concours=" . $concours . "&ecole=" . supprimerApostrophe($ecole) . "&tri=ecole'";
-			?>
+			trierTableau('ecole');
 		}
 		function triConcours() {
-			<?php
-				echo "window.location.href='resultat-d-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php?reference=" . $reference . "&filiere=" . $filiere . "&concours=" . $concours . "&ecole=" . supprimerApostrophe($ecole) . "&tri=concours'";
-			?>
+			trierTableau('concours');
 		}
+
+		// tri par école au chargement de la page
+		document.addEventListener('DOMContentLoaded', () => {
+			trierTableau('ecole');
+			etatTri = {
+				colonne: 'ecole',
+				direction: 'asc'
+			};
+			majIndicateursTri('ecole', 'asc');
+		});
 
 		// pour retourner en arrière dans l'historique du navigateur
 		function questionnaire() {
