@@ -1,0 +1,38 @@
+# ----------------------------------------------------------------------
+# | Redirection de pages                                               |
+# ----------------------------------------------------------------------
+
+# erreur de page redirigée vers l'accueil
+ErrorDocument 404	https://loic.website/CPGE/statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php
+
+# fichier index de départ
+DirectoryIndex statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php
+
+# ----------------------------------------------------------------------
+# | SEO - Normalisation des URLs                                        |
+# ----------------------------------------------------------------------
+# Objectif: supprimer les paramètres GET vides (ex: recherche=) afin
+# d'éviter la création d'URLs dupliquées pour un même contenu.
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+
+	# Cas 1: paramètre vide au début de la query string
+	# Exemple: ?recherche=&ecole=PONTS  -> ?ecole=PONTS
+	RewriteCond %{QUERY_STRING} ^[^&=]+=&(.+)$
+	RewriteRule ^ %{REQUEST_URI}?%1 [R=301,L,NE]
+
+	# Cas 2: paramètre vide au milieu de la query string
+	# Exemple: ?origine=classement&recherche=&ecole=PONTS -> ?origine=classement&ecole=PONTS
+	RewriteCond %{QUERY_STRING} ^(.+)&[^&=]+=&(.+)$
+	RewriteRule ^ %{REQUEST_URI}?%1&%2 [R=301,L,NE]
+
+	# Cas 3: paramètre vide en fin de query string
+	# Exemple: ?ecole=PONTS&recherche= -> ?ecole=PONTS
+	RewriteCond %{QUERY_STRING} ^(.+)&[^&=]+=$
+	RewriteRule ^ %{REQUEST_URI}?%1 [R=301,L,NE]
+
+	# Cas 4: seul paramètre vide présent
+	# Exemple: ?recherche= -> URL sans query string
+	RewriteCond %{QUERY_STRING} ^[^&=]+=$
+	RewriteRule ^ %{REQUEST_URI}? [R=301,L,NE,QSD]
+</IfModule>

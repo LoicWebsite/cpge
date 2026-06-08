@@ -15,7 +15,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Statistique SCEI sur les admissions d'une école d'ingénieur post prépa CPGE">
-	<link rel="canonical" href="https://loic.website/cpge/detail-resultat-admission-ecole-d-ingenieur-cpge-post-prepa.php" />
+	<link rel="canonical" href="https://loic.website/CPGE/detail-resultat-admission-ecole-d-ingenieur-cpge-post-prepa.php" />
 	
 	<?php
 		// favicons générés par https://realfavicongenerator.net
@@ -81,13 +81,17 @@
 		// pour retourner à la sélection de critères
 		function questionnaire() {
 			<?php
-				$queryQuestionnaire = http_build_query([
-					'reference' => $reference,
-					'filiere' => $filiere,
-					'concours' => $concours,
-					'ecole' => $ecole,
-				], '', '&', PHP_QUERY_RFC3986);
-				echo 'window.location.href = ' . encodeJs('statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php?' . $queryQuestionnaire) . ';';
+				// On ne garde que les paramètres réellement utiles pour éviter les URLs dupliquées.
+				$queryQuestionnaireParams = [];
+				if (($ecole !== "") && ($ecole !== "toutes")) {
+					$queryQuestionnaireParams['ecole'] = $ecole;
+				}
+				$queryQuestionnaire = http_build_query($queryQuestionnaireParams, '', '&', PHP_QUERY_RFC3986);
+				$questionnaireUrl = 'statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php';
+				if ($queryQuestionnaire !== '') {
+					$questionnaireUrl .= '?' . $queryQuestionnaire;
+				}
+				echo 'window.location.href = ' . encodeJs($questionnaireUrl) . ';';
 			?>
 		}
 	</script>		

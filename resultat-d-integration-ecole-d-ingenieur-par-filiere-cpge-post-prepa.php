@@ -7,6 +7,26 @@
 
 	// fonctions communes du site
 	include "php/fonctionConcours.php";
+
+	// URL canonique: on garde uniquement les paramètres qui modifient le contenu de la page.
+	$canonicalBase = 'https://loic.website/CPGE/resultat-d-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php';
+	$canonicalParams = [];
+	if (($reference !== '') && ($reference !== 'toutes')) {
+		$canonicalParams['reference'] = $reference;
+	}
+	if (($filiere !== '') && ($filiere !== 'toutes')) {
+		$canonicalParams['filiere'] = $filiere;
+	}
+	if (($concours !== '') && ($concours !== 'tous')) {
+		$canonicalParams['concours'] = $concours;
+	}
+	if (($ecole !== '') && ($ecole !== 'toutes')) {
+		$canonicalParams['ecole'] = $ecole;
+	}
+	$canonicalUrl = $canonicalBase;
+	if (!empty($canonicalParams)) {
+		$canonicalUrl .= '?' . http_build_query($canonicalParams, '', '&', PHP_QUERY_RFC3986);
+	}
 ?>
 
 <html lang="fr">
@@ -14,6 +34,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Statistique SCEI d'admissions par filière aux écoles d'ingénieurs post prépa CPGE">
+		<link rel="canonical" href="<?php echo escapeHtml($canonicalUrl); ?>" />
 
 	<?php
 		// favicons générés par https://realfavicongenerator.net
@@ -427,13 +448,25 @@
 		// pour retourner en arrière dans l'historique du navigateur
 		function questionnaire() {
 			<?php
-				$queryQuestionnaire = http_build_query([
-					'reference' => $reference,
-					'filiere' => $filiere,
-					'concours' => $concours,
-					'ecole' => $ecole,
-				], '', '&', PHP_QUERY_RFC3986);
-				echo 'window.location.href = ' . encodeJs('statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php?' . $queryQuestionnaire) . ';';
+				$queryQuestionnaireParams = [];
+				if ($reference !== '' && $reference !== 'toutes') {
+					$queryQuestionnaireParams['reference'] = $reference;
+				}
+				if ($filiere !== '') {
+					$queryQuestionnaireParams['filiere'] = $filiere;
+				}
+				if ($concours !== '') {
+					$queryQuestionnaireParams['concours'] = $concours;
+				}
+				if ($ecole !== '' && $ecole !== 'toutes') {
+					$queryQuestionnaireParams['ecole'] = $ecole;
+				}
+				$queryQuestionnaire = http_build_query($queryQuestionnaireParams, '', '&', PHP_QUERY_RFC3986);
+				$questionnaireUrl = 'statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php';
+				if ($queryQuestionnaire !== '') {
+					$questionnaireUrl .= '?' . $queryQuestionnaire;
+				}
+				echo 'window.location.href = ' . encodeJs($questionnaireUrl) . ';';
 			?>
 		}
 	</script>

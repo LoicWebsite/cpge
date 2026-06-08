@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Statistiques SCEI d'admissions aux écoles d'ingénieurs post prépa CPGE">
+		<link rel="canonical" href="https://loic.website/CPGE/statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php" />
 
 	<?php
 		// favicons générés par https://realfavicongenerator.net

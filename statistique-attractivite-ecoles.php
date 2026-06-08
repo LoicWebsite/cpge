@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Liste des écoles classées par attractivité selon les étudiants">
+        <!-- Canonical fixe: tri géré côté client, une seule URL canonique. -->
+        <link rel="canonical" href="https://loic.website/CPGE/statistique-attractivite-ecoles.php" />
 
     <?php
         include "php/favicon.php";
@@ -173,7 +175,7 @@
         // pour zoomer sur une école
         function zoom(ecole) {
             <?php
-                echo "window.location.href='resultat-d-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php?origine=attractivite&recherche=' + ecole";
+				echo "window.location.href='resultat-d-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php?origine=attractivite&ecole=' + encodeURIComponent(ecole)";
             ?>
         }
 

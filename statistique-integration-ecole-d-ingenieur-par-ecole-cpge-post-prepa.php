@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Critères pour les statistiques SCEI d'admissions par école aux écoles d'ingénieurs post prépa CPGE">
+		<!-- Canonical fixe: cette page est un formulaire de critères. -->
+		<link rel="canonical" href="https://loic.website/CPGE/statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php" />
 
 	<?php
 		// favicons générés par https://realfavicongenerator.net
@@ -210,6 +212,15 @@
             else {
                 critere.ecole.setCustomValidity('');
 				critere.ecole.reportValidity();
+
+				// N'envoie pas de paramètres vides dans l'URL pour limiter les doublons SEO.
+				if (critere.ecole.value == '') {
+					critere.ecole.disabled = true;
+				}
+				if (critere.recherche.value == '') {
+					critere.recherche.disabled = true;
+				}
+
                 return true;  // on autorise l'envoi du formulaire
             }
         }

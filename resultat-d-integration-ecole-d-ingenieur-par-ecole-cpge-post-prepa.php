@@ -7,6 +7,19 @@
 
 	// fonctions communes du site
 	include "php/fonctionConcours.php";
+
+	// URL canonique: conserve uniquement les paramètres qui changent réellement le contenu.
+	$canonicalBase = 'https://loic.website/CPGE/resultat-d-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php';
+	$canonicalParams = [];
+	if (($ecole !== "") && ($ecole !== "toutes")) {
+		$canonicalParams['ecole'] = $ecole;
+	} elseif ($recherche !== "") {
+		$canonicalParams['recherche'] = $recherche;
+	}
+	$canonicalUrl = $canonicalBase;
+	if (!empty($canonicalParams)) {
+		$canonicalUrl .= '?' . http_build_query($canonicalParams, '', '&', PHP_QUERY_RFC3986);
+	}
 ?>
 
 
@@ -15,6 +28,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Statistique SCEI d'admissions par école aux écoles d'ingénieurs post prépa CPGE">
+		<link rel="canonical" href="<?php echo escapeHtml($canonicalUrl); ?>" />
 
 	<?php
 		// favicons générés par https://realfavicongenerator.net
@@ -273,11 +287,19 @@
 		// pour retourner en arrière dans l'historique du navigateur
 		function questionnaire() {
 			<?php
-				$queryQuestionnaire = http_build_query([
-					'ecole' => $ecole,
-					'recherche' => $recherche,
-				], '', '&', PHP_QUERY_RFC3986);
-				echo 'window.location.href = ' . encodeJs('statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php?' . $queryQuestionnaire) . ';';
+				$queryQuestionnaireParams = [];
+				if (($ecole !== "") && ($ecole !== "toutes")) {
+					$queryQuestionnaireParams['ecole'] = $ecole;
+				}
+				if ($recherche !== "") {
+					$queryQuestionnaireParams['recherche'] = $recherche;
+				}
+				$queryQuestionnaire = http_build_query($queryQuestionnaireParams, '', '&', PHP_QUERY_RFC3986);
+				$questionnaireUrl = 'statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php';
+				if ($queryQuestionnaire !== '') {
+					$questionnaireUrl .= '?' . $queryQuestionnaire;
+				}
+				echo 'window.location.href = ' . encodeJs($questionnaireUrl) . ';';
 			?>
 		}
 	</script>

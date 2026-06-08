@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Liste des écoles par spécialité proposée post prépa CPGE">
+		<!-- Canonical fixe: URL de référence de la page spécialités. -->
+		<link rel="canonical" href="https://loic.website/CPGE/statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php" />
 
 	<?php
 		// favicons générés par https://realfavicongenerator.net

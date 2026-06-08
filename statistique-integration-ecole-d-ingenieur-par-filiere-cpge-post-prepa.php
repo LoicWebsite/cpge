@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Critères pour les statistiques SCEI d'admissions par filière aux écoles d'ingénieurs post prépa CPGE">
+		<!-- Canonical fixe: page de formulaire/critères. -->
+		<link rel="canonical" href="https://loic.website/CPGE/statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php" />
 
 	<?php
 		// favicons générés par https://realfavicongenerator.net

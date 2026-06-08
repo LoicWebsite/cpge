@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Salaires des diplômés des écoles d'ingénieurs - médiane et quartiles par promotion">
+    <!-- Canonical fixe: URL de référence de la page salaires. -->
+    <link rel="canonical" href="https://loic.website/CPGE/salaire-ingenieur-cpge-post-prepa.php" />
 
     <?php include "php/favicon.php"; ?>
     <title>Salaires des ingénieurs diplômés</title>

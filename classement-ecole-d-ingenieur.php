@@ -14,6 +14,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Classement des écoles d'ingénieurs post prépa CPGE">
+		<!-- Canonical fixe: URL de référence de la page classement. -->
+		<link rel="canonical" href="https://loic.website/CPGE/classement-ecole-d-ingenieur.php" />
 
 	<?php
 		// favicons générés par https://realfavicongenerator.net
@@ -605,7 +607,7 @@
 		// pour zoomer sur une école
 		function zoom(ecole) {
 			<?php
-				$baseZoom = 'resultat-d-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php?origine=classement&recherche=';
+				$baseZoom = 'resultat-d-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php?origine=classement&ecole=';
 				echo 'window.location.href = ' . encodeJs($baseZoom) . ' + encodeURIComponent(ecole);';
 			?>
 		}
