@@ -79,14 +79,14 @@
 								catch(PDOException $erreur)	{
 									die('Erreur connexion base : ' . $erreur->getMessage());
 								}
-								$sql = "SELECT DISTINCT Ecole FROM Ecole ORDER BY Ecole ASC;";
+								$sql = "SELECT DISTINCT Ecole FROM Ecole ORDER BY Ecole ASC";
 								if ($debug) echo "SQL = " . $sql ."<br/>";
 								try {
-									$libelleEcole = "";
-									$result = $db->query($sql);
+									$result = $db->prepare($sql);
+									$result->execute();
 									while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 										extract($row);
-										$libelleEcole = str_replace("'","&apos;",$Ecole);
+										$libelleEcole = escapeHtml($Ecole);
 										echo "<option data-name='".$libelleEcole."' value='".$libelleEcole."'>".$libelleEcole."</option>";
 									}
 								}
@@ -157,10 +157,10 @@
  		// positionnement du select Ecole à partir de paramètre passé à l'URL
  		<?php
  			if (($ecole <> "") and ($ecole <> "toutes")) {
- 				echo 'document.getElementById("ecole").value = "'.$ecole.'";';
+				echo 'document.getElementById("ecole").value = ' . encodeJs($ecole) . ';';
  			}
  			if ($recherche <> "") {
- 				echo 'document.getElementById("recherche").value = "' . $recherche . '";';
+				echo 'document.getElementById("recherche").value = ' . encodeJs($recherche) . ';';
  			}
  		?>
  		}

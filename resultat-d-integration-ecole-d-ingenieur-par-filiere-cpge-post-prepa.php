@@ -198,7 +198,9 @@
 				}
 				
 				// affichage de la ligne
-				echo '<tr '.$style.' ondblclick="zoom(&apos;'.supprimerApostrophe($Ecole).'&apos;,&apos;'.$An.'&apos;)">';
+				$jsEcole = encodeJs($Ecole);
+				$jsAn = encodeJs($An);
+				echo "<tr " . $style . " ondblclick='zoom(" . $jsEcole . "," . $jsAn . ")'>";
 				if (($filiere == "toute") or ($filiere == "")) {
 					echo "<td>". strtoupper($Filiere) ."</td>";
 				}
@@ -309,7 +311,13 @@
 		function zoom(ecole,an) {
 			<?php
 // 				echo "window.location.href='detail-resultat-admission-ecole-d-ingenieur-cpge-post-prepa.php?reference=" . $reference . "&an=' + an + '&filiere=" . $filiere . "&concours=" . $concours . "&ecole=' + ecole";
- 				echo "window.location.href='detail-resultat-admission-ecole-d-ingenieur-cpge-post-prepa.php?reference=" . $reference . "&an=toutes&filiere=" . $filiere . "&concours=" . $concours . "&ecole=' + ecole";
+				$baseZoom = 'detail-resultat-admission-ecole-d-ingenieur-cpge-post-prepa.php?' . http_build_query([
+					'reference' => $reference,
+					'an' => 'toutes',
+					'filiere' => $filiere,
+					'concours' => $concours,
+				], '', '&', PHP_QUERY_RFC3986);
+				echo 'window.location.href = ' . encodeJs($baseZoom) . " + '&ecole=' + encodeURIComponent(ecole);";
 			?>
 		}
 
@@ -419,7 +427,13 @@
 		// pour retourner en arrière dans l'historique du navigateur
 		function questionnaire() {
 			<?php
-				echo "window.location.href='statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php?reference=" . $reference . "&filiere=" . $filiere . "&concours=" . $concours . "&ecole=" . supprimerApostrophe($ecole) . "'";
+				$queryQuestionnaire = http_build_query([
+					'reference' => $reference,
+					'filiere' => $filiere,
+					'concours' => $concours,
+					'ecole' => $ecole,
+				], '', '&', PHP_QUERY_RFC3986);
+				echo 'window.location.href = ' . encodeJs('statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php?' . $queryQuestionnaire) . ';';
 			?>
 		}
 	</script>

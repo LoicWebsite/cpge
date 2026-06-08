@@ -12,6 +12,31 @@ function openDatabase() {
     return $db;
 }
 
+// echappe une valeur pour un affichage HTML sans execution de code.
+// A utiliser pour tout texte dynamique affiche dans le HTML.
+// Exemples:
+// - entree:  l'apprentissage
+//   sortie:  l&#039;apprentissage
+// - entree:  <script>alert(1)</script>
+//   sortie:  &lt;script&gt;alert(1)&lt;/script&gt;
+// - entree:  "Ecole" & Co
+//   sortie:  &quot;Ecole&quot; &amp; Co
+function escapeHtml($value) {
+	return htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+// encode une valeur pour une injection sure dans du JavaScript inline.
+// A utiliser pour les valeurs dynamiques affichees dans une balise <script>
+// ou un attribut d'evenement JS.
+// Exemples:
+// - entree:  l'apprentissage
+//   sortie:  "l\u0027apprentissage"
+// - entree:  <script>alert(1)</script>
+//   sortie:  "\u003Cscript\u003Ealert(1)\u003C\/script\u003E"
+function encodeJs($value) {
+	return json_encode($value, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+}
+
 // encode le nom de l'école dans le cas où il y a un apostrophe '
 // sinon la requête SQL plante
 // on change ' par \'

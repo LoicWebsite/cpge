@@ -57,7 +57,7 @@
 		// titre de la page
 		echo "<header class='container'>";
 		if (($ecole <> "") and ($ecole <> "toutes")) {
-			echo "<h1 class='h3'><i class='bi bi-mortarboard-fill'></i>&nbsp;&nbsp;&nbsp;Statistiques d'admissions<br/>pour l'école ".$ecole."</h1>";
+			echo "<h1 class='h3'><i class='bi bi-mortarboard-fill'></i>&nbsp;&nbsp;&nbsp;Statistiques d'admissions<br/>pour l'école ".escapeHtml($ecole)."</h1>";
 		} else {
 			echo "<h1 class='h3'><i class='bi bi-mortarboard-fill'></i>&nbsp;&nbsp;&nbsp;Statistiques d'admissions</h1>";
 		}
@@ -75,21 +75,29 @@
 			die('Erreur connexion base : ' . $erreur->getMessage());
 		}
 
-		// construction de la clause WHERE
-		$where = "";
+		// construction de la clause WHERE (requête préparée)
+		$paramsEcole = [];
+		$sql = "SELECT Filiere, Concours, Ecole FROM Ecole";
 		if (($ecole <> "") and ($ecole <> "toutes")) {
-// 			$where = ' WHERE Ecole="' . $ecole . '"';
-			$where = ' WHERE Ecole LIKE "%'.$ecole.'%"';
+			$sql .= " WHERE Ecole LIKE :ecole_like";
+			$paramsEcole[':ecole_like'] = '%' . $ecole . '%';
 		} elseif ($recherche <> "") {
-			$where = ' WHERE Ecole LIKE "%'.$recherche.'%"';				
+			$sql .= " WHERE Ecole LIKE :recherche_like";
+			$paramsEcole[':recherche_like'] = '%' . $recherche . '%';
 		}
-		$where = $where . " ORDER BY Ecole ASC, Filiere ASC;";
-		
-		// exécution de la requête SQL
-		$sql = "SELECT Filiere, Concours, Ecole FROM Ecole" . $where;
-		if ($debug) echo "SQL Ecole = " . $sql ."<br/>";
+		$sql .= " ORDER BY Ecole ASC, Filiere ASC";
+		if ($debug) {
+			echo "SQL Ecole = " . escapeHtml($sql) . "<br/>";
+			echo "PARAMS Ecole = " . escapeHtml(json_encode($paramsEcole, JSON_UNESCAPED_UNICODE)) . "<br/>";
+		}
 		try {
-			$result = $db->query($sql);
+			$stmtEcole = $db->prepare($sql);
+			$stmtEcole->execute($paramsEcole);
+			$result = $stmtEcole;
+
+			$sqlNote = 'SELECT Inscrit, Integre, RangMedian, Dernier FROM Note WHERE Ecole = :ecole AND Filiere = :filiere AND Concours = :concours AND An = :an';
+			$stmtNote = $db->prepare($sqlNote);
+			$annees = ['2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016'];
 
 			// affichage de l'en tête du tableau
 			echo "<table class='table-hover' style='width:100%;' id='tableau-par-ecole'>";
@@ -145,222 +153,52 @@
 				}
 				
 				// affichage du début de la ligne du tableau
-				echo '<tr ondblclick="zoom(&apos;'.supprimerApostrophe($Ecole).'&apos;,&apos;'.$Filiere.'&apos;,&apos;'.$Concours.'&apos;)">';
-				echo "<td".$class.">" . $Ecole . "</td>";
-				echo "<td".$class." style='text-align:center'><strong>". strtoupper($Filiere) ."</strong></td>";
-				echo "<td".$class.">".$Concours ."</td>";
+				$jsEcole = encodeJs($Ecole);
+				$jsFiliere = encodeJs($Filiere);
+				$jsConcours = encodeJs($Concours);
+				echo "<tr ondblclick='zoom(" . $jsEcole . "," . $jsFiliere . "," . $jsConcours . ")'>";
+				echo "<td".$class.">" . escapeHtml($Ecole) . "</td>";
+				echo "<td".$class." style='text-align:center'><strong>". escapeHtml(strtoupper($Filiere)) ."</strong></td>";
+				echo "<td".$class.">". escapeHtml($Concours) ."</td>";
 
-				// affichage des stats 2025
-				$sqlNote = 'SELECT Inscrit, Integre, RangMedian, Dernier FROM Note WHERE Ecole="'.$Ecole.'" AND Filiere="'.$Filiere.'" AND Concours="'.$Concours.'" AND An="2025";';
-				if ($debug) {echo "SQL Note = " . $sqlNote;}
-				try {
-					$resultNote = $db->query($sqlNote);
-					if ($resultNote->rowCount() == 0) {
-						echo "<td".$class." style='text-align:center'></td>";
-					} else {
-						while ($rowNote = $resultNote->fetch(PDO::FETCH_ASSOC)) {
-							extract($rowNote);
+				foreach ($annees as $annee) {
+					if ($debug) {
+						echo "SQL Note = " . escapeHtml($sqlNote) . " | PARAMS = " . escapeHtml(json_encode([
+							'ecole' => $Ecole,
+							'filiere' => $Filiere,
+							'concours' => $Concours,
+							'an' => $annee
+						], JSON_UNESCAPED_UNICODE)) . "<br/>";
+					}
+					try {
+						$stmtNote->execute([
+							':ecole' => $Ecole,
+							':filiere' => $Filiere,
+							':concours' => $Concours,
+							':an' => $annee,
+						]);
+						$rowNote = $stmtNote->fetch(PDO::FETCH_ASSOC);
+						if ($rowNote === false) {
+							echo "<td".$class." style='text-align:center'></td>";
+						} else {
+							$Inscrit = $rowNote['Inscrit'];
+							$Integre = $rowNote['Integre'];
+							$RangMedian = $rowNote['RangMedian'];
+							$Dernier = $rowNote['Dernier'];
+
 							if (($Dernier <> 0) and ($Dernier <> "")) {
-								echo "<td".$class." style='text-align:center; color:#0000FF'><span style='font-size:120%'>".$Integre." : <strong>".$Dernier."</strong></span> / ".$Inscrit."</td>";
+								echo "<td".$class." style='text-align:center; color:#0000FF'><span style='font-size:120%'>".escapeHtml($Integre)." : <strong>".escapeHtml($Dernier)."</strong></span> / ".escapeHtml($Inscrit)."</td>";
+							} elseif (($RangMedian <> 0) and ($RangMedian <> "")) {
+								echo "<td".$class." style='text-align:center'><span style='font-size:120%'>".escapeHtml($Integre)." : <strong>".escapeHtml($RangMedian)."</strong></span> / ".escapeHtml($Inscrit)."</td>";
 							} else {
-								echo "<td".$class." style='text-align:center'><span style='font-size:120%'>".$Integre." : <strong>".$RangMedian."</strong></span> / ".$Inscrit."</td>";
+								echo "<td".$class." style='text-align:center'></td>";
 							}
 						}
 					}
-				}
-				catch(PDOException $erreur)	{
-					echo "Erreur SELECT Note 2025 : " . $erreur->getMessage();
-				}
-
-				// affichage des stats 2024
-				$sqlNote = 'SELECT Inscrit, Integre, RangMedian, Dernier FROM Note WHERE Ecole="'.$Ecole.'" AND Filiere="'.$Filiere.'" AND Concours="'.$Concours.'" AND An="2024";';
-				if ($debug) {echo "SQL Note = " . $sqlNote;}
-				try {
-					$resultNote = $db->query($sqlNote);
-					if ($resultNote->rowCount() == 0) {
-						echo "<td".$class." style='text-align:center'></td>";
-					} else {
-						while ($rowNote = $resultNote->fetch(PDO::FETCH_ASSOC)) {
-							extract($rowNote);
-							if (($Dernier <> 0) and ($Dernier <> "")) {
-								echo "<td".$class." style='text-align:center; color:#0000FF'><span style='font-size:120%'>".$Integre." : <strong>".$Dernier."</strong></span> / ".$Inscrit."</td>";
-							} else {
-								echo "<td".$class." style='text-align:center'><span style='font-size:120%'>".$Integre." : <strong>".$RangMedian."</strong></span> / ".$Inscrit."</td>";
-							}
-						}
+					catch(PDOException $erreur)	{
+						echo "Erreur SELECT Note " . escapeHtml($annee) . " : " . escapeHtml($erreur->getMessage());
 					}
 				}
-				catch(PDOException $erreur)	{
-					echo "Erreur SELECT Note 2024 : " . $erreur->getMessage();
-				}
-
-				// affichage des stats 2023
-				$sqlNote = 'SELECT Inscrit, Integre, RangMedian, Dernier FROM Note WHERE Ecole="'.$Ecole.'" AND Filiere="'.$Filiere.'" AND Concours="'.$Concours.'" AND An="2023";';
-				if ($debug) {echo "SQL Note = " . $sqlNote;}
-				try {
-					$resultNote = $db->query($sqlNote);
-					if ($resultNote->rowCount() == 0) {
-						echo "<td".$class." style='text-align:center'></td>";
-					} else {
-						while ($rowNote = $resultNote->fetch(PDO::FETCH_ASSOC)) {
-							extract($rowNote);
-							if (($Dernier <> 0) and ($Dernier <> "")) {
-								echo "<td".$class." style='text-align:center; color:#0000FF'><span style='font-size:120%'>".$Integre." : <strong>".$Dernier."</strong></span> / ".$Inscrit."</td>";
-							} else {
-								echo "<td".$class." style='text-align:center'><span style='font-size:120%'>".$Integre." : <strong>".$RangMedian."</strong></span> / ".$Inscrit."</td>";
-							}
-						}
-					}
-				}
-				catch(PDOException $erreur)	{
-					echo "Erreur SELECT Note 2023 : " . $erreur->getMessage();
-				}
-
-				// affichage des stats 2022
-				$sqlNote = 'SELECT Inscrit, Integre, RangMedian, Dernier FROM Note WHERE Ecole="'.$Ecole.'" AND Filiere="'.$Filiere.'" AND Concours="'.$Concours.'" AND An="2022";';
-				if ($debug) {echo "SQL Note = " . $sqlNote;}
-				try {
-					$resultNote = $db->query($sqlNote);
-					if ($resultNote->rowCount() == 0) {
-						echo "<td".$class." style='text-align:center'></td>";
-					} else {
-						while ($rowNote = $resultNote->fetch(PDO::FETCH_ASSOC)) {
-							extract($rowNote);
-							if (($Dernier <> 0) and ($Dernier <> "")) {
-								echo "<td".$class." style='text-align:center; color:#0000FF'><span style='font-size:120%'>".$Integre." : <strong>".$Dernier."</strong></span> / ".$Inscrit."</td>";
-							} else {
-								echo "<td".$class." style='text-align:center'><span style='font-size:120%'>".$Integre." : <strong>".$RangMedian."</strong></span> / ".$Inscrit."</td>";
-							}
-						}
-					}
-				}
-				catch(PDOException $erreur)	{
-					echo "Erreur SELECT Note 2022 : " . $erreur->getMessage();
-				}	
-
-				// affichage des stats 2021
-				$sqlNote = 'SELECT Inscrit, Integre, RangMedian, Dernier FROM Note WHERE Ecole="'.$Ecole.'" AND Filiere="'.$Filiere.'" AND Concours="'.$Concours.'" AND An="2021";';
-				if ($debug) {echo "SQL Note = " . $sqlNote;}
-				try {
-					$resultNote = $db->query($sqlNote);
-					if ($resultNote->rowCount() == 0) {
-						echo "<td".$class." style='text-align:center'></td>";
-					} else {
-						while ($rowNote = $resultNote->fetch(PDO::FETCH_ASSOC)) {
-							extract($rowNote);
-							if (($Dernier <> 0) and ($Dernier <> "")) {
-								echo "<td".$class." style='text-align:center; color:#0000FF'><span style='font-size:120%'>".$Integre." : <strong>".$Dernier."</strong></span> / ".$Inscrit."</td>";
-							} else {
-								echo "<td".$class." style='text-align:center'><span style='font-size:120%'>".$Integre." : <strong>".$RangMedian."</strong></span> / ".$Inscrit."</td>";
-							}
-						}
-					}
-				}
-				catch(PDOException $erreur)	{
-					echo "Erreur SELECT Note 2021 : " . $erreur->getMessage();
-				}						
-
-				// affichage des stats 2020
-				$sqlNote = 'SELECT Inscrit, Integre, RangMedian, Dernier FROM Note WHERE Ecole="'.$Ecole.'" AND Filiere="'.$Filiere.'" AND Concours="'.$Concours.'" AND An="2020";';
-				if ($debug) {echo "SQL Note = " . $sqlNote;}
-				try {
-					$resultNote = $db->query($sqlNote);
-					if ($resultNote->rowCount() == 0) {
-						echo "<td".$class." style='text-align:center'></td>";
-					} else {
-						while ($rowNote = $resultNote->fetch(PDO::FETCH_ASSOC)) {
-							extract($rowNote);
-							if (($Dernier <> 0) and ($Dernier <> "")) {
-								echo "<td".$class." style='text-align:center; color:#0000FF'><span style='font-size:120%'>".$Integre." : <strong>".$Dernier."</strong></span> / ".$Inscrit."</td>";
-							} else {
-								echo "<td".$class." style='text-align:center'><span style='font-size:120%'>".$Integre." : <strong>".$RangMedian."</strong></span> / ".$Inscrit."</td>";
-							}
-						}
-					}
-				}
-				catch(PDOException $erreur)	{
-					echo "Erreur SELECT Note 2020 : " . $erreur->getMessage();
-				}					
-				
-				// affichage des stats 2019
-				$sqlNote = 'SELECT Inscrit, Integre, RangMedian, Dernier FROM Note WHERE Ecole="'.$Ecole.'" AND Filiere="'.$Filiere.'" AND Concours="'.$Concours.'" AND An="2019";';
-				if ($debug) {echo "SQL Note = " . $sqlNote;}
-				try {
-					$resultNote = $db->query($sqlNote);
-					if ($resultNote->rowCount() == 0) {
-						echo "<td".$class." style='text-align:center'></td>";
-					} else {
-						while ($rowNote = $resultNote->fetch(PDO::FETCH_ASSOC)) {
-							extract($rowNote);
-							if (($Dernier <> 0) and ($Dernier <> "")) {
-								echo "<td".$class." style='text-align:center; color:#0000FF'><span style='font-size:120%'>".$Integre." : <strong>".$Dernier."</strong></span> / ".$Inscrit."</td>";
-							} else {
-								echo "<td".$class." style='text-align:center'><span style='font-size:120%'>".$Integre." : <strong>".$RangMedian."</strong></span> / ".$Inscrit."</td>";
-							}
-						}
-					}
-				}
-				catch(PDOException $erreur)	{
-					echo "Erreur SELECT Note 2019 : " . $erreur->getMessage();
-				}						
-
-				// affichage des stats 2018
-				$sqlNote = 'SELECT Inscrit, Integre, RangMedian, Dernier FROM Note WHERE Ecole="'.$Ecole.'" AND Filiere="'.$Filiere.'" AND Concours="'.$Concours.'" AND An="2018";';
-				if ($debug) {echo "SQL Note = " . $sqlNote;}
-				try {
-					$resultNote = $db->query($sqlNote);
-					if ($resultNote->rowCount() == 0) {
-						echo "<td".$class." style='text-align:center'></td>";
-					} else {
-						while ($rowNote = $resultNote->fetch(PDO::FETCH_ASSOC)) {
-							extract($rowNote);
-							if (($Dernier <> 0) and ($Dernier <> "")) {
-								echo "<td".$class." style='text-align:center; color:#0000FF'><span style='font-size:120%'>".$Integre." : <strong>".$Dernier."</strong></span> / ".$Inscrit."</td>";
-							} else {
-								echo "<td".$class." style='text-align:center'><span style='font-size:120%'>".$Integre." : <strong>".$RangMedian."</strong></span> / ".$Inscrit."</td>";
-							}
-						}
-					}
-				}
-				catch(PDOException $erreur)	{
-					echo "Erreur SELECT Note 2018 : " . $erreur->getMessage();
-				}					
-
-				// affichage des stats 2017
-				$sqlNote = 'SELECT Inscrit, Integre, Dernier FROM Note WHERE Ecole="'.$Ecole.'" AND Filiere="'.$Filiere.'" AND Concours="'.$Concours.'" AND An="2017";';
-				if ($debug) {echo "SQL Note = " . $sqlNote;}
-				try {
-					$resultNote = $db->query($sqlNote);
-					if ($resultNote->rowCount() == 0) {
-						echo "<td".$class." style='text-align:center'></td>";
-					} else {
-						while ($rowNote = $resultNote->fetch(PDO::FETCH_ASSOC)) {
-							extract($rowNote);
-							echo "<td".$class." style='text-align:center; color:#0000FF'><span style='font-size:120%'>".$Integre." : <strong>".$Dernier."</strong></span> / ".$Inscrit."</td>";
-						}
-					}
-				}
-				catch(PDOException $erreur)	{
-					echo "Erreur SELECT Note 2017 : " . $erreur->getMessage();
-				}					
-
-				// affichage des stats 2016
-				$sqlNote = 'SELECT Inscrit, Integre, Dernier FROM Note WHERE Ecole="'.$Ecole.'" AND Filiere="'.$Filiere.'" AND Concours="'.$Concours.'" AND An="2016";';
-				if ($debug) {echo "SQL Note = " . $sqlNote;}
-				try {
-					$resultNote = $db->query($sqlNote);
-					if ($resultNote->rowCount() == 0) {
-						echo "<td".$class." style='text-align:center'></td>";
-					} else {
-						while ($rowNote = $resultNote->fetch(PDO::FETCH_ASSOC)) {
-							extract($rowNote);
-							echo "<td".$class." style='text-align:center; color:#0000FF'><span style='font-size:120%'>".$Integre." : <strong>".$Dernier."</strong></span> / ".$Inscrit."</td>";
-						}
-					}
-				}
-				catch(PDOException $erreur)	{
-					echo "Erreur SELECT Note 2016 : " . $erreur->getMessage();
-				}	
 				
 				echo "</tr>\n";
 				$ecoleCourante = $Ecole;
@@ -424,14 +262,22 @@
 		// pour zoomer sur une école
 		function zoom(ecole,filiere,concours) {
 			<?php
- 				echo "window.location.href='detail-resultat-admission-par-ecole.php?reference=" . $reference . "&an=toutes&filiere=' + filiere + '&concours=' + concours + '&ecole=' + ecole";
+				$baseZoom = 'detail-resultat-admission-par-ecole.php?' . http_build_query([
+					'reference' => $reference,
+					'an' => 'toutes',
+				], '', '&', PHP_QUERY_RFC3986);
+				echo 'window.location.href = ' . encodeJs($baseZoom) . " + '&filiere=' + encodeURIComponent(filiere) + '&concours=' + encodeURIComponent(concours) + '&ecole=' + encodeURIComponent(ecole);";
 			?>
 		}
 
 		// pour retourner en arrière dans l'historique du navigateur
 		function questionnaire() {
 			<?php
-				echo 'window.location.href="statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php?ecole=' . $ecole . '&recherche=' . $recherche . '";';
+				$queryQuestionnaire = http_build_query([
+					'ecole' => $ecole,
+					'recherche' => $recherche,
+				], '', '&', PHP_QUERY_RFC3986);
+				echo 'window.location.href = ' . encodeJs('statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php?' . $queryQuestionnaire) . ';';
 			?>
 		}
 	</script>

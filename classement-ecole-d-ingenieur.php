@@ -40,10 +40,15 @@
 	<nav id="chemin" class="container">
 		<div class="row" style='margin-top:80px;'>
 			<div class="col-sm" aria-label="breadcrumb">
-			  <ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php"><i class="bi bi-house-door-fill"></i></a></li>
-				<li class="breadcrumb-item active" aria-current="page">Classement</li>
-			  </ol>
+			      <ol class="breadcrumb">
+					<li class="breadcrumb-item">
+					<a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php">
+						<i class="bi bi-house-door-fill"></i>
+					</a>
+					</li>
+					<li class="breadcrumb-item">Palmarès</li>
+					<li class="breadcrumb-item active" aria-current="page">Classement</li>
+				</ol>
 			</div>
 		</div>
 	</nav>
@@ -63,14 +68,13 @@
 			<p>3 classements sont présentés :
 				<ul>
 					<li><strong>Le classement du site <a href='https://www.daur-rankings.com/rankings/' target=_blank tittle='vers le site DAUR'>DAUR</a></strong> a évalué 190 écoles sous statut étudiant en 2025, 185 en 2024 et 176 en 2023.
-						En 2025, ce classement a analysé les écoles à travers 6 critères (niveau moyen, sélectivité, attractivité, employabilité, recherche, entrepreneuriat) et a publié les 32 premières. Les formules de calul utilisées sont publiées sur le site.
+						En 2025, ce classement a analysé les écoles à travers 6 critères (niveau moyen, sélectivité, attractivité, employabilité, recherche, entrepreneuriat) et a publié les 32 premières. Les formules de calcul utilisées sont publiées sur le site.
 						Certaines écoles sont absentes de ce classement, par exemple les ENS, l'Ecole Navale ou l'Ecole de l'Air.
 						Le classement DAUR inclut certaines écoles post bac et post  prépas.
 						<br>Le classement DAUR est considéré comme le plus pertinent du point de vu statistiques basées sur les données de SCEI, de Parcoursup, de la campagne de certification annuelle de la CTI et de l'enquête sur l'insertion professionnelle de la CDEFI.
 						<br><strong>Autres classements</strong> : le site DAUR publient d'autres classements très riches mais non repris sur ce site.
 							<ul>
 								<li><a href='https://www.daur-rankings.com/rankings/degrees/2025/1_1_agriculture/initial' target=_blank tittle='vers le site de DAUR'>Le classement des diplômes d'ingénieur</a> et non pas seulement le classement des écoles qui peuvent délivrer plusieurs diplômes par exemple un diplôme généraliste et des diplômes de spécialités. Ce classement des diplômes d'ingénieurs est réalisé par secteur (53 secteurs différents recensés).</li>
-								<li><a href='https://www.daur-rankings.com/blog/attractivity-engineering-2025' target=_blank tittle='vers le site de DAUR'>L'attractivité des écoles</a> en fonction des voeux et des désistements des préparationnaires.</li>
 								<li><a href='https://www.daur-rankings.com/rankings/prepa_degrees/2025/mp/france' target=_blank tittle='vers le site de DAUR'>Le classement des CPGE scientifiques</a> par filière. Il est basé sur les résultats publiés dans SCEI.</li>
 							</ul>
 					</li>
@@ -167,7 +171,8 @@
 						}
 
 						// affichage de la ligne
-						echo '<tr ondblclick="zoom(&apos;'.supprimerApostrophe($Ecole).'&apos;)">';
+						$jsEcole = encodeJs($Ecole);
+						echo "<tr ondblclick='zoom(" . $jsEcole . ")'>";
 						echo "<td ".$class." style='text-align:center'>" . $Groupe . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
@@ -233,7 +238,8 @@
 						}
 
 						// affichage de la ligne
-						echo '<tr ondblclick="zoom(&apos;'.supprimerApostrophe($Ecole).'&apos;)">';
+						$jsEcole = encodeJs($Ecole);
+						echo "<tr ondblclick='zoom(" . $jsEcole . ")'>";
 						echo "<td ".$class." style='text-align:center'>" . $Groupe . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
@@ -299,7 +305,8 @@
 						}
 
 						// affichage de la ligne
-						echo '<tr ondblclick="zoom(&apos;'.supprimerApostrophe($Ecole).'&apos;)">';
+						$jsEcole = encodeJs($Ecole);
+						echo "<tr ondblclick='zoom(" . $jsEcole . ")'>";
 						echo "<td ".$class." style='text-align:center'>" . $Groupe . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
@@ -356,7 +363,8 @@
 		// 				$class = " class='nouvelEcole'";
 
 						// affichage de la ligne
-						echo '<tr ondblclick="zoom(&apos;'.supprimerApostrophe($Ecole).'&apos;)">';
+						$jsEcole = encodeJs($Ecole);
+						echo "<tr ondblclick='zoom(" . $jsEcole . ")'>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
 						echo "<td ".$class." style='padding-left:10px'><strong>" . $Ecole . "</strong></td>";
@@ -408,7 +416,8 @@
 		// 				$class = " class='nouvelEcole'";
 
 						// affichage de la ligne
-						echo '<tr ondblclick="zoom(&apos;'.supprimerApostrophe($Ecole).'&apos;)">';
+						$jsEcole = encodeJs($Ecole);
+						echo "<tr ondblclick='zoom(" . $jsEcole . ")'>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
 						echo "<td ".$class." style='padding-left:10px'><strong>" . $Ecole . "</strong></td>";
@@ -469,7 +478,8 @@
 						}
 
 						// affichage de la ligne
-						echo '<tr ondblclick="zoom(&apos;'.supprimerApostrophe($Ecole).'&apos;)">';
+						$jsEcole = encodeJs($Ecole);
+						echo "<tr ondblclick='zoom(" . $jsEcole . ")'>";
 						echo "<td ".$class." style='text-align:center'>" . $Groupe . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
@@ -537,7 +547,8 @@
 						}
 
 						// affichage de la ligne
-						echo '<tr ondblclick="zoom(&apos;'.supprimerApostrophe($Ecole).'&apos;)">';
+						$jsEcole = encodeJs($Ecole);
+						echo "<tr ondblclick='zoom(" . $jsEcole . ")'>";
 						echo "<td ".$class." style='text-align:center'>" . $Groupe . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
@@ -594,7 +605,8 @@
 		// pour zoomer sur une école
 		function zoom(ecole) {
 			<?php
- 				echo "window.location.href='resultat-d-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php?origine=classement&recherche=' + ecole";
+				$baseZoom = 'resultat-d-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php?origine=classement&recherche=';
+				echo 'window.location.href = ' . encodeJs($baseZoom) . ' + encodeURIComponent(ecole);';
 			?>
 		}
 		

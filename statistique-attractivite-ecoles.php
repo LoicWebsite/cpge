@@ -110,10 +110,10 @@
                     extract($row);
                     // utiliser la fonction qui extrait le nom d'école adapté pour la recherche
                     echo '<tr ondblclick="zoom(&apos;'.supprimerApostrophe(extraireNomEcolePourRecherche($Formation)).'&apos;)">';
-                    echo "<td style='text-align:center'>" . htmlspecialchars($Rang, ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8') . "</td>";
-                    echo "<td style='padding-left:10px'><strong>" . htmlspecialchars($Formation, ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8') . "</strong></td>";
-                    echo "<td style='text-align:center'>" . htmlspecialchars($Effectif, ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8') . "</td>";
-                    echo "<td style='text-align:center'>" . htmlspecialchars($Attractivite, ENT_QUOTES|ENT_SUBSTITUTE, 'UTF-8') . "</td>";
+                    echo "<td style='text-align:center'>" . escapeHtml($Rang) . "</td>";
+                    echo "<td style='padding-left:10px'><strong>" . escapeHtml($Formation) . "</strong></td>";
+                    echo "<td style='text-align:center'>" . escapeHtml($Effectif) . "</td>";
+                    echo "<td style='text-align:center'>" . escapeHtml($Attractivite) . "</td>";
                     echo "</tr>";
                 }
             ?>

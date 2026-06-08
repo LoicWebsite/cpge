@@ -38,7 +38,7 @@
 		<div class="row" style='margin-top:80px;'>
 			<div class="col-sm">
 			  <ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php"><i class="fas fa-home"></i></a></li>
+				<li class="breadcrumb-item"><a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php"><i class="bi bi-house-door-fill"></i></a></li>
 				<li class="breadcrumb-item"><a href="#" onclick="questionnaire()">Filière</a></li>
 				<li class="breadcrumb-item"><a href="javascript:window.history.back();">Statistiques</a></li>
 				<li class="breadcrumb-item active" aria-current="page">Détail</li>
@@ -80,7 +80,13 @@
 		// pour retourner à la sélection de critères
 		function questionnaire() {
 			<?php
-				echo "window.location.href='statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php?reference=" . $reference . "&filiere=" . $filiere . "&concours=" . $concours . "&ecole=" . supprimerApostrophe($ecole) . "'";
+				$queryQuestionnaire = http_build_query([
+					'reference' => $reference,
+					'filiere' => $filiere,
+					'concours' => $concours,
+					'ecole' => $ecole,
+				], '', '&', PHP_QUERY_RFC3986);
+				echo 'window.location.href = ' . encodeJs('statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php?' . $queryQuestionnaire) . ';';
 			?>
 		}
 	</script>		

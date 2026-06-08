@@ -159,13 +159,14 @@
 									die('Erreur connexion base : ' . $erreur->getMessage());
 								}
 
-								$sql = "SELECT Filiere FROM Filiere ORDER BY Filiere ASC;";
+								$sql = "SELECT Filiere FROM Filiere ORDER BY Filiere ASC";
 								if ($debug) echo "SQL = " . $sql ."<br/>";
 								try {
-									$result = $db->query($sql);
+									$result = $db->prepare($sql);
+									$result->execute();
 									while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 										extract($row);
-										echo "<option id='".$Filiere."' value='".$Filiere."'>".strtoupper($Filiere)."</option>";
+										echo "<option id='".escapeHtml($Filiere)."' value='".escapeHtml($Filiere)."'>".escapeHtml(strtoupper($Filiere))."</option>";
 									}
 								}
 								catch(PDOException $erreur)	{
@@ -252,16 +253,26 @@
  		// positionnement des select et radio à partir des paramètres passés à l'URL
  		<?php
 //  			if (($rang <> "") and ($rang <> "0") and ($rang <> "aucun")) {echo "document.getElementById('rang').value = '" . $rang . "';\n";}
- 			if (($reference <> "") and ($reference <> "toutes")) {echo "document.getElementById('an".$reference."').checked = true;\n";}
+			if (($reference <> "") and ($reference <> "toutes")) {
+				echo 'document.getElementById(' . encodeJs('an' . $reference) . ').checked = true;' . "\n";
+			}
 
 			// wait 1 seconde nécessaire, sinon le call back lireEcole n'a pas le temps de répondre
  			if (($concours <> "") and ($concours <> "tous")) {
- 				echo "setTimeout(function(){listerEcole('".$an."','".$concours."','".supprimerApostrophe($ecole)."')},500);\n";
+				echo 'setTimeout(function(){listerEcole(' 
+					. encodeJs($an) . ','
+					. encodeJs($concours) . ','
+					. encodeJs($ecole)
+					. ')},500);' . "\n";
  			}
 
  			if (($filiere <> "") and ($filiere <> "toutes")) {
- 				echo "document.getElementById('" . $filiere . "').selected = true;\n";
- 				echo "listerConcours('".$an."','".$filiere."','".$concours."');\n";
+				echo 'document.getElementById(' . encodeJs($filiere) . ').selected = true;' . "\n";
+				echo 'listerConcours(' 
+					. encodeJs($an) . ','
+					. encodeJs($filiere) . ','
+					. encodeJs($concours)
+					. ');' . "\n";
  			}
  
  		?>

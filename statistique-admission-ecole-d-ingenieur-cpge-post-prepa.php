@@ -46,8 +46,9 @@
 		<div id="actualite" class="container ancre">
 			<br/>
 			<p class="text-center">
-				<mark style="color:#808080;"><strong>Actualité</strong> : les statistiques des concours 2025 sont en ligne !<br>
-				Le rang du dernier admis par école en 2025 est désormais renseigné pour les concours Polytechnique, Mines-Ponts, Mines-Télécom, Agro-Veto-Bio et G2E.
+				<mark style="color:#808080;"><strong>Actualité</strong> : dans le menu Palmarès vous retrouverez le classement des écoles d'ingénieurs.
+				<br>Vous y trouverez aussi dorénavant l'attractivité des écoles (selon DAUR)
+				<br>et le salaire des écoles de 12 à 30 mois après la diplomation.
 				</mark>
 			</p>
 			<br/>

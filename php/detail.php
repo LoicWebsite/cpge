@@ -1,9 +1,17 @@
 	<?php
 		//$debug="true";	
+		$debug = isset($debug) ? $debug : false;
+		$filiere = isset($filiere) ? $filiere : '';
+		$concours = isset($concours) ? $concours : '';
+		$an = isset($an) ? $an : '';
+		$ecole = isset($ecole) ? $ecole : '';
+		$reference = isset($reference) ? $reference : '';
+
+		$ecoleFiltre = str_replace("\\'", "'", remettreEsperluete($ecole));
 		
 		// titre de la page
 		echo "<header class='container'>";
-		echo "<h1 class='h3'><i class='bi bi-bank2'></i>&nbsp;&nbsp;&nbsp;Statistiques d'admissions " . strtoupper($filiere) . "<br/>";
+		echo "<h1 class='h3'><i class='bi bi-bank2'></i>&nbsp;&nbsp;&nbsp;Statistiques d'admissions " . escapeHtml(strtoupper($filiere)) . "<br/>";
 
 		// conexion à la base concours cpge
 		try {
@@ -13,19 +21,24 @@
 			die('Erreur connexion base : ' . $erreur->getMessage());
 		}
 
-		// construction de la clause WHERE
+		// construction de la clause WHERE (requête préparée)
 		$where = " WHERE An<>'' AND An<>0 ";
+		$params = [];
 		if (($filiere <> "") and ($filiere <> "toutes")) {
-			$where = $where . " AND Note.Filiere='" . $filiere . "'";
+			$where .= " AND Note.Filiere = :filiere";
+			$params[':filiere'] = $filiere;
 		}
 		if (($concours <> "") and ($concours <> "tous")) {
-			$where = $where . " AND Note.Concours='" . $concours . "'";
+			$where .= " AND Note.Concours = :concours";
+			$params[':concours'] = $concours;
 		}
 		if (($an <> "") and ($an <> "0") and ($an <> "toutes")) {
-			$where = $where . " AND Note.An='" . $an . "'" ;
+			$where .= " AND Note.An = :an";
+			$params[':an'] = $an;
 		}
 		if (($ecole <> "") and ($ecole <> "toutes")) {
-			$where = $where . " AND Note.Ecole='" . remettreEsperluete(supprimerApostrophe($ecole)) . "'";
+			$where .= " AND Note.Ecole = :ecole";
+			$params[':ecole'] = $ecoleFiltre;
 		}
 		
 		// exécution de la requête SQL
@@ -42,27 +55,32 @@
 						Dernier
 				FROM Note" . $where . " ORDER BY Filiere ASC, Concours ASC, Ecole ASC, An DESC;";
 
-		if ($debug) echo "SQL = " . $sql ."<br/>";
+		if ($debug) {
+			echo "SQL = " . escapeHtml($sql) ."<br/>";
+			echo "PARAMS = " . escapeHtml(json_encode($params, JSON_UNESCAPED_UNICODE)) ."<br/>";
+		}
 		try {
-			$result = $db->query($sql);
+			$stmt = $db->prepare($sql);
+			$stmt->execute($params);
+			$result = $stmt;
 
 			// affichage du titre
 			if (($concours <> "tous") and ($concours <> "")) {
 				if (($ecole <> "") and ($ecole <> "toutes")) {
-					echo " pour l'école " . $ecole;
+					echo " pour l'école " . escapeHtml($ecole);
 				} else {
-					echo " pour le concours " . $concours;
+					echo " pour le concours " . escapeHtml($concours);
 				}
 				echo "<br/>";
 				if (($an <> "toutes") and ($an <> 0) and ($an <> '')) {
-					echo " en " . $an;
+					echo " en " . escapeHtml($an);
 				} else {
 					echo " de 2016 à 2025";
 				}
 			} else {
 				echo "<br/>";
 				if (($an <> "toutes") and ($an <> 0) and ($an <> '')) {
-					echo " en " . $reference;
+					echo " en " . escapeHtml($an);
 				} else {
 					echo " de 2016 à 2025";
 				}
@@ -71,10 +89,12 @@
 			echo "</header>";
 
 			// recherche du groupe et du rang de l'école dans le classement Etudiant 2022
-			$sqlEcole = "SELECT Rang AS RangEtudiant2022, Groupe AS GroupeEtudiant2022, UrlEcole, UrlEtudiant FROM Classement WHERE Ecole=(SELECT DISTINCT(EcoleClassement) FROM Ecole WHERE Ecole.Ecole='" . remettreEsperluete(supprimerApostrophe($ecole)) . "') AND An='2022';";
-			if ($debug) echo "SQLEcole = " . $sqlEcole ."<br/>";
+			$sqlEcole = "SELECT Rang AS RangEtudiant2022, Groupe AS GroupeEtudiant2022, UrlEcole, UrlEtudiant FROM Classement WHERE Ecole IN (SELECT DISTINCT EcoleClassement FROM Ecole WHERE Ecole.Ecole = :ecole) AND An='2022' ORDER BY Rang ASC LIMIT 1";
+			if ($debug) echo "SQLEcole = " . escapeHtml($sqlEcole) ."<br/>";
 			try {
-				$resultEcole = $db->query($sqlEcole);
+				$stmtEcole = $db->prepare($sqlEcole);
+				$stmtEcole->execute([':ecole' => $ecoleFiltre]);
+				$resultEcole = $stmtEcole;
 				while ($rowEcole = $resultEcole->fetch(PDO::FETCH_ASSOC)) {
 					extract($rowEcole);
 				}
@@ -84,10 +104,12 @@
 			}
 
 			// recherche du groupe et du rang de l'école dans le classement Etudiant 2023
-			$sqlEcole = "SELECT Rang AS RangEtudiant2023, Groupe AS GroupeEtudiant2023 FROM Classement WHERE Ecole=(SELECT DISTINCT(EcoleClassement) FROM Ecole WHERE Ecole.Ecole='" . remettreEsperluete(supprimerApostrophe($ecole)) . "') AND An='2023';";
-			if ($debug) echo "SQLEcole = " . $sqlEcole ."<br/>";
+			$sqlEcole = "SELECT Rang AS RangEtudiant2023, Groupe AS GroupeEtudiant2023 FROM Classement WHERE Ecole IN (SELECT DISTINCT EcoleClassement FROM Ecole WHERE Ecole.Ecole = :ecole) AND An='2023' ORDER BY Rang ASC LIMIT 1";
+			if ($debug) echo "SQLEcole = " . escapeHtml($sqlEcole) ."<br/>";
 			try {
-				$resultEcole = $db->query($sqlEcole);
+				$stmtEcole = $db->prepare($sqlEcole);
+				$stmtEcole->execute([':ecole' => $ecoleFiltre]);
+				$resultEcole = $stmtEcole;
 				while ($rowEcole = $resultEcole->fetch(PDO::FETCH_ASSOC)) {
 					extract($rowEcole);
 				}
@@ -97,10 +119,12 @@
 			}
 
 			// recherche du groupe et du rang de l'école dans le classement DAUR 2023 (data de 2022)
-			$sqlEcole = "SELECT Rang AS RangDAUR2022, Groupe AS GroupeDAUR2022 FROM DAUR WHERE Ecole=(SELECT DISTINCT(EcoleClassement) FROM Ecole WHERE Ecole.Ecole='" . remettreEsperluete(supprimerApostrophe($ecole)) . "') AND An='2022';";
-			if ($debug) echo "SQLEcole = " . $sqlEcole ."<br/>";
+			$sqlEcole = "SELECT Rang AS RangDAUR2022, Groupe AS GroupeDAUR2022 FROM DAUR WHERE Ecole IN (SELECT DISTINCT EcoleClassement FROM Ecole WHERE Ecole.Ecole = :ecole) AND An='2022' ORDER BY Rang ASC LIMIT 1";
+			if ($debug) echo "SQLEcole = " . escapeHtml($sqlEcole) ."<br/>";
 			try {
-				$resultEcole = $db->query($sqlEcole);
+				$stmtEcole = $db->prepare($sqlEcole);
+				$stmtEcole->execute([':ecole' => $ecoleFiltre]);
+				$resultEcole = $stmtEcole;
 				while ($rowEcole = $resultEcole->fetch(PDO::FETCH_ASSOC)) {
 					extract($rowEcole);
 				}
@@ -110,10 +134,12 @@
 			}
 
 			// recherche du groupe et du rang de l'école dans le classement DAUR 2024 (data de 2023)
-			$sqlEcole = "SELECT Rang AS RangDAUR2023, Groupe AS GroupeDAUR2023 FROM DAUR WHERE Ecole=(SELECT DISTINCT(EcoleClassement) FROM Ecole WHERE Ecole.Ecole='" . remettreEsperluete(supprimerApostrophe($ecole)) . "') AND An='2023';";
-			if ($debug) echo "SQLEcole = " . $sqlEcole ."<br/>";
+			$sqlEcole = "SELECT Rang AS RangDAUR2023, Groupe AS GroupeDAUR2023 FROM DAUR WHERE Ecole IN (SELECT DISTINCT EcoleClassement FROM Ecole WHERE Ecole.Ecole = :ecole) AND An='2023' ORDER BY Rang ASC LIMIT 1";
+			if ($debug) echo "SQLEcole = " . escapeHtml($sqlEcole) ."<br/>";
 			try {
-				$resultEcole = $db->query($sqlEcole);
+				$stmtEcole = $db->prepare($sqlEcole);
+				$stmtEcole->execute([':ecole' => $ecoleFiltre]);
+				$resultEcole = $stmtEcole;
 				while ($rowEcole = $resultEcole->fetch(PDO::FETCH_ASSOC)) {
 					extract($rowEcole);
 				}
@@ -123,10 +149,12 @@
 			}
 
 			// recherche du groupe et du rang de l'école dans le classement DAUR 2025 (data de 2024)
-			$sqlEcole = "SELECT Rang AS RangDAUR2024, Groupe AS GroupeDAUR2024 FROM DAUR WHERE Ecole=(SELECT DISTINCT(EcoleClassement) FROM Ecole WHERE Ecole.Ecole='" . remettreEsperluete(supprimerApostrophe($ecole)) . "') AND An='2024';";
-			if ($debug) echo "SQLEcole = " . $sqlEcole ."<br/>";
+			$sqlEcole = "SELECT Rang AS RangDAUR2024, Groupe AS GroupeDAUR2024 FROM DAUR WHERE Ecole IN (SELECT DISTINCT EcoleClassement FROM Ecole WHERE Ecole.Ecole = :ecole) AND An='2024' ORDER BY Rang ASC LIMIT 1";
+			if ($debug) echo "SQLEcole = " . escapeHtml($sqlEcole) ."<br/>";
 			try {
-				$resultEcole = $db->query($sqlEcole);
+				$stmtEcole = $db->prepare($sqlEcole);
+				$stmtEcole->execute([':ecole' => $ecoleFiltre]);
+				$resultEcole = $stmtEcole;
 				while ($rowEcole = $resultEcole->fetch(PDO::FETCH_ASSOC)) {
 					extract($rowEcole);
 				}
@@ -136,10 +164,12 @@
 			}
 
 			// recherche du groupe et du rang de l'école dans le classement Le Figaro 2025
-			$sqlEcole = "SELECT Rang AS RangFigaro2025 FROM Figaro WHERE Ecole=(SELECT DISTINCT(EcoleClassement) FROM Ecole WHERE Ecole.Ecole='" . remettreEsperluete(supprimerApostrophe($ecole)) . "') AND An='2025';";
-			if ($debug) echo "SQLEcole = " . $sqlEcole ."<br/>";
+			$sqlEcole = "SELECT Rang AS RangFigaro2025 FROM Figaro WHERE Ecole IN (SELECT DISTINCT EcoleClassement FROM Ecole WHERE Ecole.Ecole = :ecole) AND An='2025' ORDER BY Rang ASC LIMIT 1";
+			if ($debug) echo "SQLEcole = " . escapeHtml($sqlEcole) ."<br/>";
 			try {
-				$resultEcole = $db->query($sqlEcole);
+				$stmtEcole = $db->prepare($sqlEcole);
+				$stmtEcole->execute([':ecole' => $ecoleFiltre]);
+				$resultEcole = $stmtEcole;
 				while ($rowEcole = $resultEcole->fetch(PDO::FETCH_ASSOC)) {
 					extract($rowEcole);
 				}
@@ -149,10 +179,12 @@
 			}
 
 			// recherche du groupe et du rang de l'école dans le classement Le Figaro 2024
-			$sqlEcole = "SELECT Rang AS RangFigaro2024 FROM Figaro WHERE Ecole=(SELECT DISTINCT(EcoleClassement) FROM Ecole WHERE Ecole.Ecole='" . remettreEsperluete(supprimerApostrophe($ecole)) . "') AND An='2023';";
-			if ($debug) echo "SQLEcole = " . $sqlEcole ."<br/>";
+			$sqlEcole = "SELECT Rang AS RangFigaro2024 FROM Figaro WHERE Ecole IN (SELECT DISTINCT EcoleClassement FROM Ecole WHERE Ecole.Ecole = :ecole) AND An='2023' ORDER BY Rang ASC LIMIT 1";
+			if ($debug) echo "SQLEcole = " . escapeHtml($sqlEcole) ."<br/>";
 			try {
-				$resultEcole = $db->query($sqlEcole);
+				$stmtEcole = $db->prepare($sqlEcole);
+				$stmtEcole->execute([':ecole' => $ecoleFiltre]);
+				$resultEcole = $stmtEcole;
 				while ($rowEcole = $resultEcole->fetch(PDO::FETCH_ASSOC)) {
 					extract($rowEcole);
 				}
@@ -180,7 +212,7 @@
 			echo "Concours :";				
 			echo "</div>";
 			echo "<div class='col-7 text-primary'>";
-			echo $concours;	
+			echo escapeHtml($concours);	
 			echo "</div>";
 			echo "</div>";
 
@@ -189,7 +221,7 @@
 			echo "Ecole :";
 			echo "</div>";
 			echo "<div class='col-7 text-primary'>";
-			echo $ecole;
+			echo escapeHtml($ecole);
 			echo "</div>";
 			echo "</div>";
 
@@ -199,7 +231,7 @@
 			echo "</div>";
 			echo "<div class='col-7 text-primary'>";
 			if (isset($UrlEcole)) {
-				echo "<a href=" . $UrlEcole . " target=_blank>" . $UrlEcole . "</a>";
+				echo "<a href='" . escapeHtml($UrlEcole) . "' target='_blank' rel='noopener'>" . escapeHtml($UrlEcole) . "</a>";
 			}
 			echo "</div>";
 			echo "</div>";

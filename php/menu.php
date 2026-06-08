@@ -17,6 +17,10 @@
 				$menu = "filiere";
 			} elseif ($page == "statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa") {
 				$menu = "ecole";
+			} elseif ($page == "statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa") {
+				$menu = "specialite";
+			} elseif ($page == "statistique-attractivite-ecoles") {
+				$menu = "attractivite";
 			} elseif ($page == "resultat-d-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa") {
 				$menu = "filiere";
 			} elseif ($page == "resultat-d-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa") {
@@ -27,6 +31,10 @@
 				$menu = "ecole";
 			} elseif ($page == "classement-ecole-d-ingenieur") {
 				$menu = "classement";
+			} elseif ($page == "statistique-attractivite-ecoles") {
+				$menu = "attractivite";
+			} elseif ($page == "salaire-ingenieur-cpge-post-prepa") {
+				$menu = "salaire";
 			}
 
 		// si elle est renseignée on récupère le nom de la page passée en paramètre
@@ -62,13 +70,17 @@
 				}
 				echo "</li>";
 
-				echo "<li class='nav-item'>";
-				if ($menu == "classement") {
-					echo "<a class='nav-link active' href='classement-ecole-d-ingenieur.php' onclick='collapseMenu(this);'>Classement</a>";
-				} else {
-					echo "<a class='nav-link' href='classement-ecole-d-ingenieur.php' onclick='collapseMenu(this);'>Classement</a>";
-				}
-				echo "</li>";
+
+				// dropdown for classement + attractivité + salaires
+				echo "<li class='nav-item dropdown'>";
+				$parentActive = ($menu == "classement" || $menu == "attractivite" || $menu == "salaire");
+				echo "<a class='nav-link dropdown-toggle" . ($parentActive ? " active" : "") . "' href='#' id='classementDropdown' role='button' data-bs-toggle='dropdown' aria-expanded='false'>Palamarès</a>";
+				echo "<ul class='dropdown-menu' aria-labelledby='classementDropdown'>";
+				echo "<li><a class='dropdown-item" . ($menu == "classement" ? " active" : "") . "' href='classement-ecole-d-ingenieur.php' onclick='collapseMenu(this);'>Classement</a></li>";
+				echo "<li><a class='dropdown-item" . ($menu == "attractivite" ? " active" : "") . "' href='statistique-attractivite-ecoles.php' onclick='collapseMenu(this);'>Attractivité</a></li>";
+				echo "<li><a class='dropdown-item" . ($menu == "salaire" ? " active" : "") . "' href='salaire-ingenieur-cpge-post-prepa.php' onclick='collapseMenu(this);'>Salaires</a></li>";
+				echo "</ul>";
+				echo "</li>"; // close dropdown list item
 
 				echo "<li class='nav-item'>";
 				if ($menu == "propos") {
@@ -86,13 +98,13 @@
 				}
 				echo "</li>";
 ?>
+
 			</ul>
 		</div>
 	</div>
 </nav>
 
 <script>
-
 	function collapseMenu(element) {
 
 		// collapse du menu burger au click d'une option de menu
