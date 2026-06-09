@@ -259,21 +259,13 @@
 				echo 'document.getElementById(' . encodeJs('an' . $reference) . ').checked = true;' . "\n";
 			}
 
-			// wait 1 seconde nécessaire, sinon le call back lireEcole n'a pas le temps de répondre
- 			if (($concours <> "") and ($concours <> "tous")) {
-				echo 'setTimeout(function(){listerEcole(' 
-					. encodeJs($an) . ','
-					. encodeJs($concours) . ','
-					. encodeJs($ecole)
-					. ')},500);' . "\n";
- 			}
-
  			if (($filiere <> "") and ($filiere <> "toutes")) {
 				echo 'document.getElementById(' . encodeJs($filiere) . ').selected = true;' . "\n";
 				echo 'listerConcours(' 
-					. encodeJs($an) . ','
+					. encodeJs($reference) . ','
 					. encodeJs($filiere) . ','
-					. encodeJs($concours)
+					. encodeJs($concours) . ','
+					. encodeJs($ecole)
 					. ');' . "\n";
  			}
  
@@ -285,7 +277,7 @@
 	<script>
 
 		// chargement des concours pour l'année et la filière sélectionnée en appelant un script sur le serveur via AJAX
-		function listerConcours(anChoisi, filiereChoisi, concoursChoisi) {
+		function listerConcours(anChoisi, filiereChoisi, concoursChoisi, ecoleChoisi) {
 
 			// récupérer la filière si pas passée en paramètre
 			if (!filiereChoisi) filiereChoisi = document.getElementById('filiere').value || '';
@@ -338,6 +330,7 @@
 							});
 
 							listeConcours.options[indexConcours].selected = true;
+							listerEcole(anChoisi, listeConcours.options[indexConcours].value, ecoleChoisi || '');
 
 						} catch (erreur) {
 							console.error('Erreur parsing JSON', erreur, httpRequest.responseText);
