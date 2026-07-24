@@ -134,7 +134,7 @@
 				// exécution de la requête SQL pour le classement DAUR 2025 (sur data 2024)
 				$sql = "SELECT DISTINCT DAUR.Ecole, DAUR.Rang, DAUR.Groupe, DAUR.Point, DAUR.UrlEcole
 						FROM DAUR
-						INNER JOIN Ecole ON Ecole.Ecole LIKE CONCAT('%',DAUR.Ecole,'%')
+						INNER JOIN Ecole ON Ecole.EcoleClassement LIKE CONCAT('%',DAUR.Ecole,'%')
 						WHERE DAUR.Ecole IS NOT NULL AND DAUR.An = '2024'
 						ORDER BY DAUR.Rang;";
 				
@@ -201,7 +201,7 @@
 				// exécution de la requête SQL pour le classement DAUR 2023
 				$sql = "SELECT DISTINCT DAUR.Ecole, DAUR.Rang, DAUR.Groupe, DAUR.Point, DAUR.UrlEcole
 						FROM DAUR
-						INNER JOIN Ecole ON Ecole.Ecole LIKE CONCAT('%',DAUR.Ecole,'%')
+						INNER JOIN Ecole ON Ecole.EcoleClassement LIKE CONCAT('%',DAUR.Ecole,'%')
 						WHERE DAUR.Ecole IS NOT NULL AND DAUR.An = '2023'
 						ORDER BY DAUR.Rang;";
 				
@@ -268,7 +268,7 @@
 				// exécution de la requête SQL pour le classement DAUR (DAUR 2023 est classé en 2022, date des données)
 				$sql = "SELECT DISTINCT DAUR.Ecole, DAUR.Rang, DAUR.Groupe, DAUR.Point, DAUR.UrlEcole
 						FROM DAUR
-						INNER JOIN Ecole ON Ecole.Ecole LIKE CONCAT('%',DAUR.Ecole,'%')
+						INNER JOIN Ecole ON Ecole.EcoleClassement LIKE CONCAT('%',DAUR.Ecole,'%')
 						WHERE DAUR.Ecole IS NOT NULL AND DAUR.An = '2022'
 						ORDER BY DAUR.Rang;";
 				
@@ -335,7 +335,7 @@
 				// exécution de la requête SQL pour le classement Figaro 2025
 				$sql = "SELECT DISTINCT Figaro.Ecole, Figaro.Rang, Figaro.Point, Figaro.UrlFigaro
 						FROM Figaro
-						INNER JOIN Ecole ON Ecole.Ecole LIKE CONCAT('%',Figaro.Ecole,'%')
+						INNER JOIN Ecole ON Ecole.EcoleClassement LIKE CONCAT('%',Figaro.Ecole,'%')
 						WHERE Figaro.Ecole IS NOT NULL AND Figaro.An = '2025'
 						ORDER BY Figaro.Rang, Figaro.Ecole;";
 				
@@ -388,7 +388,7 @@
 				// exécution de la requête SQL pour le classement Figaro 2024
 				$sql = "SELECT DISTINCT Figaro.Ecole, Figaro.Rang, Figaro.Point, Figaro.UrlFigaro
 						FROM Figaro
-						INNER JOIN Ecole ON Ecole.Ecole LIKE CONCAT('%',Figaro.Ecole,'%')
+						INNER JOIN Ecole ON Ecole.EcoleClassement LIKE CONCAT('%',Figaro.Ecole,'%')
 						WHERE Figaro.Ecole IS NOT NULL AND Figaro.An = '2023'
 						ORDER BY Figaro.Rang, Figaro.Ecole;";
 				
@@ -441,7 +441,7 @@
 				// exécution de la requête SQL pour le classement de l'Etudiant
 				$sql = "SELECT DISTINCT Classement.Ecole, Classement.Rang, Classement.Point, Classement.Groupe, Classement.UrlEtudiant, Classement.UrlEcole
 						FROM Classement
-						INNER JOIN Ecole ON Ecole.Ecole LIKE CONCAT('%', Classement.Ecole,'%')
+						INNER JOIN Ecole ON Ecole.EcoleClassement LIKE CONCAT('%', Classement.Ecole,'%')
 						WHERE Classement.Ecole IS NOT NULL AND Classement.An = '2023'
 						ORDER BY Classement.Rang;";
 				if ($debug) echo "SQL = " . $sql ."<br>";
@@ -510,7 +510,7 @@
 				// exécution de la requête SQL pour le classement de l'Etudiant
 				$sql = "SELECT DISTINCT Classement.Ecole, Classement.Rang, Classement.Point, Classement.Groupe, Classement.UrlEtudiant, Classement.UrlEcole
 						FROM Classement
-						INNER JOIN Ecole ON Ecole.Ecole LIKE CONCAT('%', Classement.Ecole,'%')
+						INNER JOIN Ecole ON Ecole.EcoleClassement LIKE CONCAT('%', Classement.Ecole,'%')
 						WHERE Classement.Ecole IS NOT NULL AND Classement.An = '2022'
 						ORDER BY Classement.Rang;";
 				if ($debug) echo "SQL = " . $sql ."<br>";
