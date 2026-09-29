@@ -6,9 +6,10 @@ include __DIR__ . '/../fonctionConcours.php';
 try {
     $db = openDatabase();
 
-    $sql = "SELECT DISTINCT DAUR.Ecole, DAUR.Rang, DAUR.Groupe, DAUR.Point, DAUR.UrlEcole
+    $sql = "SELECT DISTINCT DAUR.Ecole, DAUR.Rang, DAUR.Groupe, DAUR.Point, Ecole.UrlEcole
             FROM DAUR
-            INNER JOIN Ecole ON Ecole.Ecole LIKE CONCAT('%',DAUR.Ecole,'%')
+            INNER JOIN EcoleConcours ON EcoleConcours.EcoleConcours LIKE CONCAT('%',DAUR.Ecole,'%')
+            LEFT JOIN Ecole ON Ecole.Ecole = DAUR.Ecole
             WHERE DAUR.Ecole IS NOT NULL AND DAUR.An = '2023'
             ORDER BY DAUR.Rang;";
     $result = $db->query($sql);

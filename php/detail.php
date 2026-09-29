@@ -1,509 +1,297 @@
-	<?php
-		//$debug="true";	
-		$debug = isset($debug) ? $debug : false;
-		$filiere = isset($filiere) ? $filiere : '';
-		$concours = isset($concours) ? $concours : '';
-		$an = isset($an) ? $an : '';
-		$ecole = isset($ecole) ? $ecole : '';
-		$reference = isset($reference) ? $reference : '';
+<?php
+/**
+ * Orchestrateur de la fiche école.
+ * Appelé par detail-resultat-admission-par-ecole.php, il prépare les onglets,
+ * rend les spécialités disponibles immédiatement et délègue les contenus
+ * lourds aux endpoints AJAX au premier clic. Les tests Salaire/Spécialités
+ * servent à ne pas afficher d'onglet sans donnée exploitable.
+ */
 
-		$ecoleFiltre = str_replace("\\'", "'", remettreEsperluete($ecole));
-		
-		// titre de la page
-		echo "<header class='container'>";
-		echo "<h1 class='h3'><i class='bi bi-bank2'></i>&nbsp;&nbsp;&nbsp;Statistiques d'admissions " . escapeHtml(strtoupper($filiere)) . "<br/>";
+	$debug = isset($debug) ? $debug : false;
+	$filiere = isset($filiere) ? $filiere : '';
+	$ecole = isset($ecole) ? $ecole : '';
+	$origine = isset($origine) ? $origine : '';
 
-		// conexion à la base concours cpge
-		try {
-			$db = openDatabase();
+	require_once __DIR__ . '/detailEntete.php';
+	require_once __DIR__ . '/detailClassement.php';
+	require_once __DIR__ . '/detailFiliere.php';
+	require_once __DIR__ . '/detailSpecialite.php';
+
+	// nom de l'école tel qu'il figure dans la table Note (libellé propre au concours)
+	$ecoleFiltre = str_replace("\\'", "'", remettreEsperluete($ecole));
+
+	if ($ecoleFiltre === '' || $ecoleFiltre === 'toutes') {
+		echo "<main class='container'><div class='alert alert-warning' style='margin-top:20px;'>";
+		echo "<i class='bi bi-exclamation-triangle'></i>&nbsp; Aucune école sélectionnée.";
+		echo "</div></main>";
+		return;
+	}
+
+	// Chaque visite recalcule la page : la table Salaire/Note est indexée et
+	// les onglets (Classements, une filière) sont chargés à la demande par
+	// ajax/detailOnglet.php, donc le premier affichage reste léger (~4 requêtes).
+	try {
+		$db = openDatabase();
+	}
+	catch (PDOException $erreur) {
+		die('Erreur connexion base : ' . $erreur->getMessage());
+	}
+
+		// données légères nécessaires au premier affichage : liste des filières
+		// (barre d'onglets) et URL officielle (bandeau). Les classements/attractivité
+		// et le détail de chaque filière ne sont chargés qu'à l'ouverture de l'onglet.
+		$ecolesConcoursRecherchees = obtenirEcolesConcoursRecherchees($db, $ecoleFiltre, $origine);
+		$filieresEcole = obtenirFilieresEcole($db, $ecolesConcoursRecherchees, $debug);
+		$urlEcole = obtenirUrlEcole($db, $ecoleFiltre);
+		// Résout le nom canonique utilisé par Diplome, Specialite et EcoleSalaire.
+		$stmtCanonique = $db->prepare("SELECT Ecole FROM EcoleConcours WHERE EcoleConcours = :ecole AND Ecole IS NOT NULL LIMIT 1");
+		$stmtCanonique->execute([':ecole' => $ecoleFiltre]);
+		$ecoleCanonique = $stmtCanonique->fetchColumn() ?: $ecoleFiltre;
+
+		// Un diplôme seul ne suffit pas : l'onglet exige une spécialité collectée.
+		$stmtSpecialites = $db->prepare("SELECT 1 FROM Ecole e
+			JOIN Diplome d ON d.IdEcole = e.IdEcole
+			JOIN Specialite s ON s.IdDiplome = d.IdDiplome
+			WHERE (e.Ecole = :canonique OR e.Ecole = :directe)
+			  AND s.Specialite IS NOT NULL AND s.Specialite <> '' LIMIT 1");
+		$stmtSpecialites->execute([':canonique' => $ecoleCanonique, ':directe' => $ecoleFiltre]);
+		$hasSpecialites = (bool) $stmtSpecialites->fetchColumn();
+
+		// Le salaire est considéré disponible si au moins un horizon contient une valeur.
+		$stmtSalaires = $db->prepare("SELECT 1 FROM Salaire
+			JOIN EcoleSalaire es ON es.uo_lib = Salaire.uo_lib
+			 AND (es.denomination_principale = '' OR es.denomination_principale = Salaire.denomination_principale)
+			WHERE es.Ecole = :ecole
+			  AND Salaire.type_diplome = 'Formation ingénieur'
+			  AND Salaire.libelle_diplome = 'Tout diplôme d\\'ingénieur'
+			  AND Salaire.obtention_diplome = 'diplômé'
+			  AND Salaire.nationalite = 'ensemble' AND Salaire.genre = 'ensemble'
+			  AND Salaire.regime_inscription = 'ensemble'
+			  AND Salaire.promo_annee IS NOT NULL AND Salaire.promo_annee NOT IN ('2023','2024')
+			  AND Salaire.uo_lib <> 'National'
+			  AND (Salaire.salaire_q2_12 > 0 OR Salaire.salaire_q2_18 > 0 OR Salaire.salaire_q2_24 > 0 OR Salaire.salaire_q2_30 > 0)
+			LIMIT 1");
+		$stmtSalaires->execute([':ecole' => $ecoleCanonique]);
+		$hasSalaires = (bool) $stmtSalaires->fetchColumn();
+		$ongletActif = $hasSpecialites ? 'specialites' : ($hasSalaires ? 'salaire' : 'classements');
+
+		// Spécialités est rendu immédiatement côté serveur : son contenu ne doit
+		// jamais porter data-onglet, sinon le gestionnaire AJAX le remplacerait.
+		// Salaire, Classements et les filières sont des fragments AJAX différés.
+		afficherEnteteEcole($ecoleFiltre, $urlEcole, $filieresEcole);
+
+		echo "<main class='container' style='margin-top:24px;'>";
+
+		// barre d'onglets (défilement horizontal sur petit écran)
+		echo "<nav class='onglets-ecole'>";
+		echo "<div class='nav nav-tabs' id='nav-ecole' role='tablist'>";
+
+		$idClassements = identifiantOnglet('classements');
+		echo "<button class='nav-link" . ($ongletActif === 'classements' ? ' active' : '') . "' id='tab-" . $idClassements . "'"
+		   . " data-bs-toggle='tab' data-bs-target='#" . $idClassements . "' data-onglet='classements' type='button' role='tab'"
+		   . " aria-controls='" . $idClassements . "' aria-selected='" . ($ongletActif === 'classements' ? 'true' : 'false') . "'>"
+		   . "<i class='bi bi-trophy'></i>&nbsp; Classements</button>";
+
+		foreach ($filieresEcole as $cle) {
+			$id = identifiantOnglet($cle);
+			echo "<button class='nav-link' id='tab-" . $id . "'"
+			   . " data-bs-toggle='tab' data-bs-target='#" . $id . "' data-onglet='" . escapeHtml($cle) . "' type='button' role='tab'"
+			   . " aria-controls='" . $id . "' aria-selected='false'>"
+			   . escapeHtml(strtoupper($cle)) . "</button>";
 		}
-		catch(PDOException $erreur)	{
-			die('Erreur connexion base : ' . $erreur->getMessage());
+
+		$idSpecialites = identifiantOnglet('specialites');
+		$idSalaire = identifiantOnglet('salaire');
+		if ($hasSalaires) {
+			echo "<button class='nav-link" . ($ongletActif === 'salaire' ? ' active' : '') . "' id='tab-" . $idSalaire . "'"
+			   . " data-bs-toggle='tab' data-bs-target='#" . $idSalaire . "' data-onglet='salaire' type='button' role='tab'"
+			   . " aria-controls='" . $idSalaire . "' aria-selected='" . ($ongletActif === 'salaire' ? 'true' : 'false') . "'>"
+			   . "<i class='bi bi-cash-stack'></i>&nbsp; Salaire</button>";
+		}
+		if ($hasSpecialites) {
+			echo "<button class='nav-link" . ($ongletActif === 'specialites' ? ' active' : '') . "' id='tab-" . $idSpecialites . "'"
+		   . " data-bs-toggle='tab' data-bs-target='#" . $idSpecialites . "' type='button' role='tab'"
+		   . " aria-controls='" . $idSpecialites . "' aria-selected='" . ($ongletActif === 'specialites' ? 'true' : 'false') . "'>"
+		   . "<i class='bi bi-diagram-3'></i>&nbsp; Spécialités</button>";
 		}
 
-		// construction de la clause WHERE (requête préparée)
-		$where = " WHERE An<>'' AND An<>0 ";
-		$params = [];
-		if (($filiere <> "") and ($filiere <> "toutes")) {
-			$where .= " AND Note.Filiere = :filiere";
-			$params[':filiere'] = $filiere;
+		echo "</div>";
+		echo "</nav>";
+
+		// Contenu : Spécialités est déjà rempli côté serveur ; Salaire, Classements
+		// et chaque filière démarrent avec un spinner et sont remplis par
+		// ajax/detailOnglet.php au premier affichage.
+		echo "<div class='tab-content p-3 p-md-4 border border-top-0 bg-light' id='nav-ecoleContent'>";
+
+		echo "<div class='tab-pane fade" . ($ongletActif === 'classements' ? ' show active' : '') . "' id='" . $idClassements . "' role='tabpanel' aria-labelledby='tab-" . $idClassements . "' data-onglet='classements'>";
+		echo "<div class='text-center text-secondary py-4'><span class='spinner-border spinner-border-sm'></span>&nbsp; Chargement...</div>";
+		echo "</div>";
+
+		foreach ($filieresEcole as $cle) {
+			$id = identifiantOnglet($cle);
+			echo "<div class='tab-pane fade' id='" . $id . "' role='tabpanel' aria-labelledby='tab-" . $id . "' data-onglet='" . escapeHtml($cle) . "'>";
+			echo "<div class='text-center text-secondary py-4'><span class='spinner-border spinner-border-sm'></span>&nbsp; Chargement...</div>";
+			echo "</div>";
 		}
-		if (($concours <> "") and ($concours <> "tous")) {
-			$where .= " AND Note.Concours = :concours";
-			$params[':concours'] = $concours;
+
+		if ($hasSalaires) {
+			echo "<div class='tab-pane fade" . ($ongletActif === 'salaire' ? ' show active' : '') . "' id='" . $idSalaire . "' role='tabpanel' aria-labelledby='tab-" . $idSalaire . "' data-onglet='salaire'>";
+			echo "<div class='text-center text-secondary py-4'><span class='spinner-border spinner-border-sm'></span>&nbsp; Chargement...</div>";
+			echo "</div>";
 		}
-		if (($an <> "") and ($an <> "0") and ($an <> "toutes")) {
-			$where .= " AND Note.An = :an";
-			$params[':an'] = $an;
+
+		if ($hasSpecialites) {
+			// Spécialités est déjà rendu côté serveur : il ne doit pas passer par l'AJAX.
+			echo "<div class='tab-pane fade" . ($ongletActif === 'specialites' ? ' show active' : '') . "' id='" . $idSpecialites . "' role='tabpanel' aria-labelledby='tab-" . $idSpecialites . "'>";
+			afficherSpecialites($db, $ecoleFiltre, $debug);
+			echo "</div>";
 		}
-		if (($ecole <> "") and ($ecole <> "toutes")) {
-			$where .= " AND Note.Ecole = :ecole";
-			$params[':ecole'] = $ecoleFiltre;
+
+		echo "</div>";
+
+		if (empty($filieresEcole)) {
+			echo "<div class='alert alert-warning mt-3'><i class='bi bi-exclamation-triangle'></i>&nbsp; "
+			   . "Aucun résultat d'admission n'est disponible pour cette école.</div>";
 		}
-		
-		// exécution de la requête SQL
-		$sql = "SELECT  Filiere,
-						Concours,
-						Ecole,
-						An,
-						Place,
-						Inscrit,
-						Classe,
-						Integre,
-						RangMedian,
-						RangMoyen,						
-						Dernier
-				FROM Note" . $where . " ORDER BY Filiere ASC, Concours ASC, Ecole ASC, An DESC;";
 
-		if ($debug) {
-			echo "SQL = " . escapeHtml($sql) ."<br/>";
-			echo "PARAMS = " . escapeHtml(json_encode($params, JSON_UNESCAPED_UNICODE)) ."<br/>";
+		echo "</main>";
+
+		$db = null;
+?>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		var parametresOnglets = {
+			ecole: <?php echo json_encode($ecole, JSON_UNESCAPED_UNICODE); ?>,
+			origine: <?php echo json_encode($origine, JSON_UNESCAPED_UNICODE); ?>
+		};
+		var ongletInitial = <?php echo json_encode($filiere, JSON_UNESCAPED_UNICODE); ?>;
+		var ongletActif = <?php echo json_encode($ongletActif, JSON_UNESCAPED_UNICODE); ?>;
+
+		// Les contenus d'onglets sont injectés en AJAX après le chargement initial de
+		// la page. Bootstrap ne détecte pas automatiquement les nouveaux attributs
+		// data-bs-toggle="tooltip" : on initialise donc les tooltips dans le fragment
+		// qui vient d'être ajouté au DOM.
+		/** Initialise les tooltips Bootstrap présents dans un fragment injecté. */
+		function initialiserTooltips(conteneur) {
+			if (!conteneur || typeof bootstrap === 'undefined') { return; }
+			conteneur.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (element) {
+				bootstrap.Tooltip.getOrCreateInstance(element);
+			});
 		}
-		try {
-			$stmt = $db->prepare($sql);
-			$stmt->execute($params);
-			$result = $stmt;
 
-			// affichage du titre
-			if (($concours <> "tous") and ($concours <> "")) {
-				if (($ecole <> "") and ($ecole <> "toutes")) {
-					echo " pour l'école " . escapeHtml($ecole);
-				} else {
-					echo " pour le concours " . escapeHtml($concours);
-				}
-				echo "<br/>";
-				if (($an <> "toutes") and ($an <> 0) and ($an <> '')) {
-					echo " en " . escapeHtml($an);
-				} else {
-					echo " de 2016 à 2025";
-				}
-			} else {
-				echo "<br/>";
-				if (($an <> "toutes") and ($an <> 0) and ($an <> '')) {
-					echo " en " . escapeHtml($an);
-				} else {
-					echo " de 2016 à 2025";
-				}
+		/** Demande le fragment HTML correspondant à un onglet de la fiche. */
+		function chargerFragment(onglet) {
+			var params = new URLSearchParams(parametresOnglets);
+			params.set('onglet', onglet);
+			return fetch('php/ajax/detailOnglet.php?' + params.toString()).then(function (reponse) { return reponse.text(); });
+		}
+
+		// bandeau classements/attractivité : chargé indépendamment des onglets
+		var badges = document.getElementById('badges-entete');
+		if (badges) {
+			chargerFragment('entete')
+				.then(function (html) {
+					badges.innerHTML = html;
+					initialiserTooltips(badges);
+				})
+				.catch(function () { badges.innerHTML = ''; });
+		}
+
+		var barre = document.getElementById('nav-ecole');
+		if (!barre || typeof bootstrap === 'undefined') { return; }
+		initialiserTooltips(document);
+
+		// Seuls les panneaux portant data-onglet sont des fragments AJAX. Le panneau
+		// Spécialités n'en porte pas : il a déjà été rendu par PHP.
+		/** Charge une seule fois le contenu du panneau demandé par l'utilisateur. */
+		function chargerOnglet(panneau) {
+			if (!panneau || !panneau.dataset.onglet || panneau.dataset.charge === '1') { return; }
+			panneau.dataset.charge = '1';
+			chargerFragment(panneau.dataset.onglet)
+				.then(function (html) {
+					panneau.innerHTML = html;
+					initialiserTooltips(panneau);
+					if (panneau.dataset.onglet === 'salaire') { chargerDonneesSalaire(panneau); }
+				})
+				.catch(function () { panneau.innerHTML = "<div class='alert alert-danger'>Erreur de chargement.</div>"; });
+		}
+
+		/** Charge les dépendances puis les données et rend le graphique/tableau Salaire. */
+		function chargerDonneesSalaire(panneau) {
+			var canvas = panneau.querySelector('#canvas-salaire-detail');
+			var tableau = panneau.querySelector('#zone-tableau-salaire-detail');
+			var erreur = panneau.querySelector('#erreur-salaire-detail');
+			var params = new URLSearchParams({ ecole: parametresOnglets.ecole });
+			/** Ajoute une dépendance JavaScript au premier besoin, sans doublon. */
+			function chargerScript(src, id) {
+				if (document.getElementById(id)) { return Promise.resolve(); }
+				return new Promise(function (resolve, reject) {
+					var script = document.createElement('script');
+					script.id = id;
+					script.src = src;
+					script.onload = resolve;
+					script.onerror = reject;
+					document.head.appendChild(script);
+				});
 			}
-			echo "</h1><br/>";
-			echo "</header>";
-
-			// recherche du groupe et du rang de l'école dans le classement Etudiant 2022
-			$sqlEcole = "SELECT Rang AS RangEtudiant2022, Groupe AS GroupeEtudiant2022, UrlEcole, UrlEtudiant FROM Classement WHERE Ecole IN (SELECT DISTINCT EcoleClassement FROM Ecole WHERE Ecole.Ecole = :ecole) AND An='2022' ORDER BY Rang ASC LIMIT 1";
-			if ($debug) echo "SQLEcole = " . escapeHtml($sqlEcole) ."<br/>";
-			try {
-				$stmtEcole = $db->prepare($sqlEcole);
-				$stmtEcole->execute([':ecole' => $ecoleFiltre]);
-				$resultEcole = $stmtEcole;
-				while ($rowEcole = $resultEcole->fetch(PDO::FETCH_ASSOC)) {
-					extract($rowEcole);
-				}
-			}
-			catch(PDOException $erreur)	{
-				echo "Erreur SELECT Etudiant 2022 : " . $erreur->getMessage();
-			}
-
-			// recherche du groupe et du rang de l'école dans le classement Etudiant 2023
-			$sqlEcole = "SELECT Rang AS RangEtudiant2023, Groupe AS GroupeEtudiant2023 FROM Classement WHERE Ecole IN (SELECT DISTINCT EcoleClassement FROM Ecole WHERE Ecole.Ecole = :ecole) AND An='2023' ORDER BY Rang ASC LIMIT 1";
-			if ($debug) echo "SQLEcole = " . escapeHtml($sqlEcole) ."<br/>";
-			try {
-				$stmtEcole = $db->prepare($sqlEcole);
-				$stmtEcole->execute([':ecole' => $ecoleFiltre]);
-				$resultEcole = $stmtEcole;
-				while ($rowEcole = $resultEcole->fetch(PDO::FETCH_ASSOC)) {
-					extract($rowEcole);
-				}
-			}
-			catch(PDOException $erreur)	{
-				echo "Erreur SELECT Etudiant 2023 : " . $erreur->getMessage();
-			}
-
-			// recherche du groupe et du rang de l'école dans le classement DAUR 2023 (data de 2022)
-			$sqlEcole = "SELECT Rang AS RangDAUR2022, Groupe AS GroupeDAUR2022 FROM DAUR WHERE Ecole IN (SELECT DISTINCT EcoleClassement FROM Ecole WHERE Ecole.Ecole = :ecole) AND An='2022' ORDER BY Rang ASC LIMIT 1";
-			if ($debug) echo "SQLEcole = " . escapeHtml($sqlEcole) ."<br/>";
-			try {
-				$stmtEcole = $db->prepare($sqlEcole);
-				$stmtEcole->execute([':ecole' => $ecoleFiltre]);
-				$resultEcole = $stmtEcole;
-				while ($rowEcole = $resultEcole->fetch(PDO::FETCH_ASSOC)) {
-					extract($rowEcole);
-				}
-			}
-			catch(PDOException $erreur)	{
-				echo "Erreur SELECT DAUR 2022 : " . $erreur->getMessage();
-			}
-
-			// recherche du groupe et du rang de l'école dans le classement DAUR 2024 (data de 2023)
-			$sqlEcole = "SELECT Rang AS RangDAUR2023, Groupe AS GroupeDAUR2023 FROM DAUR WHERE Ecole IN (SELECT DISTINCT EcoleClassement FROM Ecole WHERE Ecole.Ecole = :ecole) AND An='2023' ORDER BY Rang ASC LIMIT 1";
-			if ($debug) echo "SQLEcole = " . escapeHtml($sqlEcole) ."<br/>";
-			try {
-				$stmtEcole = $db->prepare($sqlEcole);
-				$stmtEcole->execute([':ecole' => $ecoleFiltre]);
-				$resultEcole = $stmtEcole;
-				while ($rowEcole = $resultEcole->fetch(PDO::FETCH_ASSOC)) {
-					extract($rowEcole);
-				}
-			}
-			catch(PDOException $erreur)	{
-				echo "Erreur SELECT DAUR 2023 : " . $erreur->getMessage();
-			}
-
-			// recherche du groupe et du rang de l'école dans le classement DAUR 2025 (data de 2024)
-			$sqlEcole = "SELECT Rang AS RangDAUR2024, Groupe AS GroupeDAUR2024 FROM DAUR WHERE Ecole IN (SELECT DISTINCT EcoleClassement FROM Ecole WHERE Ecole.Ecole = :ecole) AND An='2024' ORDER BY Rang ASC LIMIT 1";
-			if ($debug) echo "SQLEcole = " . escapeHtml($sqlEcole) ."<br/>";
-			try {
-				$stmtEcole = $db->prepare($sqlEcole);
-				$stmtEcole->execute([':ecole' => $ecoleFiltre]);
-				$resultEcole = $stmtEcole;
-				while ($rowEcole = $resultEcole->fetch(PDO::FETCH_ASSOC)) {
-					extract($rowEcole);
-				}
-			}
-			catch(PDOException $erreur)	{
-				echo "Erreur SELECT DAUR 2024 : " . $erreur->getMessage();
-			}
-
-			// recherche du groupe et du rang de l'école dans le classement Le Figaro 2025
-			$sqlEcole = "SELECT Rang AS RangFigaro2025 FROM Figaro WHERE Ecole IN (SELECT DISTINCT EcoleClassement FROM Ecole WHERE Ecole.Ecole = :ecole) AND An='2025' ORDER BY Rang ASC LIMIT 1";
-			if ($debug) echo "SQLEcole = " . escapeHtml($sqlEcole) ."<br/>";
-			try {
-				$stmtEcole = $db->prepare($sqlEcole);
-				$stmtEcole->execute([':ecole' => $ecoleFiltre]);
-				$resultEcole = $stmtEcole;
-				while ($rowEcole = $resultEcole->fetch(PDO::FETCH_ASSOC)) {
-					extract($rowEcole);
-				}
-			}
-			catch(PDOException $erreur)	{
-				echo "Erreur SELECT Figaro 2025 : " . $erreur->getMessage();
-			}
-
-			// recherche du groupe et du rang de l'école dans le classement Le Figaro 2024
-			$sqlEcole = "SELECT Rang AS RangFigaro2024 FROM Figaro WHERE Ecole IN (SELECT DISTINCT EcoleClassement FROM Ecole WHERE Ecole.Ecole = :ecole) AND An='2023' ORDER BY Rang ASC LIMIT 1";
-			if ($debug) echo "SQLEcole = " . escapeHtml($sqlEcole) ."<br/>";
-			try {
-				$stmtEcole = $db->prepare($sqlEcole);
-				$stmtEcole->execute([':ecole' => $ecoleFiltre]);
-				$resultEcole = $stmtEcole;
-				while ($rowEcole = $resultEcole->fetch(PDO::FETCH_ASSOC)) {
-					extract($rowEcole);
-				}
-			}
-			catch(PDOException $erreur)	{
-				echo "Erreur SELECT Figaro 2024 : " . $erreur->getMessage();
-			}
-
-			// section principale de la page
-			echo "<main class='container'>";
-
-			echo "<div class='p-3 border bg-light'>";
-			
-			echo "<div class='row'>";
-			echo "<div class='col-5 text-secondary'>";
-			echo "Filière :";
-			echo "</div>";
-			echo "<div class='col-7 text-primary'>";
-			echo strtoupper($filiere);
-			echo "</div>";
-			echo "</div>";
-
-			echo "<div class='row'>";
-			echo "<div class='col-5 text-secondary'>";
-			echo "Concours :";				
-			echo "</div>";
-			echo "<div class='col-7 text-primary'>";
-			echo escapeHtml($concours);	
-			echo "</div>";
-			echo "</div>";
-
-			echo "<div class='row'>";
-			echo "<div class='col-5 text-secondary'>";
-			echo "Ecole :";
-			echo "</div>";
-			echo "<div class='col-7 text-primary'>";
-			echo escapeHtml($ecole);
-			echo "</div>";
-			echo "</div>";
-
-			echo "<div class='row'>";
-			echo "<div class='col-5 text-secondary'>";
-			echo "Site Web de l'école :";
-			echo "</div>";
-			echo "<div class='col-7 text-primary'>";
-			if (isset($UrlEcole)) {
-				echo "<a href='" . escapeHtml($UrlEcole) . "' target='_blank' rel='noopener'>" . escapeHtml($UrlEcole) . "</a>";
-			}
-			echo "</div>";
-			echo "</div>";
-
-			echo "<div class='row'>";
-			echo "<div class='col-5 text-secondary'>";
-			echo "Classements :";
-			echo "</div>";
-			echo "<div class='col-7 text-primary'>";
-			echo " ";
-			echo "</div>";
-			echo "</div>";
-
-			echo "<div class='row'>";
-			echo "<div class='col-5 text-secondary'>";
-			echo "&bull; DAUR 2025 &nbsp;&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La notation de l&apos;école en 2025 est définie par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 60<br>AA : 59 à 47<br>Le Rang est le résultat du classement par note finale décroissante (de 1 à 32)<br>La note finale est attribuée à partir de 6 critères détaillés sur le site de DAUR Rankings.'></i>";
-			echo "</div>";
-			echo "<div class='col-7 text-primary'>";
-			if (isset($GroupeDAUR2024)) {
-				echo $GroupeDAUR2024;
-			}
-			echo " &nbsp; ";
-			if (isset($RangDAUR2024)) {
-				if ($RangDAUR2024 != "") {
-					echo $RangDAUR2024 . " / 32";
-				}
-			}
-			echo "</div>";
-			echo "</div>";
-
-			echo "<div class='row'>";
-			echo "<div class='col-5 text-secondary'>";
-			echo "&bull; DAUR 2024 &nbsp;&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La notation de l&apos;école en 2024 est définie par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 70<br>AA : 69 à 54<br>A : 53 à 47 points<br>BBB : 46 à 41<br>BB : 40 à 37<br>B : 36 à 34<br>CCC : 33 à 31<br>CC : 30 à 28<br>C : 27 à 0<br>Le Rang est le résultat du classement par note finale décroissante (de 1 à 185)<br>La note finale est attribuée à partir de 5 critères détaillés sur le site de DAUR Rankings.'></i>";
-			echo "</div>";
-			echo "<div class='col-7 text-primary'>";
-			if (isset($GroupeDAUR2023)) {
-				echo $GroupeDAUR2023;
-			}
-			echo " &nbsp; ";
-			if (isset($RangDAUR2023)) {
-				if ($RangDAUR2023 != "") {
-					echo $RangDAUR2023 . " / 185";
-				}
-			}
-			echo "</div>";
-			echo "</div>";
-				
-			echo "<div class='row'>";
-			echo "<div class='col-5 text-secondary'>";
-			echo "&bull; DAUR 2023 &nbsp;&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La notation de l&apos;école en 2023 est définie par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 70<br>AA : 69 à 56<br>A : 55 à 49 points<br>BBB : 48 à 44<br>BB : 43 à 39<br>B : 39 à 35<br>CCC : 34 à 32<br>CC : 31 à 29<br>C : 29 à 0<br>Le Rang est le résultat du classement par note finale décroissante (de 1 à 176)<br>La note finale est attribuée à partir de 5 critères détaillés sur le site de DAUR Rankings.'></i>";
-			echo "</div>";
-			echo "<div class='col-7 text-primary'>";
-			if (isset($GroupeDAUR2022)) {
-				echo $GroupeDAUR2022;
-			}
-			echo " &nbsp; ";
-			if (isset($RangDAUR2022)) {
-				if ($RangDAUR2022 != "") {
-					echo $RangDAUR2022 . " / 176";
-				}
-			}
-			echo "</div>";
-			echo "</div>";
-
-			echo "<div class='row'>";
-			echo "<div class='col-5 text-secondary'>";
-			echo "&bull; Le Figaro 2025 &nbsp;&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 87).<br>Les écoles sont notées en 2025 de 0 à 20. C&apos;est la moyenne pondérée de trois notes évaluant leur excellence académique (coefficient 2), leur ouverture à l’international (coefficient 1) et l’emploi, ou réussite professionnelle des diplômés (coefficient 3).'></i>";
-			echo "</div>";
-			echo "<div class='col-7 text-primary'>";
-			if (isset($RangFigaro2025)) {
-				if ($RangFigaro2025 != "") {
-					echo $RangFigaro2025 . " / 87";
-				}
-			}
-			echo "</div>";
-			echo "</div>";
-
-			echo "<div class='row'>";
-			echo "<div class='col-5 text-secondary'>";
-			echo "&bull; Le Figaro 2024 &nbsp;&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 87).<br>Les écoles sont notées en 2024 de 0 à 20. Cette note résulte de l&apos;évaluation de 14 critères.'></i>";
-			echo "</div>";
-			echo "<div class='col-7 text-primary'>";
-			if (isset($RangFigaro2024)) {
-				if ($RangFigaro2024 != "") {
-					echo $RangFigaro2024 . " / 87";
-				}
-			}
-			echo "</div>";
-			echo "</div>";
-
-			echo "<div class='row'>";
-			echo "<div class='col-5 text-secondary'>";
-			echo "&bull; l'Etudiant 2023 &nbsp;&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le nombre de Points attribués est au maximum de 111 en 2023. Il résulte de l&apos;évaluation de 11 critères.<br>Le Rang est le résultat du classement par points (de 1 à 169).<br>Le Groupe d&apos;appartenance de l&apos;école en 2023 est désormais défini par le magasine L&apos;Etudiant comme étant un simple quartile.<br>A+ : 97 à 63 points<br>A : 62 à 51 points<br>B : 50 à 44 points<br>C : 0 à 43 points'></i>";
-			echo "</div>";
-			echo "<div class='col-7 text-primary'>";
-			if (isset($GroupeEtudiant2023)) {
-				echo $GroupeEtudiant2023;
-			}
-			echo " &nbsp; ";
-			if (isset($RangEtudiant2023)) {
-				if ($RangEtudiant2023 != "") {
-					echo $RangEtudiant2023 . " / 169";
-				}
-			}
-			echo "</div>";
-			echo "</div>";
-
-			echo "<div class='row'>";
-			echo "<div class='col-5 text-secondary'>";
-			echo "&bull; l'Etudiant 2022 &nbsp;&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le classement du magasine L&apos;Etudiant en 2022 est réalisé en comptabilisant le nombre de points sur une cinquantaine de critères. 172 écoles y sont notées.<br>Le Groupe d&apos;appartenance de l&apos;école en 2022 est défini par le magasine L&apos;Etudiant selon la note obtenue par l&apos;école dans leur classement.<br/>A+ : 42 à 58 points<br/>A : 34 à 41 points<br/>B : 24 à 33 points<br/>C : 0 à 23 points'></i>";
-			echo "</div>";
-			echo "<div class='col-7 text-primary'>";
-			if (isset($GroupeEtudiant2022)) {
-				echo $GroupeEtudiant2022;
-			}
-			echo " &nbsp; ";
-			if (isset($RangEtudiant2022)) {
-				if ($RangEtudiant2022 != "") {
-					echo $RangEtudiant2022 . " / 172";
-				}
-			}
-			echo "</div>";
-			echo "</div>";
-
-// 				echo "<div class='row'>";
-// 				echo "<div class='col-5 text-secondary'>";
-// 				echo "Résumé de l'école par l'Etudiant :";
-// 				echo "</div>";
-// 				echo "<div class='col-7 text-primary'>";
-// 				echo "<a href=" . $UrlEtudiant . " target=_blank>" . $UrlEtudiant . "</a>";
-// 				echo "</div>";
-// 				echo "</div>";
-				
-			echo "</div>";
-			echo "<br/><hr><br/>";
-				
-			while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-				extract($row);
-
-				echo "<div class='row gy-4 justify-content-md-center'>";
-			    echo "<div class='col-md'>";
-
-				echo "<div class='p-3 border bg-light'>";
-
-				echo "<div class='row'>";
-				echo "<div class='col-5 text-secondary'>";
-				echo "<strong>Année :</strong>";
-				echo "</div>";
-				echo "<div class='col-7 text-primary'><strong>";
-				echo $An;
-				echo "</strong></div>";
-				echo "</div>";
-				
-				echo "<br/>";
-
-				echo "<div class='row'>";
-				echo "<div class='col-5 text-secondary'>";
-				echo "Nombre de places :";
-				echo "</div>";
-				echo "<div class='col-7 text-primary'>";
-				echo formater($Place,0);
-				echo "</div>";
-				echo "</div>";
-
-				echo "<div class='row'>";
-				echo "<div class='col-5 text-secondary'>";
-				echo "Nombre d'inscrits :";
-				echo "</div>";
-				echo "<div class='col-7 text-primary'>";
-				echo formater($Inscrit,0);
-				echo "</div>";
-				echo "</div>";
-				
-				echo "<div class='row'>";
-				echo "<div class='col-5 text-secondary'>";
-				echo "Nombre de classés :";
-				echo "</div>";
-				echo "<div class='col-7 text-primary'>";
-				echo formater($Classe,0);
-				echo "</div>";
-				echo "</div>";
-
-				echo "<div class='row'>";
-				echo "<div class='col-5 text-secondary'>";
-				echo "Nombre d'intégrés :";
-				echo "</div>";
-				echo "<div class='col-7 text-primary'>";
-				echo formater($Integre,0);
-				echo "</div>";
-				echo "</div>";
-
-				echo "</div></div>";
-								
-			    echo "<div class='col-md'>";
-				echo "<div class='p-3 border bg-light'>";
-	
-				echo "<div class='row'>";
-				echo "<div class='col-5 text-secondary'>";
-				echo "Rang médian des admis :";
-				echo "</div>";
-				echo "<div class='col-7 text-primary'>";
-				echo formater($RangMedian,0);
-				echo "</div>";
-				echo "</div>";
-
-
-				echo "<div class='row'>";
-				echo "<div class='col-5 text-secondary'>";
-				echo "Rang moyen des admis :";
-				echo "</div>";
-				echo "<div class='col-7 text-primary'>";
-				echo formater($RangMoyen,0);
-				echo "</div>";
-				echo "</div>";
-
-				echo "<div class='row'>";
-				echo "<div class='col-5 text-secondary'>";
-				echo "Rang du dernier admis :";
-				echo "</div>";
-				echo "<div class='col-7 text-primary'>";
-				echo formater($Dernier,0);
-				echo "</div>";
-				echo "</div>";
-
-				echo "<br/>";
-	
-				$selectivite = "";
-				$selectiviteMediane = "";
-				if ($Inscrit <> 0) {
-					if (($Dernier <>0) and ($Dernier <> "") ) {
-						$selectivite = ($Dernier / $Inscrit) * 100; 
+			chargerScript('https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js', 'script-chartjs-salaire')
+				.then(function () { return chargerScript('js/salaireEcole.js', 'script-salaire-ecole'); })
+				.then(function () { return fetch('php/ajax/salaire_ecole.php?' + params.toString()); })
+				.then(function (reponse) {
+					return reponse.json().then(function (donnees) {
+						if (!reponse.ok) { throw new Error(donnees.error || 'Erreur HTTP ' + reponse.status); }
+						return donnees;
+					});
+				})
+				.then(function (donnees) {
+					if (!Array.isArray(donnees) || donnees.length === 0) {
+						erreur.textContent = 'Aucune donnée salariale disponible pour cette école.';
+						erreur.classList.remove('d-none');
+						return;
 					}
-					if (($RangMedian <> 0) and ($RangMedian <> "")) {
-						$selectiviteMediane = ($RangMedian / $Inscrit) * 100;
-					}
-				}
-
-				echo "<div class='row'>";
-				echo "<div class='col-5 text-secondary'>";
-				echo "Sélectivité médiane : <i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La sélectivité médiane est le rapport rang médian divisé par le nombre d&apos;inscrits.'></i>";
-				echo "</div>";
-				echo "<div class='col-7 text-primary'>";
-				if ($selectiviteMediane <> "") {
-					echo formater($selectiviteMediane,1)."%";
-				}
-				echo "</div>";
-				echo "</div>";
-
-				echo "<div class='row'>";
-				echo "<div class='col-5 text-secondary'>";
-				echo "Sélectivité : <i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La sélectivité est le rapport rang du dernier admis divisé par le nombre d&apos;inscrits.'></i>";
-				echo "</div>";
-				echo "<div class='col-7 text-primary'>";
-				if ($selectivite <> "") {
-					echo formater($selectivite,1)."%";
-				}
-				echo "</div>";
-				echo "</div>";
-
-				echo "</div></div>";
-				echo "</div>";
-				echo "<br/>";
-				echo "<hr>";
-				echo "<br/>";
-			}
-			echo "</main>";
-		}
-		catch(PDOException $erreur)	{
-			echo "Erreur SELECT Note : " . $erreur->getMessage();
+					SalaireEcole.afficherGraphique(donnees, canvas, {});
+					SalaireEcole.construireTableau(donnees, tableau, { id: 'tableau-salaire-detail', titre: parametresOnglets.ecole });
+				})
+				.catch(function (e) {
+					erreur.textContent = 'Erreur lors du chargement des salaires : ' + e.message;
+					erreur.classList.remove('d-none');
+				});
 		}
 
-		// fermeture de la base
-		if (isset($result)) {$result->closeCursor();}
-		$db = null;	
-	?>
+		barre.querySelectorAll('button[data-bs-toggle="tab"]').forEach(function (bouton) {
+			bouton.addEventListener('show.bs.tab', function (evenement) {
+				chargerOnglet(document.querySelector(evenement.target.getAttribute('data-bs-target')));
+			});
+			bouton.addEventListener('shown.bs.tab', function (evenement) {
+				history.replaceState(null, '', evenement.target.getAttribute('data-bs-target'));
+			});
+		});
+		if (ongletActif === 'salaire' || ongletActif === 'classements') {
+			chargerOnglet(document.getElementById('onglet-' + ongletActif));
+		}
+
+		// ouverture directe d'un onglet via l'ancre de l'URL, ou via le paramètre
+		// filiere (lien provenant d'une autre page) : l'affichage initial reste sur
+		// Spécialités, seul le contenu de l'onglet ciblé est chargé après coup.
+		var ancre = window.location.hash;
+		if (/^#onglet-[a-z0-9\-]+$/.test(ancre)) {
+			var bouton = barre.querySelector('[data-bs-target="' + ancre + '"]');
+			if (bouton) { bootstrap.Tab.getOrCreateInstance(bouton).show(); }
+		}
+		else if (ongletInitial) {
+			var boutonFiliere = document.getElementById('tab-onglet-' + ongletInitial);
+			if (boutonFiliere) { bootstrap.Tab.getOrCreateInstance(boutonFiliere).show(); }
+		}
+	});
+
+	// le retour à la liste n'a de sens que si l'on arrive d'une page de résultats
+	document.addEventListener('DOMContentLoaded', function () {
+		var venantDUneListe = /\/resultat-d-integration-ecole-d-ingenieur-par-(ecole|filiere)-cpge-post-prepa\.php/.test(document.referrer);
+		if (!venantDUneListe) { return; }
+		['retourListe', 'filStatistiques'].forEach(function (id) {
+			var element = document.getElementById(id);
+			if (element) { element.hidden = false; }
+		});
+	});
+</script>

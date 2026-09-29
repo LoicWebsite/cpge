@@ -31,7 +31,7 @@ try {
         $where = " WHERE " . implode(" AND ", $conditions);
     }
 
-    $sql = "SELECT DISTINCT(Ecole) FROM Note" . $where . " ORDER BY Ecole ASC";
+    $sql = "SELECT DISTINCT(EcoleConcours) AS Ecole FROM Note" . $where . " ORDER BY EcoleConcours ASC";
     $stmt = $db->prepare($sql);
 
     // liaison sécurisée des paramètres

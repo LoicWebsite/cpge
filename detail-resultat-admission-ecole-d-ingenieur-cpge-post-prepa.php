@@ -31,13 +31,18 @@
 		$canonicalUrl .= '?' . http_build_query($canonicalParams, '', '&', PHP_QUERY_RFC3986);
 	}
 
+	$ecoleAffichee = str_replace("\\'", "'", remettreEsperluete($ecole));
+	$titrePage = ($ecoleAffichee !== '' && $ecoleAffichee !== 'toutes')
+		? $ecoleAffichee . " : admissions, classements et spécialités"
+		: "Détail admissions en école d'ingénieurs";
+
 ?>
 
 <html lang="fr">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Statistique SCEI sur les admissions d'une école d'ingénieur post prépa CPGE">
+    <meta name="description" content="<?php echo escapeHtml($titrePage); ?> - statistiques SCEI d'admission en école d'ingénieurs post prépa CPGE">
 		<link rel="canonical" href="<?php echo escapeHtml($canonicalUrl); ?>" />
 
 	<?php
@@ -45,7 +50,7 @@
 		include "php/favicon.php";
 	?>
 
-    <title>Détail admissions en école d'ingénieurs</title>
+    <title><?php echo escapeHtml($titrePage); ?></title>
 
 	<?php
 		// styles nécessaires à l'application (bootstrap + fontawasome + ECN)
@@ -64,8 +69,8 @@
 			  <ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php"><i class="bi bi-house-door-fill"></i></a></li>
 				<li class="breadcrumb-item"><a href="#" onclick="questionnaire()">Filière</a></li>
-				<li class="breadcrumb-item"><a href="javascript:window.history.back();">Statistiques</a></li>
-				<li class="breadcrumb-item active" aria-current="page">Détail</li>
+				<li class="breadcrumb-item" id="filStatistiques" hidden><a href="javascript:window.history.back();">Statistiques</a></li>
+				<li class="breadcrumb-item active" aria-current="page"><?php echo escapeHtml(($ecoleAffichee !== '' && $ecoleAffichee !== 'toutes') ? $ecoleAffichee : 'Détail'); ?></li>
 			  </ol>
 			</div>
 		</div>
@@ -82,7 +87,7 @@
 		<p class=text-center>
 			<button class="btn btn-primary" onclick="questionnaire()">|&larr; Retour aux critères</button>
 &nbsp;&nbsp;&nbsp;
-			<button class="btn btn-primary" onclick="javascript:window.history.back();">&larr; Retour à la liste</button>
+			<button class="btn btn-primary" id="retourListe" hidden onclick="javascript:window.history.back();">&larr; Retour à la liste</button>
 		</p>
 	</footer>
 

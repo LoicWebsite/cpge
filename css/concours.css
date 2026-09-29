@@ -21,6 +21,15 @@ table {
 
 tr:hover { background: AliceBlue; }
 
+/* Bascule manuelle "en liste" / "en tableau" (voir js/basculeAffichage.js) :
+   remplace le comportement responsive par défaut quand l'utilisateur a
+   explicitement choisi un mode, quelle que soit la largeur de son écran. */
+body.forcer-tableau .vue-cartes { display: none !important; }
+body.forcer-tableau .vue-tableau { display: block !important; }
+body.forcer-liste .vue-tableau { display: none !important; }
+body.forcer-liste .vue-cartes { display: block !important; }
+
+
 td {
 	font-family:'Arial', 'Arial', sans-serif;
 	font-size:70%;
@@ -62,4 +71,105 @@ th {
 
 .breadcrumb {
   background: none; 
+}
+
+/* page détail d'une école : barre d'onglets maintenue sous le menu pendant le défilement */
+.onglets-ecole {
+	overflow-x: auto;
+	overflow-y: hidden;
+	-webkit-overflow-scrolling: touch;
+	scrollbar-width: thin;
+	position: sticky;
+	top: 56px;
+	z-index: 1020;
+	background-color: #fff;
+}
+
+.onglets-ecole .nav-tabs {
+	flex-wrap: nowrap;
+	white-space: nowrap;
+	border-bottom-width: 1px;
+}
+
+.onglets-ecole .nav-link {
+	white-space: nowrap;
+	flex: 0 0 auto;
+}
+
+/* sur mobile les onglets passent à la ligne : aucun n'est masqué hors écran */
+@media (max-width: 767.98px) {
+	.onglets-ecole {
+		overflow-x: visible;
+	}
+
+	.onglets-ecole .nav-tabs {
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
+	.onglets-ecole .nav-link {
+		padding: 0.35rem 0.6rem;
+		font-size: 0.9rem;
+	}
+}
+
+/* les tableaux de la page détail restent lisibles dans les onglets */
+.tab-pane table caption {
+	caption-side: top;
+}
+
+.tab-pane table.table-filiere td {
+	font-size: 85%;
+}
+
+.tab-pane table.table-filiere th {
+	font-size: 90%;
+}
+
+/* le tableau des classements doit rester compact mais plus lisible */
+.tab-pane table.table-classements td {
+	font-size: 90%;
+}
+
+.tab-pane table.table-classements th {
+	font-size: 95%;
+}
+
+/* pas d'en-tête flottant sur les tableaux courts de la page détail */
+.tab-pane th {
+	position: static;
+	top: auto;
+}
+
+@media (max-width: 575.98px) {
+	.tab-pane td {
+		font-size: 85%;
+	}
+	.tab-pane th {
+		font-size: 90%;
+	}
+}
+
+/* spécialités : listes de libellés, mises en colonnes plutôt qu'en tableau */
+.liste-specialites {
+	column-count: 2;
+	column-gap: 2.5rem;
+	margin-bottom: 0.75rem;
+}
+
+.liste-specialites li {
+	break-inside: avoid;
+	margin-bottom: 0.35rem;
+}
+
+@media (min-width: 1200px) {
+	.liste-specialites {
+		column-count: 3;
+	}
+}
+
+@media (max-width: 767.98px) {
+	.liste-specialites {
+		column-count: 1;
+	}
 }

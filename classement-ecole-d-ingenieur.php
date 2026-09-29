@@ -132,9 +132,10 @@
 			<div class="tab-pane fade show active" id="daur-2025" role="tabpanel" aria-labelledby="tab-daur-2025">
 			<?php
 				// exécution de la requête SQL pour le classement DAUR 2025 (sur data 2024)
-				$sql = "SELECT DISTINCT DAUR.Ecole, DAUR.Rang, DAUR.Groupe, DAUR.Point, DAUR.UrlEcole
+				$sql = "SELECT DISTINCT DAUR.Ecole, DAUR.Rang, DAUR.Groupe, DAUR.Point, Ecole.UrlEcole
 						FROM DAUR
-						INNER JOIN Ecole ON Ecole.EcoleClassement LIKE CONCAT('%',DAUR.Ecole,'%')
+						INNER JOIN EcoleConcours ON EcoleConcours.Ecole LIKE CONCAT('%',DAUR.Ecole,'%')
+						LEFT JOIN Ecole ON Ecole.Ecole = DAUR.Ecole
 						WHERE DAUR.Ecole IS NOT NULL AND DAUR.An = '2024'
 						ORDER BY DAUR.Rang;";
 				
@@ -178,7 +179,7 @@
 						echo "<td ".$class." style='text-align:center'>" . $Groupe . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
-						echo "<td ".$class." style='padding-left:10px'><strong>" . $Ecole . "</strong></td>";
+						echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEcole . "' target=_blank>" . $UrlEcole . "</a></td>";
 						echo "</tr>";	
 
@@ -199,9 +200,10 @@
 			<div class="tab-pane fade" id="daur-2024" role="tabpanel" aria-labelledby="tab-daur-2024">
 			<?php
 				// exécution de la requête SQL pour le classement DAUR 2023
-				$sql = "SELECT DISTINCT DAUR.Ecole, DAUR.Rang, DAUR.Groupe, DAUR.Point, DAUR.UrlEcole
+				$sql = "SELECT DISTINCT DAUR.Ecole, DAUR.Rang, DAUR.Groupe, DAUR.Point, Ecole.UrlEcole
 						FROM DAUR
-						INNER JOIN Ecole ON Ecole.EcoleClassement LIKE CONCAT('%',DAUR.Ecole,'%')
+						INNER JOIN EcoleConcours ON EcoleConcours.Ecole LIKE CONCAT('%',DAUR.Ecole,'%')
+						LEFT JOIN Ecole ON Ecole.Ecole = DAUR.Ecole
 						WHERE DAUR.Ecole IS NOT NULL AND DAUR.An = '2023'
 						ORDER BY DAUR.Rang;";
 				
@@ -245,7 +247,7 @@
 						echo "<td ".$class." style='text-align:center'>" . $Groupe . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
-						echo "<td ".$class." style='padding-left:10px'><strong>" . $Ecole . "</strong></td>";
+							echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEcole . "' target=_blank>" . $UrlEcole . "</a></td>";
 						echo "</tr>";	
 
@@ -266,9 +268,10 @@
 			<div class="tab-pane fade" id="daur-2023" role="tabpanel" aria-labelledby="tab-daur-2023">
 			<?php
 				// exécution de la requête SQL pour le classement DAUR (DAUR 2023 est classé en 2022, date des données)
-				$sql = "SELECT DISTINCT DAUR.Ecole, DAUR.Rang, DAUR.Groupe, DAUR.Point, DAUR.UrlEcole
+				$sql = "SELECT DISTINCT DAUR.Ecole, DAUR.Rang, DAUR.Groupe, DAUR.Point, Ecole.UrlEcole
 						FROM DAUR
-						INNER JOIN Ecole ON Ecole.EcoleClassement LIKE CONCAT('%',DAUR.Ecole,'%')
+						INNER JOIN EcoleConcours ON EcoleConcours.Ecole LIKE CONCAT('%',DAUR.Ecole,'%')
+						LEFT JOIN Ecole ON Ecole.Ecole = DAUR.Ecole
 						WHERE DAUR.Ecole IS NOT NULL AND DAUR.An = '2022'
 						ORDER BY DAUR.Rang;";
 				
@@ -312,7 +315,7 @@
 						echo "<td ".$class." style='text-align:center'>" . $Groupe . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
-						echo "<td ".$class." style='padding-left:10px'><strong>" . $Ecole . "</strong></td>";
+							echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEcole . "' target=_blank>" . $UrlEcole . "</a></td>";
 						echo "</tr>";	
 
@@ -335,7 +338,7 @@
 				// exécution de la requête SQL pour le classement Figaro 2025
 				$sql = "SELECT DISTINCT Figaro.Ecole, Figaro.Rang, Figaro.Point, Figaro.UrlFigaro
 						FROM Figaro
-						INNER JOIN Ecole ON Ecole.EcoleClassement LIKE CONCAT('%',Figaro.Ecole,'%')
+						INNER JOIN EcoleConcours ON EcoleConcours.Ecole LIKE CONCAT('%',Figaro.Ecole,'%')
 						WHERE Figaro.Ecole IS NOT NULL AND Figaro.An = '2025'
 						ORDER BY Figaro.Rang, Figaro.Ecole;";
 				
@@ -369,7 +372,7 @@
 						echo "<tr ondblclick='zoom(" . $jsEcole . ")'>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
-						echo "<td ".$class." style='padding-left:10px'><strong>" . $Ecole . "</strong></td>";
+							echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlFigaro . "' target=_blank>" . $Ecole . "</a></td>";
 						echo "</tr>";	
 					}
@@ -388,7 +391,7 @@
 				// exécution de la requête SQL pour le classement Figaro 2024
 				$sql = "SELECT DISTINCT Figaro.Ecole, Figaro.Rang, Figaro.Point, Figaro.UrlFigaro
 						FROM Figaro
-						INNER JOIN Ecole ON Ecole.EcoleClassement LIKE CONCAT('%',Figaro.Ecole,'%')
+						INNER JOIN EcoleConcours ON EcoleConcours.Ecole LIKE CONCAT('%',Figaro.Ecole,'%')
 						WHERE Figaro.Ecole IS NOT NULL AND Figaro.An = '2023'
 						ORDER BY Figaro.Rang, Figaro.Ecole;";
 				
@@ -422,7 +425,7 @@
 						echo "<tr ondblclick='zoom(" . $jsEcole . ")'>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
-						echo "<td ".$class." style='padding-left:10px'><strong>" . $Ecole . "</strong></td>";
+						echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlFigaro . "' target=_blank>" . $Ecole . "</a></td>";
 						echo "</tr>";	
 					}
@@ -439,11 +442,12 @@
 			<div class="tab-pane fade" id="etudiant-2023" role="tabpanel" aria-labelledby="tab-etudiant-2023">
 			<?php
 				// exécution de la requête SQL pour le classement de l'Etudiant
-				$sql = "SELECT DISTINCT Classement.Ecole, Classement.Rang, Classement.Point, Classement.Groupe, Classement.UrlEtudiant, Classement.UrlEcole
-						FROM Classement
-						INNER JOIN Ecole ON Ecole.EcoleClassement LIKE CONCAT('%', Classement.Ecole,'%')
-						WHERE Classement.Ecole IS NOT NULL AND Classement.An = '2023'
-						ORDER BY Classement.Rang;";
+				$sql = "SELECT DISTINCT Letudiant.Ecole, Letudiant.Rang, Letudiant.Point, Letudiant.Groupe, Letudiant.UrlEtudiant, Ecole.UrlEcole
+						FROM Letudiant
+						INNER JOIN EcoleConcours ON EcoleConcours.Ecole LIKE CONCAT('%', Letudiant.Ecole,'%')
+						LEFT JOIN Ecole ON Ecole.Ecole = Letudiant.Ecole
+						WHERE Letudiant.Ecole IS NOT NULL AND Letudiant.An = '2023'
+						ORDER BY Letudiant.Rang;";
 				if ($debug) echo "SQL = " . $sql ."<br>";
 				try {
 					$result = $db->query($sql);
@@ -485,7 +489,7 @@
 						echo "<td ".$class." style='text-align:center'>" . $Groupe . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
-						echo "<td ".$class." style='padding-left:10px'><strong>" . $Ecole . "</strong></td>";
+						echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEcole . "' target=_blank>" . $UrlEcole . "</a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEtudiant . "' target=_blank>Fiche " . $Ecole . "</a></td>";
 						echo "</tr>";	
@@ -508,11 +512,12 @@
 			<div class="tab-pane fade" id="etudiant-2022" role="tabpanel" aria-labelledby="tab-etudiant-2022">
 			<?php
 				// exécution de la requête SQL pour le classement de l'Etudiant
-				$sql = "SELECT DISTINCT Classement.Ecole, Classement.Rang, Classement.Point, Classement.Groupe, Classement.UrlEtudiant, Classement.UrlEcole
-						FROM Classement
-						INNER JOIN Ecole ON Ecole.EcoleClassement LIKE CONCAT('%', Classement.Ecole,'%')
-						WHERE Classement.Ecole IS NOT NULL AND Classement.An = '2022'
-						ORDER BY Classement.Rang;";
+				$sql = "SELECT DISTINCT Letudiant.Ecole, Letudiant.Rang, Letudiant.Point, Letudiant.Groupe, Letudiant.UrlEtudiant, Ecole.UrlEcole
+						FROM Letudiant
+						INNER JOIN EcoleConcours ON EcoleConcours.Ecole LIKE CONCAT('%', Letudiant.Ecole,'%')
+						LEFT JOIN Ecole ON Ecole.Ecole = Letudiant.Ecole
+						WHERE Letudiant.Ecole IS NOT NULL AND Letudiant.An = '2022'
+						ORDER BY Letudiant.Rang;";
 				if ($debug) echo "SQL = " . $sql ."<br>";
 				try {
 					$result = $db->query($sql);
@@ -554,7 +559,7 @@
 						echo "<td ".$class." style='text-align:center'>" . $Groupe . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
-						echo "<td ".$class." style='padding-left:10px'><strong>" . $Ecole . "</strong></td>";
+						echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEcole . "' target=_blank>" . $UrlEcole . "</a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEtudiant . "' target=_blank>Fiche " . $Ecole . "</a></td>";
 						echo "</tr>";	
@@ -607,7 +612,7 @@
 		// pour zoomer sur une école
 		function zoom(ecole) {
 			<?php
-				$baseZoom = 'resultat-d-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php?origine=classement&ecole=';
+				$baseZoom = 'detail-resultat-admission-par-ecole.php?origine=classement&ecole=';
 				echo 'window.location.href = ' . encodeJs($baseZoom) . ' + encodeURIComponent(ecole);';
 			?>
 		}

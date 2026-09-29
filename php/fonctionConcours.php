@@ -122,6 +122,10 @@ function extraireNomEcolePourRecherche($formation) {
 	$out = preg_replace('/\\s*\\(.*?\\)\\s*/u', ' ', $out);
 	$out = trim(preg_replace('/\\s+/', ' ', $out));
 
+	// retirer un article "L'" / "L’" en tête (apostrophe droite ou typographique) :
+	// certaines écoles sont nommées tantôt avec, tantôt sans cet article selon la source.
+	$out = preg_replace('/^L[\'’]\s*/iu', '', $out);
+
 	return $out;
 }
 

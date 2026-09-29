@@ -70,6 +70,14 @@
 				}
 				echo "</li>";
 
+				echo "<li class='nav-item'>";
+				if ($menu == "specialite") {
+					echo "<a class='nav-link active' href='statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php' onclick='collapseMenu(this);'>Spécialité</a>";
+				} else {
+					echo "<a class='nav-link' href='statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php' onclick='collapseMenu(this);'>Spécialité</a>";
+				}
+				echo "</li>";
+
 
 				// dropdown for classement + attractivité + salaires
 				echo "<li class='nav-item dropdown'>";

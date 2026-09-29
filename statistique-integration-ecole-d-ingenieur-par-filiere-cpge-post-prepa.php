@@ -226,14 +226,26 @@
 				<h2 class="h4" style="text-align:left;">2 - Visualiser les statistiques d'admissions</h2>
 
 				<div class="text-center">
-					<div>
-						<button type="submit" class="btn btn-primary mt-1 mb-5">Voir les statistiques</button>
+					<div class="d-flex flex-wrap justify-content-center gap-3 mt-1 mb-3">
+						<div>
+							<button type="submit" class="btn btn-primary">
+								<i class="bi bi-table"></i>&nbsp; Voir les statistiques
+							</button>
+							<div><small class="text-muted">Tableau comparatif année par année</small></div>
+						</div>
+						<div>
+							<button type="button" id="ficheEcole" class="btn btn-primary" disabled>
+								<i class="bi bi-bank2"></i>&nbsp; Voir la fiche de l'école
+							</button>
+							<div><small class="text-muted">Classements, filières et spécialités<sup>*</sup></small></div>
+						</div>
 					</div>
 				</div>
 				<div class="text-center">
 					<em>Effacer tous les critères pour recommencer une nouvelle recherche</em>
 					<br/><button name="reset" type="reset" class="btn btn-info mt-1 mb-5">Effacer les critères</button>
 				</div>
+				<span style='font-style:italic;'><sup>*</sup><small>la sélection d'une école précise est obligatoire pour accéder à sa fiche.</small></span>
 			</nav>
 		</form>
 
@@ -458,6 +470,44 @@
 			return true;
 		}
     </script>	
+
+	<!-- accès direct à la fiche d'une école, seulement si une école précise est sélectionnée -->
+	<script>
+		(function () {
+			var champEcole = document.getElementById('ecole');
+			var bouton = document.getElementById('ficheEcole');
+
+			function ecoleChoisie() {
+				var valeur = champEcole.value;
+				return valeur !== '' && valeur !== 'toutes';
+			}
+
+			function actualiser() {
+				bouton.disabled = !ecoleChoisie();
+			}
+
+			champEcole.addEventListener('change', actualiser);
+
+			// la liste des écoles est alimentée en AJAX après le choix de la filière et du concours
+			new MutationObserver(actualiser).observe(champEcole, { childList: true });
+
+			document.querySelector('button[name="reset"]').addEventListener('click', function () {
+				setTimeout(actualiser, 0);
+			});
+
+			bouton.addEventListener('click', function () {
+				if (!ecoleChoisie()) { return; }
+				var url = 'detail-resultat-admission-par-ecole.php?ecole=' + encodeURIComponent(champEcole.value);
+				var filiere = document.getElementById('filiere').value;
+				if (filiere !== '' && filiere !== 'toutes') {
+					url += '&filiere=' + encodeURIComponent(filiere);
+				}
+				window.location.href = url;
+			});
+
+			actualiser();
+		})();
+	</script>
 
   </body>
 </html>

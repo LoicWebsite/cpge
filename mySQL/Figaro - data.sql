@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost:8889
--- Généré le : sam. 29 mars 2025 à 17:08
+-- Hôte : localhost
+-- Généré le : sam. 05 sep. 2026 à 16:18
 -- Version du serveur : 5.7.39
 -- Version de PHP : 8.2.0
 
@@ -70,7 +70,7 @@ INSERT INTO `Figaro` (`An`, `Rang`, `Ecole`, `Point`, `UrlFigaro`) VALUES
 (2023, 60, 'ENSSAT Lannion', 13.3, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34704-enssat-formations-et-admission/'),
 (2023, 23, 'ENSTA Bretagne', 14.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34650-ensta-bretagne-concours-et-classement/'),
 (2023, 6, 'ENSTA Paris', 15.9, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34620-ensta-paris-specialites-concours-et-salaire-a-la-sortie/'),
-(2023, 55, 'ENSTBB Bordeaux', 13.4, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34432-cpbx-enstbb/'),
+(2023, 55, 'ENSTBB', 13.4, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34432-cpbx-enstbb/'),
 (2023, 47, 'ENSTIB Epinal', 13.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34692-enstib-masters-proposes-concours-et-frais/'),
 (2023, 44, 'ENTPE Lyon', 13.6, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34680-entpe-formations-concours-et-classement/'),
 (2023, 39, 'EOST Strasbourg', 13.8, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34708-eost-admission-et-frais-de-scolarite/'),
@@ -78,7 +78,7 @@ INSERT INTO `Figaro` (`An`, `Rang`, `Ecole`, `Point`, `UrlFigaro`) VALUES
 (2023, 84, 'ESB Nantes', 12.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34696-esb-tout-savoir-sur-l-ecole-du-bois/'),
 (2023, 32, 'ESBS', 14, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34710-esbs-programmes-prix-et-classement/'),
 (2023, 65, 'ESIAB Brest', 13.2, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34702-esiab-presentation-parcours-et-campus/'),
-(2023, 78, 'Esix Normandie', 12.9, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34670-esix-normandie-presentation-et-admission/'),
+(2023, 78, 'Esix', 12.9, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34670-esix-normandie-presentation-et-admission/'),
 (2023, 10, 'ESPCI Paris', 15.3, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34612-espci-paris-psl-admission-prepa-et-classement/'),
 (2023, 60, 'ESTIA Bidart', 13.3, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/28804-cpbx-estia/'),
 (2023, 23, 'ESTP Paris', 14.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34648-estp-prepa-admission-et-prix/'),
@@ -96,8 +96,8 @@ INSERT INTO `Figaro` (`An`, `Rang`, `Ecole`, `Point`, `UrlFigaro`) VALUES
 (2023, 39, 'ISAE-ENSMA Poitiers', 13.8, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34698-isae-ensma-classement-concours-et-frais-de-scolarite/'),
 (2023, 47, 'Isae-Supméca', 13.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34724-supmeca-presentation-difficulte-et-classement/'),
 (2023, 78, 'ISIFC Besançon', 12.9, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34660-isifc-masters-et-admission/'),
-(2023, 72, 'ISIMA', 13, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34592-isima-admission-frais-de-scolarite-et-classement/'),
-(2023, 67, 'ITECH Lyon', 13.1, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34762-itech-lyon-classement-prix-et-salaire-a-la-sortie/'),
+(2023, 72, 'ISIMA Clermont-Ferrand', 13, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34592-isima-admission-frais-de-scolarite-et-classement/'),
+(2023, 67, 'ITECH', 13.1, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34762-itech-lyon-classement-prix-et-salaire-a-la-sortie/'),
 (2023, 14, 'MINES de NANCY', 14.9, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34630-mines-nancy-programmes-et-salaire-a-la-sortie/'),
 (2023, 2, 'MINES Paris', 17.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34606-mines-paris-psl-admission-et-classement/'),
 (2023, 14, 'MINES Saint-Etienne', 14.9, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34640-mines-saint-etienne-programmes-et-admission/'),
@@ -157,7 +157,7 @@ INSERT INTO `Figaro` (`An`, `Rang`, `Ecole`, `Point`, `UrlFigaro`) VALUES
 (2025, 53, 'ENSSAT Lannion', 13.2, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34704-enssat-formations-et-admission/'),
 (2025, 21, 'ENSTA Bretagne', 14.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34650-ensta-bretagne-concours-et-classement/'),
 (2025, 8, 'ENSTA Paris', 15.9, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34620-ensta-paris-specialites-concours-et-salaire-a-la-sortie/'),
-(2025, 75, 'ENSTBB Bordeaux', 12.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34432-cpbx-enstbb/'),
+(2025, 75, 'ENSTBB', 12.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34432-cpbx-enstbb/'),
 (2025, 75, 'ENSTIB Epinal', 12.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34692-enstib-masters-proposes-concours-et-frais/'),
 (2025, 37, 'ENTPE Lyon', 13.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34680-entpe-formations-concours-et-classement/'),
 (2025, 31, 'EOST Strasbourg', 14.1, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34708-eost-admission-et-frais-de-scolarite/'),
@@ -178,6 +178,7 @@ INSERT INTO `Figaro` (`An`, `Rang`, `Ecole`, `Point`, `UrlFigaro`) VALUES
 (2025, 43, 'IMT Mines Albi', 13.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34720-imt-mines-albi-formations-admission-et-frais/'),
 (2025, 34, 'IMT Mines Alès', 13.9, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34654-imt-mines-d-ales-formations-et-tarifs/'),
 (2025, 43, 'IMT Nord Europe', 13.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34482-imt-nord-europe/'),
+(2025, 47, 'Institut Agro – Montpellier', 13.4, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34682-institut-agro-montpellier-diplomes-prix-et-debouches/'),
 (2025, 5, 'ISAE - SUPAERO', 16.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34634-isae-supaero-tout-sur-l-ecole-des-pilotes-de-ligne/'),
 (2025, 37, 'ISAE-ENSMA Poitiers', 13.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34698-isae-ensma-classement-concours-et-frais-de-scolarite/'),
 (2025, 41, 'ISAE-Supméca', 13.6, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34724-isae-supmeca/'),
@@ -187,7 +188,6 @@ INSERT INTO `Figaro` (`An`, `Rang`, `Ecole`, `Point`, `UrlFigaro`) VALUES
 (2025, 10, 'MINES de NANCY', 15.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34630-mines-nancy-programmes-et-salaire-a-la-sortie/'),
 (2025, 2, 'MINES Paris', 17.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34606-mines-paris-psl-admission-et-classement/'),
 (2025, 24, 'MINES Saint-Etienne', 14.4, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34640-mines-saint-etienne-programmes-et-admission/'),
-(2025, 47, 'Montpellier Sup Agro', 13.4, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34682-institut-agro-montpellier-diplomes-prix-et-debouches/'),
 (2025, 75, 'ONIRIS Nantes', 12.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/25222-ecole-nationale-veterinaire-agroalimentaire-et-de-l-alimentation-de-nantes-atlantique-oniris-site-de-la-chantrerie/'),
 (2025, 75, 'Paoli Tech', 12.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34732-paoli-tech-tout-sur-l-ecole-d-ingenieurs-corse/'),
 (2025, 3, 'PONTS ParisTech', 17.2, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34608-ecole-des-ponts-paristech-masters-disponibles-et-admission/'),

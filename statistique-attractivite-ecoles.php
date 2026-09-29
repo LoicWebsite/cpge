@@ -111,9 +111,9 @@
                 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     extract($row);
                     // utiliser la fonction qui extrait le nom d'école adapté pour la recherche
-                    echo '<tr ondblclick="zoom(&apos;'.supprimerApostrophe(extraireNomEcolePourRecherche($Formation)).'&apos;)">';
+                    echo '<tr ondblclick="zoom(&apos;'.supprimerApostrophe(extraireNomEcolePourRecherche($Formation)).'&apos;)" title="Double-cliquer sur la ligne pour afficher le détail">';
                     echo "<td style='text-align:center'>" . escapeHtml($Rang) . "</td>";
-                    echo "<td style='padding-left:10px'><strong>" . escapeHtml($Formation) . "</strong></td>";
+                    echo "<td style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=attractivite&amp;ecole=" . rawurlencode(extraireNomEcolePourRecherche($Formation)) . "'><strong>" . escapeHtml($Formation) . "</strong></a></td>";
                     echo "<td style='text-align:center'>" . escapeHtml($Effectif) . "</td>";
                     echo "<td style='text-align:center'>" . escapeHtml($Attractivite) . "</td>";
                     echo "</tr>";
@@ -175,7 +175,7 @@
         // pour zoomer sur une école
         function zoom(ecole) {
             <?php
-				echo "window.location.href='resultat-d-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php?origine=attractivite&ecole=' + encodeURIComponent(ecole)";
+                    echo "window.location.href='detail-resultat-admission-par-ecole.php?origine=attractivite&ecole=' + encodeURIComponent(ecole)";
             ?>
         }
 

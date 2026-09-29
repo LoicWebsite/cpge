@@ -46,4 +46,14 @@
 	$concours = isset($_GET['concours']) ? (string)$_GET['concours'] : "";
 	$concours = substr($concours, 0, 256);	
 
+	// Paramètres de navigation à valeurs fermées : une seule valeur valide est
+	// retenue afin d'éviter qu'une URL arbitraire ne modifie le comportement.
+	$strict = isset($_GET['strict']) && (string)$_GET['strict'] === '1';
+	$rechercher = isset($_GET['rechercher']) && (string)$_GET['rechercher'] === '1';
+	$origineParametre = isset($_GET['origine']) ? (string)$_GET['origine'] : '';
+	// Ces valeurs pilotent uniquement le libellé et la destination du bouton retour.
+	$origine = in_array($origineParametre, ['specialite', 'attractivite', 'classement', 'salaire', 'filiere', 'ecole'], true)
+		? $origineParametre
+		: '';
+
 ?>

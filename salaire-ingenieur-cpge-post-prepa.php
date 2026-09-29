@@ -12,6 +12,7 @@
     <?php include "php/style.php"; ?>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="js/salaireEcole.js"></script>
     <style>
       th, td { font-size: 100%; }
       #zone-tableau { overflow-x: auto; }
@@ -54,7 +55,8 @@
           qui mesure l'insertion professionnelle des diplômés de l'enseignement supérieur <small>(source : <a href="https://data.enseignementsup-recherche.gouv.fr/explore/assets/fr-esr-insersup/" target="_blank" rel="noopener">InserSup – data.gouv.fr</a>)</small>.
           <br>
           Les salaires sont exprimés en <strong>salaire mensuel net en équivalent temps plein (ETP)</strong>,
-          mesurés à <strong>12, 18, 24 et 30 mois</strong> après l'obtention du diplôme. Les rémunérations proviennent des déclarations sociales des emloyeurs (DSN) et sont donc fiables (ils ne proviennent pas d'une enquête).<br><br>
+          mesurés à <strong>12, 18, 24 et 30 mois</strong> après l'obtention du diplôme. Les rémunérations proviennent des déclarations sociales des emloyeurs (DSN) et sont donc fiables (ils ne proviennent pas d'une enquête).
+          Il s'agit des salaires nets en France, incluant les éventuelles primes.<br><br>
           Trois indicateurs sont affichés :
         </p>
         <ul>
@@ -214,8 +216,26 @@
         return (isNaN(n) || n <= 0) ? null : Math.round(n);
       }
 
+      // Réaffiche un élément identifié par son sélecteur CSS.
       function afficher(selector) { document.querySelector(selector).style.display = ''; }
+      // Masque un élément identifié par son sélecteur CSS.
       function masquer(selector)  { document.querySelector(selector).style.display = 'none'; }
+
+      // Construit l'URL canonique de la fiche en conservant l'origine salaire.
+      function urlFicheEcole(ecole) {
+        return 'detail-resultat-admission-par-ecole.php?origine=salaire&ecole=' + encodeURIComponent(ecole);
+      }
+
+      // Ouvre la fiche d'une école lorsqu'un rattachement EcoleSalaire existe.
+      function ouvrirFicheEcole(ecole) {
+        if (ecole) window.location.href = urlFicheEcole(ecole);
+      }
+
+      // Rend le libellé cliquable uniquement quand il possède une fiche canonique.
+      function afficherLienEcole(ecole, libelle) {
+        if (!ecole) return escHtml(libelle);
+        return '<a href="' + urlFicheEcole(ecole) + '"><strong>' + escHtml(libelle) + '</strong></a>';
+      }
 
       // ──────────────────────────────────────────────────────────────────
       // Onglet 1 – chargement de la liste déroulante
@@ -353,6 +373,11 @@
       // ──────────────────────────────────────────────────────────────────
 
       function afficherGraphique(data) {
+        afficher('#zone-legende');
+        afficher('#zone-graphique');
+        monChart = SalaireEcole.afficherGraphique(data, document.getElementById('canvas-salaire'), { chart: monChart });
+        return;
+
         var labels = ['12 mois', '18 mois', '24 mois', '30 mois'];
 
         // Une courbe par promotion, sur les 4 horizons en abscisse
@@ -444,9 +469,11 @@
 
       function afficherTableau(data, etab) {
         var idT = 'tableau-salaire';
+        var ecole = data.length > 0 ? data[0].ecole : null;
         var html = '<table id="' + idT + '">';
         html += '<caption style="caption-side:top;"><small>';
-        html += 'Salaires mensuels nets ETP (€) &ndash; ' + escHtml(etab) + '.';
+        html += 'Salaires mensuels nets ETP (€) &ndash; ';
+        html += afficherLienEcole(ecole, etab) + '.';
         html += '<br>Cliquer pour télécharger au format CSV&nbsp;: </small>';
         html += '<button type="button" class="btn btn-secondary btn-sm" ';
         html += 'onclick="tableToCSV(\'#' + idT + '\',\'promotion;indicateur;12 mois;18 mois;24 mois;30 mois\')"><i class="bi bi-download"></i> csv</button>';
@@ -467,7 +494,7 @@
           }
 
           // Q1
-          html += '<tr>';
+          html += '<tr' + (ecole ? ' data-ecole="' + escHtml(ecole) + '" ondblclick="ouvrirFicheEcole(this.dataset.ecole)" style="cursor:pointer"' : '') + '>';
           html += '<td rowspan="3" class="align-middle text-center fw-bold">' + escHtml(row.promotion) + '</td>';
           html += '<td>1er quartile (Q1)</td>';
           html += cel(row.q1_12) + cel(row.q1_18) + cel(row.q1_24) + cel(row.q1_30);
@@ -507,6 +534,7 @@
           .replace(/>/g, '&gt;')
           .replace(/"/g, '&quot;');
       }
+          window.ouvrirFicheEcole = ouvrirFicheEcole;
 
       // ──────────────────────────────────────────────────────────────────
       // changerTexte(btn)
@@ -652,9 +680,9 @@
             var n = round(v);
             return '<td class="text-center">' + (n !== null ? n + '&nbsp;€' : '<span class="text-muted">n/d</span>') + '</td>';
           }
-          html += '<tr>';
+          html += '<tr' + (row.ecole ? ' data-ecole="' + escHtml(row.ecole) + '" ondblclick="ouvrirFicheEcole(this.dataset.ecole)" style="cursor:pointer"' : '') + '>';
           html += '<td class="text-center">' + (i + 1) + '</td>';
-          html += '<td style="padding-left:6px"><strong>' + escHtml(row.etablissement) + '</strong></td>';
+          html += '<td style="padding-left:6px">' + afficherLienEcole(row.ecole, row.etablissement) + '</td>';
           html += cel(row.q1) + cel(row.med) + cel(row.q3);
           html += '</tr>';
         });

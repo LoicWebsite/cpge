@@ -33,9 +33,9 @@ function tableToCSV(idTableau, enTete) {
         let csvrow = [];
         for (let j = 0; j < cols.length; j++) {
 
-            // Get the text data of each cell
-            // of a row and push it to csvrow
-            csvrow.push(cols[j].textContent);
+            // data-csv permet de restreindre l'export à une partie du contenu
+            // affiché (ex. une cellule combinant plusieurs informations visuelles)
+            csvrow.push(cols[j].hasAttribute('data-csv') ? cols[j].getAttribute('data-csv') : cols[j].textContent);
         }
 
         // Combine each column value with comma

@@ -38,7 +38,8 @@
 	?>
 
 	<header class="container" style='margin-top:90px;'>
-		<h1>Statistiques intégrations post CPGE</h1>
+		<h1>Choisir son école d'ingénieurs après une prépa scientifique</h1>
+		<p class="lead text-center">Comparez les admissions, classements, spécialités et salaires des écoles d'ingénieurs.</p>
 		<br/>
 	</header>
 
@@ -47,12 +48,8 @@
 		<div id="actualite" class="container ancre">
 			<br/>
 			<p class="text-center">
-				<mark style="color:#808080;"><strong>Actualité</strong> : dans le menu Palmarès vous retrouverez le classement des écoles d'ingénieurs.
-				<br>Vous y trouverez aussi dorénavant l'attractivité des écoles (selon DAUR)
-				<br>et le salaire des écoles de 12 à 30 mois après la diplomation.
-				</mark>
-			</p>
-			<br/>
+			<mark style="color:#808080;"><strong>Actualité</strong> : vous pouvez désormais rechercher les écoles d'ingénieurs par spécialité ou domaine d'intérêt.
+			<br>Essayez par exemple informatique, robotique, énergie, matériaux, data ou cybersécurité.
 		</div>
 
 		<section>
@@ -60,19 +57,22 @@
 			<div>
 				<p class="text-center"><i class="bi bi-bank2"></i>&nbsp;&nbsp;<a href="statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php">Statistiques d'admissions <strong>par filière</strong> et concours</a></p>
 				<p class="text-center"><i class="bi bi-mortarboard-fill"></i>&nbsp;&nbsp;<a href="statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php">Statistiques d'admissions <strong>pour une école</strong></a></p>
+				<p class="text-center"><i class="bi bi-diagram-3"></i>&nbsp;&nbsp;<a href="statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php">Recherche d'une école <strong>par spécialité</strong></a></p>
 				<p class="text-center"><i class="bi bi-clipboard-data"></i>&nbsp;&nbsp;<a href="classement-ecole-d-ingenieur.php"><strong>Classement</strong> des écoles</a></p>
 			</div>
 			<br/><hr>
 			<h2 class="h4">A quoi sert ce site ?</h2>
 			<br/>
 			<div>
-				<p>Ce site est <strong>un <em>visualisateur</em> des statistiques SCEI</strong>. Il permet d'explorer les résultats d'admissions aux écoles d'ingénieurs post CPGE par filière, par concours ou par école. Les données sont issues du SCEI et enrichies du rang des derniers admis provenant des rapports des concours notamment Polytechnique, CentraleSupelec, Mines-Telecom et Mines-Ponts. 
+				<p>Ce site est <strong>un outil d'exploration des écoles d'ingénieurs accessibles après une CPGE</strong>. Il rassemble, dans une interface unique, les statistiques d'admission issues du SCEI, les principaux classements disponibles et les spécialités proposées par les écoles.</p>
+				<p>Vous pouvez l'utiliser de plusieurs façons : rechercher une école par filière et concours, consulter les résultats d'admission d'une école donnée, comparer les classements, ou encore trouver des écoles à partir d'un domaine qui vous intéresse comme l'informatique, l'énergie, la robotique, les matériaux ou la santé.</p>
+				<p>Les données d'admission couvrent les années 2016 à 2025. Les rangs des derniers admis sont enrichis à partir des rapports des concours, notamment Polytechnique, CentraleSupélec, Mines-Télécom et Mines-Ponts.
 						<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Pour le concours CentraleSupelec, le rang du dernier admis par école est connu uniquement pour les années de 2019 à 2022 pour les filières MP, PC, PSI et TSI. A partir de 2023 le concours ne publie plus le rang du dernier admis dans son rapport du jury.<br/>
 						<br/>&bull;  Pour le concours Mines-Ponts, le rang du dernier admis par école est connu pour les filières MP, PC et PSI depuis 2022, et MPI depuis 2023.<br/>
 						<br/>&bull;  Pour les concours Polytechnique et Mines-Telecom, le rang du dernier admis par école est connu pour toutes les filières.<br/>
 						<br/>&bull;  Pour les concours de la filière BCPST G2E, A ENV, A BIO et A PC BIO, le rang du dernier admis est connu pour toutes les années.<br/>
 						<br/>&bull;  Pour tous les autres concours, le rang du dernier admis est connu uniquement pour les années 2016 et 2017.'></i></p>
-				<p>Les données accessibles sont celles de 2016 à 2025. Les différentes années sont visibles en même temps sur un seul et même tableau.</p>
+				<p>Les informations sur les spécialités sont en cours d'enrichissement. Elles portent pour l'instant sur les écoles des concours X-ENS, CentraleSupélec, Mines-Ponts, Mines-Télécom et CCINP, et seront complétées progressivement.</p>
 			</div>
 			<br/>
 		</section>
@@ -101,13 +101,23 @@
 				</div>
 			</div>
 			<br/><br/>
-			<div class="row justify-content-md-center">
+			<div class="row gy-4 justify-content-md-center">
+			    <div class="col-md-6">
+					<div class="p-3 border bg-light">
+						<h2 class="h4 pb-2"><i class="bi bi-diagram-3"></i>&nbsp;&nbsp;Par spécialité</h2>
+						<p>Vous pouvez rechercher les écoles qui proposent une spécialité ou un domaine qui vous intéresse (informatique, robotique, énergie, matériaux...). La recherche tient compte du nom de la spécialité ou des groupes de spécialités et d'une liste de synonymes pour élargir les résultats pertinents.</p>
+						<p><i class="bi bi-diagram-3"></i>&nbsp;&nbsp;<a href="statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php">Chercher une école <strong>par spécialité</strong></a></p>
+						<p><a href="statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php">
+							<img src="image/recherche-specialite.png" class="img-fluid img-thumbnail" alt="recherche des écoles d'ingénieurs par spécialité">
+						</a></p>
+					</div>
+				</div>
 			    <div class="col-md-6">
 					<div class="p-3 border bg-light">
 						<h2 class="h4 pb-2"><i class="bi bi-clipboard-data"></i>&nbsp;&nbsp;Classement des écoles</h2>
 						<p>Vous pouvez également regarder les classements des écoles (issus du magazine L'Etudiant, du site DAUR Rankings et du magazine Le Figaro étudiant). Cette page liste pour chacun des 3 classements, toutes les écoles post prépa sans avoir à paginer. En cliquant sur une école pour pouvez voir ses statistiques d'admissions. Et le site web des écoles est indiqué directement sur cette page sans avoir à zoomer.</p>
 						<p><i class="bi bi-clipboard-data"></i>&nbsp;&nbsp;<a href="classement-ecole-d-ingenieur.php">Voir le <strong>classement des écoles</strong><br/><br/>
-							<img src="image/classement-ecole-ingenieur.png" class="img-fluid img-thumbnail" alt="classement des écoles d'ingénieurs selon L'Etudiant">
+							<img src="image/classement-ecole-ingenieur.png" class="img-fluid img-thumbnail" alt="classement des écoles d'ingénieurs post prépa">
 						</a></p>
 					</div>
 				</div>
