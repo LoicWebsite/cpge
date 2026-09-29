@@ -33,7 +33,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET character_set_results     = utf8mb4 */;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`cpge`@`%` SQL SECURITY DEFINER */
+/*!50013 DEFINER=`USER`@`%` SQL SECURITY DEFINER */
 /*!50001 VIEW `vuespecialite` AS select `e`.`IdEcole` AS `IdEcole`,`e`.`Ecole` AS `Ecole`,`e`.`UrlEcole` AS `UrlEcole`,`d`.`IdDiplome` AS `IdDiplome`,`d`.`Diplome` AS `Diplome`,`d`.`UrlFormation` AS `UrlFormation`,`s`.`IdSpecialite` AS `IdSpecialite`,`s`.`Groupe` AS `Groupe`,`s`.`Specialite` AS `Specialite`,`s`.`TypeEtude` AS `TypeEtude`,`s`.`AnneeChoix` AS `AnneeChoix` from ((`Ecole` `e` join `Diplome` `d` on((`d`.`IdEcole` = `e`.`IdEcole`))) left join `Specialite` `s` on((`s`.`IdDiplome` = `d`.`IdDiplome`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;

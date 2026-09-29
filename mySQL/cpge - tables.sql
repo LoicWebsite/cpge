@@ -482,20 +482,16 @@ ALTER TABLE `SpecialiteDomaine`
 -- --------------------------------------------------------
 
 --
--- Structure de la vue `VueSpecialite`
---
 DROP TABLE IF EXISTS `VueSpecialite`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`cpge`@`%` SQL SECURITY DEFINER VIEW `VueSpecialite`  AS SELECT `e`.`IdEcole` AS `IdEcole`, `e`.`Ecole` AS `Ecole`, `e`.`UrlEcole` AS `UrlEcole`, `d`.`IdDiplome` AS `IdDiplome`, `d`.`Diplome` AS `Diplome`, `d`.`UrlFormation` AS `UrlFormation`, `s`.`IdSpecialite` AS `IdSpecialite`, `s`.`Groupe` AS `Groupe`, `s`.`Specialite` AS `Specialite`, `s`.`TypeEtude` AS `TypeEtude`, `s`.`AnneeChoix` AS `AnneeChoix` FROM ((`Ecole` `e` join `Diplome` `d` on((`d`.`IdEcole` = `e`.`IdEcole`))) left join `Specialite` `s` on((`s`.`IdDiplome` = `d`.`IdDiplome`))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`USER`@`%` SQL SECURITY DEFINER VIEW `VueSpecialite`  AS SELECT `e`.`IdEcole` AS `IdEcole`, `e`.`Ecole` AS `Ecole`, `e`.`UrlEcole` AS `UrlEcole`, `d`.`IdDiplome` AS `IdDiplome`, `d`.`Diplome` AS `Diplome`, `d`.`UrlFormation` AS `UrlFormation`, `s`.`IdSpecialite` AS `IdSpecialite`, `s`.`Groupe` AS `Groupe`, `s`.`Specialite` AS `Specialite`, `s`.`TypeEtude` AS `TypeEtude`, `s`.`AnneeChoix` AS `AnneeChoix` FROM ((`Ecole` `e` join `Diplome` `d` on((`d`.`IdEcole` = `e`.`IdEcole`))) left join `Specialite` `s` on((`s`.`IdDiplome` = `d`.`IdDiplome`))) ;
 
 -- --------------------------------------------------------
 
 --
--- Structure de la vue `VueSpecialiteDomaineSynonyme`
---
 DROP TABLE IF EXISTS `VueSpecialiteDomaineSynonyme`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`cpge`@`%` SQL SECURITY INVOKER VIEW `VueSpecialiteDomaineSynonyme`  AS SELECT `d`.`Domaine` AS `Domaine`, `d`.`Description` AS `Description`, `d`.`Actif` AS `Actif`, `s`.`TermeRecherche` AS `TermeRecherche`, `s`.`Poids` AS `Poids` FROM (`SpecialiteDomaine` `d` join `SpecialiteSynonyme` `s` on((`s`.`IdDomaine` = `d`.`IdDomaine`))) ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`USER`@`%` SQL SECURITY INVOKER VIEW `VueSpecialiteDomaineSynonyme`  AS SELECT `d`.`Domaine` AS `Domaine`, `d`.`Description` AS `Description`, `d`.`Actif` AS `Actif`, `s`.`TermeRecherche` AS `TermeRecherche`, `s`.`Poids` AS `Poids` FROM (`SpecialiteDomaine` `d` join `SpecialiteSynonyme` `s` on((`s`.`IdDomaine` = `d`.`IdDomaine`))) ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

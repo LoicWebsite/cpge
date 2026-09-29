@@ -137,6 +137,16 @@
 			<br/>
 		</section>	
 
+		<section id="sources">
+			<br/>
+			<h2 class='h4'>Sources des données et code source</h2>
+			<p>Ce site est un projet personnel et bénévole. Dans un souci de transparence, le code source ainsi que les données utilisées pour construire les statistiques sont accessibles publiquement sur GitHub.</p>
+			<p><a href="https://github.com/LoicWebsite/cpge/blob/main/README.md" target="_blank" rel="noopener noreferrer"><i class="bi bi-github"></i>&nbsp;&nbsp;<strong>Voir le code source et les données du site sur GitHub</strong></a></p>
+			<p>Les données proviennent notamment du SCEI, des rapports des concours et des publications des organismes de classement. Elles sont intégrées et mises en forme dans une base de données afin de permettre leur exploration sur le site.</p>
+			<p>Les données sont mises à jour chaque année après la publication des résultats des concours, des rapports des jurys et des nouveaux classements.</p>
+			<br/>
+		</section>
+
 		<section id="contact">
 			<br/>
 			<h2 class='h4'>Contact</h2>
