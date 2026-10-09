@@ -31,7 +31,7 @@ if ($ecoleFiltre === '' || $ecoleFiltre === 'toutes' || !in_array($onglet, $ongl
 }
 
 // Chaque onglet est recalculé à la demande : requêtes indexées (voir
-// data/add_detail_ecole_perf_indexes.sql), pas besoin de cache fichier.
+// data/ecoles/add_detail_ecole_perf_indexes.sql), pas besoin de cache fichier.
 try {
 	$db = openDatabase();
 }

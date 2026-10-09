@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.2
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost
--- Généré le : mar. 29 sep. 2026 à 12:48
--- Version du serveur : 5.5.61-38.13-log
--- Version de PHP : 8.3.19
+-- Hôte : localhost:8889
+-- Généré le : ven. 09 oct. 2026 à 13:53
+-- Version du serveur : 5.7.44
+-- Version de PHP : 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `cpge`
+-- Base de données : `CPGE`
 --
 
 -- --------------------------------------------------------
@@ -133,7 +133,7 @@ CREATE TABLE `Figaro` (
 
 CREATE TABLE `Filiere` (
   `Filiere` varchar(16) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- --------------------------------------------------------
 
@@ -300,6 +300,20 @@ CREATE TABLE `SpecialiteDomaine` (
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `SpecialiteDomaineAffectation`
+--
+
+CREATE TABLE `SpecialiteDomaineAffectation` (
+  `IdSpecialite` int(5) NOT NULL,
+  `IdDomaine` int(5) NOT NULL,
+  `Decision` enum('inclure','exclure') NOT NULL DEFAULT 'inclure',
+  `Origine` enum('automatique','manuel','copilot') NOT NULL DEFAULT 'automatique',
+  `DateMaj` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `SpecialiteSynonyme`
 --
 
@@ -308,40 +322,6 @@ CREATE TABLE `SpecialiteSynonyme` (
   `TermeRecherche` varchar(100) NOT NULL,
   `Poids` int(3) NOT NULL DEFAULT '60'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Doublure de structure pour la vue `VueSpecialite`
--- (Voir ci-dessous la vue réelle)
---
-CREATE TABLE `VueSpecialite` (
-`IdEcole` int(5)
-,`Ecole` varchar(64)
-,`UrlEcole` varchar(256)
-,`IdDiplome` int(5)
-,`Diplome` varchar(250)
-,`UrlFormation` varchar(512)
-,`IdSpecialite` int(5)
-,`Groupe` varchar(250)
-,`Specialite` varchar(250)
-,`TypeEtude` varchar(16)
-,`AnneeChoix` varchar(16)
-);
-
--- --------------------------------------------------------
-
---
--- Doublure de structure pour la vue `VueSpecialiteDomaineSynonyme`
--- (Voir ci-dessous la vue réelle)
---
-CREATE TABLE `VueSpecialiteDomaineSynonyme` (
-`Domaine` varchar(100)
-,`Description` varchar(250)
-,`Actif` tinyint(1)
-,`TermeRecherche` varchar(100)
-,`Poids` int(3)
-);
 
 --
 -- Index pour les tables déchargées
@@ -446,6 +426,13 @@ ALTER TABLE `SpecialiteDomaine`
   ADD UNIQUE KEY `uk_Domaine` (`Domaine`);
 
 --
+-- Index pour la table `SpecialiteDomaineAffectation`
+--
+ALTER TABLE `SpecialiteDomaineAffectation`
+  ADD PRIMARY KEY (`IdSpecialite`,`IdDomaine`),
+  ADD KEY `idx_Affectation_Domaine_Decision` (`IdDomaine`,`Decision`);
+
+--
 -- Index pour la table `SpecialiteSynonyme`
 --
 ALTER TABLE `SpecialiteSynonyme`
@@ -479,19 +466,16 @@ ALTER TABLE `Specialite`
 ALTER TABLE `SpecialiteDomaine`
   MODIFY `IdDomaine` int(5) NOT NULL AUTO_INCREMENT;
 
--- --------------------------------------------------------
+--
+-- Contraintes pour les tables déchargées
+--
 
 --
-DROP TABLE IF EXISTS `VueSpecialite`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`USER`@`%` SQL SECURITY DEFINER VIEW `VueSpecialite`  AS SELECT `e`.`IdEcole` AS `IdEcole`, `e`.`Ecole` AS `Ecole`, `e`.`UrlEcole` AS `UrlEcole`, `d`.`IdDiplome` AS `IdDiplome`, `d`.`Diplome` AS `Diplome`, `d`.`UrlFormation` AS `UrlFormation`, `s`.`IdSpecialite` AS `IdSpecialite`, `s`.`Groupe` AS `Groupe`, `s`.`Specialite` AS `Specialite`, `s`.`TypeEtude` AS `TypeEtude`, `s`.`AnneeChoix` AS `AnneeChoix` FROM ((`Ecole` `e` join `Diplome` `d` on((`d`.`IdEcole` = `e`.`IdEcole`))) left join `Specialite` `s` on((`s`.`IdDiplome` = `d`.`IdDiplome`))) ;
-
--- --------------------------------------------------------
-
+-- Contraintes pour la table `SpecialiteDomaineAffectation`
 --
-DROP TABLE IF EXISTS `VueSpecialiteDomaineSynonyme`;
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`USER`@`%` SQL SECURITY INVOKER VIEW `VueSpecialiteDomaineSynonyme`  AS SELECT `d`.`Domaine` AS `Domaine`, `d`.`Description` AS `Description`, `d`.`Actif` AS `Actif`, `s`.`TermeRecherche` AS `TermeRecherche`, `s`.`Poids` AS `Poids` FROM (`SpecialiteDomaine` `d` join `SpecialiteSynonyme` `s` on((`s`.`IdDomaine` = `d`.`IdDomaine`))) ;
+ALTER TABLE `SpecialiteDomaineAffectation`
+  ADD CONSTRAINT `fk_Affectation_Domaine` FOREIGN KEY (`IdDomaine`) REFERENCES `SpecialiteDomaine` (`IdDomaine`),
+  ADD CONSTRAINT `fk_Affectation_Specialite` FOREIGN KEY (`IdSpecialite`) REFERENCES `Specialite` (`IdSpecialite`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

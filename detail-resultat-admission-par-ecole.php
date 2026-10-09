@@ -26,6 +26,11 @@
 		if ($strict) {
 			$paramsRetourSpecialite['strict'] = '1';
 		}
+		// Preserve les correspondances du Panorama lors du retour depuis une fiche ecole.
+		$idDomaineRetour = filter_var($_GET['domaine'] ?? '', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: null;
+		if ($idDomaineRetour !== null) {
+			$paramsRetourSpecialite['domaine'] = $idDomaineRetour;
+		}
 		if ($filiere !== '') {
 			$paramsRetourSpecialite['filiere'] = strtolower($filiere);
 		}

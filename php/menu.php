@@ -19,6 +19,8 @@
 				$menu = "ecole";
 			} elseif ($page == "statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa") {
 				$menu = "specialite";
+			} elseif ($page == "paysage-specialites-ecoles-ingenieur") {
+				$menu = "paysage";
 			} elseif ($page == "statistique-attractivite-ecoles") {
 				$menu = "attractivite";
 			} elseif ($page == "resultat-d-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa") {
@@ -70,14 +72,14 @@
 				}
 				echo "</li>";
 
-				echo "<li class='nav-item'>";
-				if ($menu == "specialite") {
-					echo "<a class='nav-link active' href='statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php' onclick='collapseMenu(this);'>Spécialité</a>";
-				} else {
-					echo "<a class='nav-link' href='statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php' onclick='collapseMenu(this);'>Spécialité</a>";
-				}
-				echo "</li>";
-
+				// Deux vues complémentaires : la recherche liste les écoles, le panorama décrit les domaines.
+				echo "<li class='nav-item dropdown'>";
+				$specialiteActive = ($menu == "specialite" || $menu == "paysage");
+				echo "<a class='nav-link dropdown-toggle" . ($specialiteActive ? " active" : "") . "' href='#' id='specialiteDropdown' role='button' data-bs-toggle='dropdown' aria-expanded='false'>Spécialité</a>";
+				echo "<ul class='dropdown-menu' aria-labelledby='specialiteDropdown'>";
+				echo "<li><a class='dropdown-item" . ($menu == "specialite" ? " active" : "") . "'" . ($menu == "specialite" ? " aria-current='page'" : "") . " href='statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php' onclick='collapseMenu(this);'>Recherche</a></li>";
+				echo "<li><a class='dropdown-item" . ($menu == "paysage" ? " active" : "") . "'" . ($menu == "paysage" ? " aria-current='page'" : "") . " href='paysage-specialites-ecoles-ingenieur.php' onclick='collapseMenu(this);'>Panorama</a></li>";
+				echo "</ul></li>";
 
 				// dropdown for classement + attractivité + salaires
 				echo "<li class='nav-item dropdown'>";

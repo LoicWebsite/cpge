@@ -1,8 +1,8 @@
 <?php
 /**
  * PIPELINE GLOBAL "salaire InserSup" (ordonnancement des scripts) :
- *   1. data/createSalaire.sql             -> crée la table
- *   2. data/add_salaire_perf_indexes.sql  -> ajoute les index perf (1x, si absents)
+ *   1. data/Salaire/createSalaire.sql             -> crée la table
+ *   2. data/Salaire/add_salaire_perf_indexes.sql  -> ajoute les index perf (1x, si absents)
  *   3. python/load_salaire.py (local)     -> recharge les données, 1x/an
  *      OU php/loadSalaire.php (production, via navigateur + token)
  *   4. php/ajax/load_salaire.php           -> lit Salaire, sert le JSON -- CE FICHIER

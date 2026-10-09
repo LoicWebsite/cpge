@@ -19,6 +19,40 @@
 		include "php/style.php";
 	?>
 	<style>
+		#resultats {
+			scroll-margin-top: 80px;
+		}
+		#detailTermesRecherche {
+			overflow-wrap: anywhere;
+		}
+		#boutonTermesRecherche {
+			cursor: pointer;
+		}
+		#detailTermesRecherche[hidden] {
+			display: none !important;
+		}
+		.detail-recherche-grille {
+			display: grid;
+			grid-template-columns: 8rem minmax(0, 1fr);
+			gap: 0.375rem 1rem;
+			margin: 0 0 0 1.25rem;
+		}
+		.detail-recherche-grille dt {
+			font-weight: 600;
+		}
+		.detail-recherche-grille dd {
+			min-width: 0;
+			margin: 0;
+		}
+		@media (max-width: 375.98px) {
+			.detail-recherche-grille {
+				grid-template-columns: minmax(0, 1fr);
+				row-gap: 0.25rem;
+			}
+			.detail-recherche-grille dt:not(:first-child) {
+				margin-top: 0.5rem;
+			}
+		}
 		.table-specialites thead th {
 			position: static;
 			top: auto;
@@ -146,13 +180,14 @@
 				<i class="bi bi-house-door-fill"></i>
 			</a>
 		</li>
-		<li class="breadcrumb-item active" aria-current="page">Spécialité</li>
+		<li class="breadcrumb-item">Spécialité</li>
+		<li class="breadcrumb-item active" aria-current="page">Recherche</li>
 	  </ol>
 	</nav>
 
 	<header class="container">
 		<h1 class="h3">
-			<i class="bi bi-bank2"></i>
+			<i class="bi bi-search" aria-hidden="true"></i>
 			&nbsp;&nbsp;&nbsp;Écoles par spécialité
 		</h1>
 		<br/>
@@ -235,7 +270,8 @@
 				</div>
 			</div>
 			<br/>
-			<span style='font-style:italic;'><sup>*</sup><small>en mode étendu, la recherche utilise les libellés de spécialités, les groupes et les synonymes ; en mode strict, seul le libellé de spécialité est recherché.</small></span>
+			<span style='font-style:italic;'><sup>*</sup><small>En mode étendu, la recherche utilise le nom des spécialités, celui des groupes de spécialités et des synonymes. En mode strict, une recherche libre porte uniquement sur le nom de la spécialité.</small></span>
+			<!-- Les synonymes sont utilisés lorsque le mot-clé correspond à un domaine de la liste ; sinon, aucun synonyme n'est ajouté. -->
 			</form>
 		</div>
 
@@ -244,10 +280,15 @@
 		<div class="border bg-white p-2" id="resultats">
 			<h2 class="h4" style="text-align:left;">Écoles correspondant à la recherche</h2>
 			<p id="resumeRecherche" class="text-muted small mb-2">Saisissez un domaine ou une spécialité pour lancer la recherche.</p>
-			<div id="termesRechercheMobile" class="d-lg-none small mb-2 d-none">
-				<button id="boutonTermesRecherche" class="btn btn-link btn-sm p-0 text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#detailTermesRecherche" aria-expanded="false" aria-controls="detailTermesRecherche">+ Voir les termes recherchés</button>
-				<div class="collapse mt-1 text-muted" id="detailTermesRecherche">
-					<span id="listeTermesRechercheMobile"></span>
+			<div id="termesRechercheMobile" class="small mb-2 d-none">
+				<button id="boutonTermesRecherche" class="btn btn-link btn-sm p-0 text-decoration-none" type="button" aria-expanded="false" aria-controls="detailTermesRecherche"><i id="iconeDetailRecherche" class="bi bi-plus" aria-hidden="true"></i> Détails de la recherche</button>
+				<div class="mt-1 text-muted" id="detailTermesRecherche" role="region" aria-labelledby="boutonTermesRecherche" hidden>
+					<dl class="detail-recherche-grille">
+						<dt>Mot-clé :</dt><dd id="motCleDetailRecherche"></dd>
+						<dt>Mode :</dt><dd id="modeDetailRecherche"></dd>
+						<dt>Termes recherchés :</dt><dd id="listeTermesRechercheMobile"></dd>
+					</dl>
+					<br>
 				</div>
 			</div>
 			<div id="choixAffichageSpecialite" class="justify-content-between align-items-center flex-wrap gap-2 mb-3 d-none" role="group" aria-label="Choix de l'affichage et export">
@@ -256,7 +297,7 @@
 					<button type="button" class="btn btn-sm btn-secondary bouton-vue-tableau" onclick="choisirVue('tableau')" data-bs-toggle="tooltip" title="Afficher les résultats dans un tableau, quelle que soit la taille de l'écran."><i class="bi bi-table"></i> tableau</button>
 					<button type="button" class="btn btn-sm btn-secondary bouton-vue-auto" onclick="choisirVue('auto')" data-bs-toggle="tooltip" title="Choisir automatiquement selon la taille de l'écran : tableau sur ordinateur, liste sur mobile."><i class="bi bi-arrow-repeat"></i> auto</button>
 				</div>
-				<small class="text-muted">Cliquer sur le bouton pour télécharger le tableau au format CSV : <button type="button" class="btn btn-secondary btn-sm" onclick="tableToCSV('#tableau-specialites', 'pertinence;école - diplôme;spécialité;')"><i class="bi bi-download"></i> csv</button></small>
+				<small class="text-muted">Cliquer sur le bouton pour télécharger tous les résultats au format CSV : <button type="button" class="btn btn-secondary btn-sm" onclick="tableToCSV('#tableau-specialites', 'pertinence;école - diplôme;spécialité;')"><i class="bi bi-download"></i> csv</button></small>
 			</div>
 			<div id="listeEcoles"></div>
 			<div class='border-top mt-4 pt-3'>
@@ -266,9 +307,11 @@
 					<li>Les spécialités correspondent aux spécialisations choisies par les étudiants. Elles se distinguent des enseignements fondamentaux et des orientations professionnelles (recherche, conseil, entrepreneuriat, etc.) qui peuvent compléter le parcours.</li>
 				</ul>
 			</div>
-			<div class="text-center mt-2">
-				<br/>
+			<div class="d-flex flex-wrap justify-content-center gap-2 mt-4">
 				<a href="#hautdepage" class="btn btn-primary btn-sm"><i class="bi bi-arrow-up"></i> Haut de page</a>
+				<?php if (filter_var($_GET['domaine'] ?? '', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]])): ?>
+					<a href="paysage-specialites-ecoles-ingenieur.php" class="btn btn-primary btn-sm"><i class="bi bi-arrow-left" aria-hidden="true"></i> Retour vers le panorama</a>
+				<?php endif; ?>
 			</div>
 		</div>
 
@@ -293,9 +336,12 @@
 	<script>
 		var resultatsSpecialite = [];
 		var etatTriSpecialite = { colonne: 'pertinence', direction: 'desc' };
+		var domainePanoramaSpecialite = <?php echo encodeJs(filter_var($_GET['domaine'] ?? '', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: null); ?>;
+		var motClePanoramaSpecialite = <?php echo encodeJs($specialite ?? ''); ?>;
+		var positionnerResultatsAuChargement = domainePanoramaSpecialite !== null || window.location.hash === '#resultats';
 
-		// Préremplit la recherche et la relance lorsqu'une URL de retour le demande.
-		window.onload = function() {
+		// Lance la recherche des que le DOM est pret, sans attendre images et scripts externes asynchrones.
+		window.addEventListener('DOMContentLoaded', function() {
 			initialiserDetailTermesRecherche();
 			<?php
 			if ($filiere !== '') {
@@ -310,7 +356,7 @@
 				}
 			}
 			?>
-		}
+		});
 
 		// La recherche utilise partout le même modèle : un select natif pour les
 		// mots-clés connus et un champ libre pour les termes absents de la liste.
@@ -387,6 +433,7 @@
 			}
 			resume.textContent = 'Recherche en cours...';
 			output.innerHTML = '';
+			masquerChoixAffichageSpecialite();
 			masquerTermesRechercheMobile();
 
 			var httpRequest = new XMLHttpRequest();
@@ -398,7 +445,9 @@
 					resume.textContent = 'Erreur pendant la recherche.';
 				}
 			};
-			httpRequest.open('GET', 'php/lireEcoleParSpecialite.php?q=' + encodeURIComponent(specialite) + (rechercheStricte ? '&strict=1' : '') + (filiere ? '&filiere=' + encodeURIComponent(filiere) : ''), true);
+			// Une modification du mot-cle ou du mode revient au moteur de recherche habituel.
+			var domaine = domainePanoramaSpecialite && rechercheStricte && specialite === motClePanoramaSpecialite ? domainePanoramaSpecialite : null;
+			httpRequest.open('GET', 'php/lireEcoleParSpecialite.php?q=' + encodeURIComponent(specialite) + (rechercheStricte ? '&strict=1' : '') + (filiere ? '&filiere=' + encodeURIComponent(filiere) : '') + (domaine ? '&domaine=' + encodeURIComponent(domaine) : ''), true);
 			httpRequest.send();
 		}
 
@@ -420,10 +469,8 @@
 			setRechercheStricte(document.getElementById('rechercheStricte').checked);
 		}
 
-		// Stocke la réponse, affiche un résumé adapté à l'écran et prépare les deux
-		// rendus. Sur desktop/tablette large, les termes recherchés restent visibles dans la phrase ;
-		// sur mobile ils sont placés dans un bloc dépliable pour préserver la place
-		// avant la première carte.
+		// Affiche seulement les totaux dans le resume ; le mode et les termes restent
+		// disponibles dans un bloc replie par defaut, sur ordinateur comme sur mobile.
 		function afficherResultatsSpecialite(data) {
 			var resume = document.getElementById('resumeRecherche');
 			var output = document.getElementById('listeEcoles');
@@ -433,6 +480,7 @@
 				resume.textContent = 'Aucune école trouvée pour cette recherche.';
 				masquerChoixAffichageSpecialite();
 				masquerTermesRechercheMobile();
+				positionnerResultatsSpecialites();
 				return;
 			}
 
@@ -440,48 +488,76 @@
 			etatTriSpecialite = { colonne: 'pertinence', direction: 'desc' };
 			var termesRecherche = (data.terms || []).join(', ');
 			var filtreFiliere = data.filiere ? '. Filière CPGE : ' + String(data.filiere).toUpperCase() : '';
-			resume.innerHTML = echapperHtml(data.results.length + ' spécialité(s) trouvée(s). Mode : ' + (data.strict ? 'strict' : 'étendu') + filtreFiliere)
-				+ '<span class="d-none d-lg-inline">. Termes recherchés : ' + echapperHtml(termesRecherche) + '</span>';
-			afficherTermesRechercheMobile(termesRecherche);
+			var totalEcoles = data.totalEcoles !== undefined ? data.totalEcoles : new Set(data.results.map(function (resultat) { return resultat.ecole; })).size;
+			var totalSpecialites = data.totalSpecialites !== undefined ? data.totalSpecialites : data.results.length;
+			var bilan = totalSpecialites.toLocaleString('fr-FR') + (totalSpecialites === 1 ? ' spécialité proposée par ' : ' spécialités proposées par ') + totalEcoles.toLocaleString('fr-FR') + (totalEcoles === 1 ? ' école' : ' écoles');
+			var mode = data.domaine ? 'strict sur libellé, avec synonymes du domaine' : (data.strict ? 'strict' : 'étendu');
+			resume.textContent = bilan;
+			afficherTermesRechercheMobile(termesRecherche, mode + filtreFiliere, data.query || valeurSpecialiteRecherche());
 			afficherChoixAffichageSpecialite();
 			dessinerResultatsSpecialites();
+			positionnerResultatsSpecialites();
 		}
 
-		// Affiche le lien dépliable des termes uniquement quand une recherche a des
-		// résultats. Le bloc repart fermé à chaque nouvelle recherche.
-		function afficherTermesRechercheMobile(termesRecherche) {
+		// Recale l'arrivee apres l'AJAX puis la mise en page finale, sans deplacer les recherches suivantes.
+		function positionnerResultatsSpecialites() {
+			if (!positionnerResultatsAuChargement) { return; }
+			positionnerResultatsAuChargement = false;
+			var chargement = new Promise(function (resolve) {
+				if (document.readyState === 'complete') { resolve(); }
+				else { window.addEventListener('load', resolve, { once: true }); }
+			});
+			chargement.then(function () {
+				return document.fonts ? document.fonts.ready : undefined;
+			}).then(function () {
+				window.requestAnimationFrame(function () {
+					window.requestAnimationFrame(recalerResultatsSpecialites);
+				});
+			});
+		}
+
+		// Respecte la marge CSS du menu fixe pour la cible de l'ancre.
+		function recalerResultatsSpecialites() {
+			document.getElementById('resultats').scrollIntoView({ block: 'start', behavior: 'instant' });
+		}
+
+		// Affiche les details sur tous les ecrans uniquement avec des resultats,
+		// sans interpreter les mots-cles comme du HTML. Chaque recherche repart repliee.
+		function afficherTermesRechercheMobile(termesRecherche, mode, motCle) {
 			var bloc = document.getElementById('termesRechercheMobile');
 			var detail = document.getElementById('detailTermesRecherche');
 			var bouton = document.getElementById('boutonTermesRecherche');
 			document.getElementById('listeTermesRechercheMobile').textContent = termesRecherche;
+			document.getElementById('modeDetailRecherche').textContent = mode;
+			document.getElementById('motCleDetailRecherche').textContent = motCle;
 			bloc.classList.remove('d-none');
-			detail.classList.remove('show');
-			bouton.innerText = '+ Voir les termes recherchés';
+			detail.hidden = true;
+			document.getElementById('iconeDetailRecherche').className = 'bi bi-plus';
 			bouton.setAttribute('aria-expanded', 'false');
 		}
 
-		// Masque et referme le détail mobile pendant une nouvelle recherche, une
+		// Masque et referme les details pendant une nouvelle recherche, une
 		// erreur de saisie ou une réponse sans résultat.
 		function masquerTermesRechercheMobile() {
 			var bloc = document.getElementById('termesRechercheMobile');
 			var detail = document.getElementById('detailTermesRecherche');
 			var bouton = document.getElementById('boutonTermesRecherche');
 			bloc.classList.add('d-none');
-			detail.classList.remove('show');
-			bouton.innerText = '+ Voir les termes recherchés';
+			detail.hidden = true;
+			document.getElementById('iconeDetailRecherche').className = 'bi bi-plus';
 			bouton.setAttribute('aria-expanded', 'false');
 		}
 
-		// Le libellé du lien suit l'état réel du collapse Bootstrap. C'est plus fiable
-		// qu'un basculement au clic, car l'ouverture/fermeture est animée.
+		// Bascule le détail sans dépendre du plugin Collapse Bootstrap ou de son CDN.
 		function initialiserDetailTermesRecherche() {
 			var detail = document.getElementById('detailTermesRecherche');
 			var bouton = document.getElementById('boutonTermesRecherche');
-			detail.addEventListener('shown.bs.collapse', function () {
-				bouton.innerText = '- Masquer les termes recherchés';
-			});
-			detail.addEventListener('hidden.bs.collapse', function () {
-				bouton.innerText = '+ Voir les termes recherchés';
+			var icone = document.getElementById('iconeDetailRecherche');
+			bouton.addEventListener('click', function () {
+				detail.hidden = !detail.hidden;
+				var ouvert = !detail.hidden;
+				bouton.setAttribute('aria-expanded', ouvert ? 'true' : 'false');
+				icone.className = ouvert ? 'bi bi-dash' : 'bi bi-plus';
 			});
 		}
 
@@ -537,7 +613,7 @@
 			majIndicateursTriSpecialite();
 		}
 
-		// Construit le tableau HTML à partir des résultats actuellement triés.
+		// Construit le tableau complet, partage par l'affichage et l'export CSV.
 		function construireTableauSpecialites() {
 			var table = document.createElement('table');
 				table.className = 'table table-specialites align-middle';
@@ -551,8 +627,9 @@
 				+ '</tr>';
 			table.appendChild(thead);
 			var tbody = document.createElement('tbody');
-			for (var i = 0; i < resultatsSpecialite.length; ++i) {
-				var r = resultatsSpecialite[i];
+			var lignes = resultatsSpecialite;
+			for (var i = 0; i < lignes.length; ++i) {
+				var r = lignes[i];
 				var tr = document.createElement('tr');
 				var ecoleDiplome = libelleEcoleDiplome(r.ecole, r.diplome);
 				var groupe = r.groupe ? '<br><span class="text-muted small">' + echapperHtml(r.groupe) + '</span>' : '';
@@ -575,8 +652,9 @@
 		function construireListeSpecialites() {
 			var liste = document.createElement('div');
 			liste.className = 'd-lg-none vue-cartes';
-			for (var i = 0; i < resultatsSpecialite.length; ++i) {
-				var r = resultatsSpecialite[i];
+			var lignes = resultatsSpecialite;
+			for (var i = 0; i < lignes.length; ++i) {
+				var r = lignes[i];
 				var carte = document.createElement('div');
 				var ecoleDiplome = libelleEcoleDiplome(r.ecole, r.diplome);
 				var groupe = r.groupe ? '<div class="text-muted small mt-1">Groupe : ' + echapperHtml(r.groupe) + '</div>' : '';

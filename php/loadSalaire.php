@@ -1,8 +1,8 @@
 <?php
 /**
  * PIPELINE GLOBAL "salaire InserSup" (ordonnancement des scripts) :
- *   1. data/createSalaire.sql             -> crée la table
- *   2. data/add_salaire_perf_indexes.sql  -> ajoute les index perf (1x, si absents)
+ *   1. data/Salaire/createSalaire.sql             -> crée la table
+ *   2. data/Salaire/add_salaire_perf_indexes.sql  -> ajoute les index perf (1x, si absents)
  *   3. python/load_salaire.py (local)     -> recharge les données en local, 1x/an,
  *      puis exporter le dump SQL et l'importer en production via phpMyAdmin
  *      (table assez petite désormais, ~4 400 lignes).
@@ -45,8 +45,8 @@ define('SECRET_TOKEN', 'MonTokenSecret223557!');  // ← À personnaliser avant 
 
 define('DB_HOST',   'localhost');
 define('DB_NAME',   'cpge');
-define('DB_USER',   'USER');
-define('DB_PASS',   'PASSWORD');
+define('DB_USER',   'cpge');
+define('DB_PASS',   'cpge');
 
 define('API_BASE',  'https://data.enseignementsup-recherche.gouv.fr'
                   . '/api/explore/v2.1/catalog/datasets/fr-esr-insersup/exports/csv/');

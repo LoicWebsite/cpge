@@ -1,49 +1,79 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.3
+-- https://www.phpmyadmin.net/
+--
+-- Hôte : localhost:8889
+-- Généré le : ven. 09 oct. 2026 à 13:54
+-- Version du serveur : 5.7.44
+-- Version de PHP : 7.4.33
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-DROP TABLE IF EXISTS `vuespecialite`;
-/*!50001 DROP VIEW IF EXISTS `vuespecialite`*/;
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-/*!50001 CREATE VIEW `vuespecialite` AS SELECT 
- 1 AS `IdEcole`,
- 1 AS `Ecole`,
- 1 AS `UrlEcole`,
- 1 AS `IdDiplome`,
- 1 AS `Diplome`,
- 1 AS `UrlFormation`,
- 1 AS `IdSpecialite`,
- 1 AS `Groupe`,
- 1 AS `Specialite`,
- 1 AS `TypeEtude`,
- 1 AS `AnneeChoix`*/;
-SET character_set_client = @saved_cs_client;
-/*!50001 DROP VIEW IF EXISTS `vuespecialite`*/;
-/*!50001 SET @saved_cs_client          = @@character_set_client */;
-/*!50001 SET @saved_cs_results         = @@character_set_results */;
-/*!50001 SET @saved_col_connection     = @@collation_connection */;
-/*!50001 SET character_set_client      = utf8mb4 */;
-/*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_general_ci */;
-/*!50001 CREATE ALGORITHM=UNDEFINED */
-/*!50013 DEFINER=`USER`@`%` SQL SECURITY DEFINER */
-/*!50001 VIEW `vuespecialite` AS select `e`.`IdEcole` AS `IdEcole`,`e`.`Ecole` AS `Ecole`,`e`.`UrlEcole` AS `UrlEcole`,`d`.`IdDiplome` AS `IdDiplome`,`d`.`Diplome` AS `Diplome`,`d`.`UrlFormation` AS `UrlFormation`,`s`.`IdSpecialite` AS `IdSpecialite`,`s`.`Groupe` AS `Groupe`,`s`.`Specialite` AS `Specialite`,`s`.`TypeEtude` AS `TypeEtude`,`s`.`AnneeChoix` AS `AnneeChoix` from ((`Ecole` `e` join `Diplome` `d` on((`d`.`IdEcole` = `e`.`IdEcole`))) left join `Specialite` `s` on((`s`.`IdDiplome` = `d`.`IdDiplome`))) */;
-/*!50001 SET character_set_client      = @saved_cs_client */;
-/*!50001 SET character_set_results     = @saved_cs_results */;
-/*!50001 SET collation_connection      = @saved_col_connection */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+/*!40101 SET NAMES utf8mb4 */;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+--
+-- Base de données : `CPGE`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Doublure de structure pour la vue `vuespecialite`
+-- (Voir ci-dessous la vue réelle)
+--
+CREATE TABLE `vuespecialite` (
+`IdEcole` int(5)
+,`Ecole` varchar(64)
+,`UrlEcole` varchar(256)
+,`IdDiplome` int(5)
+,`Diplome` varchar(250)
+,`UrlFormation` varchar(512)
+,`IdSpecialite` int(5)
+,`Groupe` varchar(250)
+,`Specialite` varchar(250)
+,`TypeEtude` varchar(16)
+,`AnneeChoix` varchar(16)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Doublure de structure pour la vue `vuespecialitedomainesynonyme`
+-- (Voir ci-dessous la vue réelle)
+--
+CREATE TABLE `vuespecialitedomainesynonyme` (
+`Domaine` varchar(100)
+,`Description` varchar(250)
+,`Actif` tinyint(1)
+,`TermeRecherche` varchar(100)
+,`Poids` int(3)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la vue `vuespecialite`
+--
+DROP TABLE IF EXISTS `vuespecialite`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`cpge`@`%` SQL SECURITY DEFINER VIEW `vuespecialite`  AS SELECT `e`.`IdEcole` AS `IdEcole`, `e`.`Ecole` AS `Ecole`, `e`.`UrlEcole` AS `UrlEcole`, `d`.`IdDiplome` AS `IdDiplome`, `d`.`Diplome` AS `Diplome`, `d`.`UrlFormation` AS `UrlFormation`, `s`.`IdSpecialite` AS `IdSpecialite`, `s`.`Groupe` AS `Groupe`, `s`.`Specialite` AS `Specialite`, `s`.`TypeEtude` AS `TypeEtude`, `s`.`AnneeChoix` AS `AnneeChoix` FROM ((`ecole` `e` join `diplome` `d` on((`d`.`IdEcole` = `e`.`IdEcole`))) left join `specialite` `s` on((`s`.`IdDiplome` = `d`.`IdDiplome`))) ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la vue `vuespecialitedomainesynonyme`
+--
+DROP TABLE IF EXISTS `vuespecialitedomainesynonyme`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`cpge`@`%` SQL SECURITY INVOKER VIEW `vuespecialitedomainesynonyme`  AS SELECT `d`.`Domaine` AS `Domaine`, `d`.`Description` AS `Description`, `d`.`Actif` AS `Actif`, `s`.`TermeRecherche` AS `TermeRecherche`, `s`.`Poids` AS `Poids` FROM (`specialitedomaine` `d` join `specialitesynonyme` `s` on((`s`.`IdDomaine` = `d`.`IdDomaine`))) ;
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
