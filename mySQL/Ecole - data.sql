@@ -2,10 +2,10 @@
 -- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost
--- Généré le : sam. 05 sep. 2026 à 16:16
--- Version du serveur : 5.7.39
--- Version de PHP : 8.2.0
+-- Hôte : localhost:8889
+-- Généré le : jeu. 15 oct. 2026 à 13:42
+-- Version du serveur : 5.7.44
+-- Version de PHP : 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -137,7 +137,7 @@ INSERT INTO `Ecole` (`IdEcole`, `Ecole`, `UrlEcole`) VALUES
 (109, 'VetAgro Sup', 'https://www.vetagrosup.fr'),
 (110, 'ENSC Lille', 'https://www.ensc-lille.fr'),
 (111, 'ESPCI Paris', 'https://www.espci.psl.eu/fr'),
-(112, 'EIL Côte d\'Opale', 'http://www.eilco-ulco.fr'),
+(112, 'EIL Côte d\'Opale', 'https://eilco.univ-littoral.fr'),
 (113, 'EOST Strasbourg', 'https://eost.unistra.fr'),
 (114, 'ESGT', 'https://www.esgt.cnam.fr/esgt/'),
 (115, 'ENSGSI - Lorraine', 'https://www.ensgsi.univ-lorraine.fr'),
@@ -195,13 +195,17 @@ INSERT INTO `Ecole` (`IdEcole`, `Ecole`, `UrlEcole`) VALUES
 (167, 'Polytech Lyon', 'https://polytech.univ-lyon1.fr'),
 (168, 'Polytech Paris-Saclay', 'https://www.polytech.universite-paris-saclay.fr'),
 (169, 'Sup Galilée Villetaneuse', 'https://galilee.univ-paris13.fr'),
-(170, 'EPITA', 'https://toulouse.epita.fr'),
+(170, 'EPITA', 'https://www.epita.fr'),
 (171, 'IPSA', 'https://www.ipsa.fr'),
 (172, 'ESCOM', 'https://www.escom.fr'),
 (173, 'ENIB', 'https://www.enib.fr'),
 (174, 'ENSM', 'https://www.supmaritime.fr'),
 (176, 'ESI Reims', 'https://www.univ-reims.fr/esireims/'),
-(181, 'ENIT', 'https://www.enit.fr/');
+(181, 'ENIT', 'https://www.enit.fr/'),
+(182, 'ECOLE DE L\'AIR', 'https://www.ecole-air-espace.fr'),
+(183, 'ENSAR', 'https://ensar.univ-poitiers.fr'),
+(184, 'ESM Saint-Cyr', 'https://www.terre.defense.gouv.fr/amscc'),
+(185, 'ECOLE NAVALE Brest', 'https://www.ecole-navale.fr');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

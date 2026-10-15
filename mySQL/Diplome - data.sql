@@ -2,10 +2,10 @@
 -- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost
--- Généré le : mer. 09 sep. 2026 à 13:33
--- Version du serveur : 5.7.39
--- Version de PHP : 8.2.0
+-- Hôte : localhost:8889
+-- Généré le : jeu. 15 oct. 2026 à 13:42
+-- Version du serveur : 5.7.44
+-- Version de PHP : 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -329,7 +329,49 @@ INSERT INTO `Diplome` (`IdEcole`, `IdDiplome`, `Diplome`, `UrlFormation`) VALUES
 (93, 301, 'Polytech Angers - Génie Biologique et Santé', 'https://polytech-angers.fr/fr/formations-polytech-angers.html'),
 (93, 302, 'Polytech Angers - Bâtiments Durables', 'https://polytech-angers.fr/fr/formations-polytech-angers.html'),
 (93, 303, 'Polytech Angers - Qualité, Innovation, Fiabilité', 'https://polytech-angers.fr/fr/formations-polytech-angers.html'),
-(93, 304, 'Polytech Angers - Systèmes Automatisés et Génie Informatique', 'https://polytech-angers.fr/fr/formations-polytech-angers.html');
+(93, 304, 'Polytech Angers - Systèmes Automatisés et Génie Informatique', 'https://polytech-angers.fr/fr/formations-polytech-angers.html'),
+(144, 305, 'EEIGM', 'https://eeigm.univ-lorraine.fr/formations/ingenieure-eeigm/programme-des-etudes'),
+(115, 306, 'ENSGSI - Lorraine', 'https://ensgsi.univ-lorraine.fr/nos-formations/cycle-ingenieur'),
+(84, 307, 'ENSTIB Épinal', 'https://www.enstib.univ-lorraine.fr/fr/syllabus-formation-ingenieur-enstib'),
+(113, 308, 'EOST Strasbourg - Option (1 option à sélectionner sur 3)', 'https://eost.unistra.fr/ecole-dingenieurs/presentation/odf-parcours-diplome-dingenieur-de-leost-PR877-14399'),
+(145, 309, 'Grenoble INP - Génie industriel', 'https://genie-industriel.grenoble-inp.fr/fr/formation/cursus-ingenieur'),
+(182, 310, 'ECOLE DE L\'AIR', 'https://www.ecole-air-espace.fr/la-formation-de-lofficier-aviateur/les-concours-externes/cursus-ingenieur-eae'),
+(184, 311, 'ESM Saint Cyr', 'https://www.terre.defense.gouv.fr/amscc/devenir-officier/ecole-speciale-militaire'),
+(131, 312, 'ELISA Aerospace', 'https://www.elisa-aerospace.fr/cycle-ingenieur'),
+(150, 313, 'ESAIP Angers', 'https://www.esaip.org/formation'),
+(151, 314, 'ESEO Angers', 'https://www.eseo.fr/formations/cycle-ingenieur-eseo-statut-etudiant'),
+(134, 315, 'ESIEA Paris', 'https://www.esiea.fr/programme-ingenieur/cycle-ingenieur'),
+(139, 316, 'ESTIA Bidart', 'https://www.estia.fr/formations/ingenieur-generaliste-international'),
+(155, 317, 'ISEN Méditerranée', 'https://isen-mediterranee.fr/formation/cycle-ingenieur'),
+(156, 318, 'ISEN Yncrea Ouest', 'https://isen-ouest.fr/formations'),
+(157, 319, 'ISEP Paris', 'https://www.isep.fr/formation/cycle-ingenieur'),
+(152, 320, 'JUNIA HEI', 'https://www.junia.com/formations/cycle-ingenieur-hei-generaliste'),
+(154, 321, 'JUNIA ISEN', 'https://www.junia.com/formations/cycle-ingenieur-isen-numerique'),
+(183, 322, 'ENSAR - Energétique et environnement', 'https://formations.univ-poitiers.fr/fr/index/diplome-d-ingenieur-FI/diplome-d-ingenieur-FI.html'),
+(183, 323, 'ENSAR - Génie de l\'eau et génie civil', 'https://formations.univ-poitiers.fr/fr/index/diplome-d-ingenieur-FI/diplome-d-ingenieur-FI.html'),
+(183, 324, 'ENSAR - Gestion des risques', 'https://formations.univ-poitiers.fr/fr/index/diplome-d-ingenieur-FI/diplome-d-ingenieur-FI.html'),
+(183, 325, 'ENSAR - Science de la donnée', 'https://formations.univ-poitiers.fr/fr/index/diplome-d-ingenieur-FI/diplome-d-ingenieur-FI.html'),
+(128, 326, 'EFREI Paris', 'https://www.efrei.fr/formation/cycle-ingenieur'),
+(127, 327, 'ECE', 'https://www.ece.fr/programme-grande-ecole-ingenieurs'),
+(129, 328, 'EIDD Paris', 'https://eidd.u-pariscite.fr/les-specialites/'),
+(130, 329, 'EIGSI La Rochelle', 'https://www.eigsi.fr/formation-ingenieur/dominantes-ingenierie-generaliste'),
+(132, 330, 'ENSAIT Roubaix', 'https://www.ensait.fr/formations/ingenieur-ensait-formation-initiale'),
+(174, 331, 'ENSM', 'https://www.supmaritime.fr/inscriptions-a-lensm/ingenieurs-en-genie-maritime'),
+(170, 332, 'EPITA', 'https://www.epita.fr/diplome-ingenieur/cycle-ingenieur/les-majeures'),
+(172, 333, 'ESCOM', 'https://www.escom.fr/formation/cycle-ingenieur-chimiste'),
+(136, 334, 'ESILV', 'https://www.esilv.fr/formations/cycle-ingenieur/majeures'),
+(137, 335, 'ESME', 'https://www.esme.fr/formation-ingenieur/domaines-majeures'),
+(171, 336, 'IPSA', 'https://www.ipsa.fr/formations/specialisations'),
+(140, 337, 'ITECH', 'https://www.itech.fr/formations/ingenieur'),
+(112, 338, 'EIL Côte d\'Opale - Informatique', 'https://eilco.univ-littoral.fr/candidater-cycle-ingenieur/'),
+(112, 339, 'EIL Côte d\'Opale - Génie Industriel', 'https://eilco.univ-littoral.fr/candidater-cycle-ingenieur/'),
+(112, 340, 'EIL Côte d\'Opale - Génie Energétique et Environnement', 'https://eilco.univ-littoral.fr/candidater-cycle-ingenieur/'),
+(112, 341, 'EIL Côte d\'Opale - Agroalimentaire', 'https://eilco.univ-littoral.fr/candidater-cycle-ingenieur/'),
+(138, 342, 'ESTACA - Automobile', 'https://www.estaca.fr/'),
+(138, 343, 'ESTACA - Aéronautique', 'https://www.estaca.fr/'),
+(138, 344, 'ESTACA - Spatial', 'https://www.estaca.fr/'),
+(138, 345, 'ESTACA - Ferroviaire', 'https://www.estaca.fr/'),
+(185, 346, 'ECOLE NAVALE Brest', 'https://www.ecole-navale.fr/wp-content/uploads/2026/09/plaquette-Bordaches.pdf');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

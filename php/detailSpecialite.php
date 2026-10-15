@@ -52,7 +52,7 @@ function afficherSpecialites(PDO $db, string $ecole, bool $debug = false): void 
 		echo "</div>";
 		echo "<div class='border-top mt-4 pt-3'>";
 		echo "<ul class='text-muted small mb-0'>";
-		echo "<li>Les spécialités recensées à ce jour sont celles des écoles des concours X-ENS, CentraleSupélec, Mines-Ponts, Mines-Télécom, CCINP, Groupe INSA et Polytech.</li>";
+		echo "<li>Les spécialités recensées à ce jour sont celles des écoles des concours X-ENS, CentraleSupélec, Mines-Ponts, Mines-Télécom, CCINP, Groupe INSA, Polytech, Ecoles Militaires et Puissance Alpha.</li>";
 		echo "<li>Les autres concours seront couverts progressivement.</li>";
 		echo "</ul>";
 		echo "</div>";
@@ -176,6 +176,9 @@ function afficherGroupesDiplome(array $diplome, string $anneeUnique): void {
 // l'année si elle varie au sein de l'école, le statut uniquement pour l'apprentissage.
 function badgesSpecialite(array $specialite, string $anneeUnique): string {
 	$html = '';
+	// Ce code sera réactivé lorsque les données AnneeChoix et TypeEtude seront fiables.
+	// Retirer ce bloc de commentaire pour réactiver leur affichage.
+	/*
 	if ($anneeUnique === '' && !empty($specialite['AnneeChoix'])) {
 		$html .= " <span class='badge rounded-pill bg-white border text-secondary fw-normal'>"
 			   . escapeHtml($specialite['AnneeChoix']) . "</span>";
@@ -184,6 +187,7 @@ function badgesSpecialite(array $specialite, string $anneeUnique): string {
 		$html .= " <span class='badge rounded-pill bg-white border text-secondary fw-normal'"
 			   . " data-bs-toggle='tooltip' title='FISA : formation par apprentissage.'>apprentissage</span>";
 	}
+	*/
 	return $html;
 }
 

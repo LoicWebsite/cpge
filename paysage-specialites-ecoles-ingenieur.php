@@ -78,7 +78,7 @@ try {
             <aside class="paysage-methode mt-4 pt-3" aria-labelledby="titre-methode">
                 <h2 id="titre-methode" class="h5">Périmètre et méthode de comptage</h2>
                 <ul class="text-muted small mb-0">
-                    <li>Les spécialités recensées à ce jour sont celles des écoles des concours X-ENS, CentraleSupélec, Mines-Ponts, Mines-Télécom, CCINP, Groupe INSA et Polytech.</li>
+                    <li>Les spécialités recensées à ce jour sont celles des écoles des concours X-ENS, CentraleSupélec, Mines-Ponts, Mines-Télécom, CCINP, Groupe INSA, Polytech, Ecoles Militaires et Puissance Alpha.</li>
                     <li>Les autres concours seront couverts progressivement.</li>
                     <li>Les spécialités correspondent aux spécialisations choisies par les étudiants. Elles se distinguent des enseignements fondamentaux et des orientations professionnelles (recherche, conseil, entrepreneuriat, etc.) qui peuvent compléter le parcours.</li>
                     <li>Chaque spécialité est comptée une seule fois par domaine. Une spécialité peut relever de plusieurs domaines. La surface des bulles représente le nombre de spécialités, leur position ne signifiant pas une proximité scientifique.</li>

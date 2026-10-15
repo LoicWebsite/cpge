@@ -27,8 +27,8 @@ define('SECRET_TOKEN', 'MonTokenSecret223557!');  // ← À personnaliser avant 
 
 define('DB_HOST',   'localhost');
 define('DB_NAME',   'cpge');
-define('DB_USER',   'cpge');
-define('DB_PASS',   'cpge');
+define('DB_USER',   'USER');
+define('DB_PASS',   'PASSWORD');
 
 define('API_BASE',  'https://data.enseignementsup-recherche.gouv.fr'
                   . '/api/explore/v2.1/catalog/datasets/fr-esr-insersup/exports/csv/');

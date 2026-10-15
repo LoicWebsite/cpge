@@ -2,10 +2,10 @@
 -- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost
--- Généré le : sam. 05 sep. 2026 à 16:16
--- Version du serveur : 5.7.39
--- Version de PHP : 8.2.0
+-- Hôte : localhost:8889
+-- Généré le : jeu. 15 oct. 2026 à 13:43
+-- Version du serveur : 5.7.44
+-- Version de PHP : 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -44,16 +44,7 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('mp', 'Banque CENTRALE-SUPELEC', 'CENTRALE CASABLANCA', NULL),
 ('mp', 'Banque CENTRALE-SUPELEC', 'CENTRALE CASABLANCA - 2', NULL),
 ('mp', 'Banque CENTRALE-SUPELEC', 'CENTRALE CASABLANCA - CI', NULL),
-('mp', 'Banque CENTRALE-SUPELEC', 'ECOLE NAVALE Brest', NULL),
-('mp', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Base', NULL),
-('mp', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Méca', NULL),
-('mp', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Pilote', NULL),
-('mp', 'Banque épreuves CCINP', 'ESM Saint-Cyr', NULL),
-('mp', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Base', NULL),
-('mp', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Méca', NULL),
-('mp', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Pilote', NULL),
 ('mp', 'Banque épreuves CCINP Inter-Filière', 'ENSCI Limoges', NULL),
-('mp', 'Banque épreuves CCINP Inter-Filière', 'ESM Saint-Cyr', NULL),
 ('mp', 'Concours Commun INP', 'EISTI Cergy - Pau', NULL),
 ('mp', 'Concours Commun INP', 'ENSIAME Valenciennes Informatique et Génie Industriel', NULL),
 ('mp', 'Concours Commun INP', 'ENSIAME Valenciennes Méca Energ.', NULL),
@@ -75,9 +66,6 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('mpi', 'Autres écoles E3A', 'EIJV Saint Quentin - Logistique innovante', NULL),
 ('mpi', 'Avenir Prépas', 'EIGSI Casablanca', NULL),
 ('mpi', 'Banque CENTRALE-SUPELEC', 'Centrale Casablanca', NULL),
-('mpi', 'Banque CENTRALE-SUPELEC', 'ECOLE NAVALE Brest', NULL),
-('mpi', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Base', NULL),
-('mpi', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Méca', NULL),
 ('mpi', 'Concours POLYTECH', 'Polytech Dijon - Informatique et réseaux', NULL),
 ('mpi', 'Concours POLYTECH', 'Polytech Dijon - Robotique', NULL),
 ('pc', 'Autres écoles E3A', 'EIA Bethune - Génie électrique', NULL),
@@ -87,16 +75,7 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('pc', 'Avenir Prépas', 'EIGSI Casablanca', NULL),
 ('pc', 'Banque CENTRALE-SUPELEC', 'CENTRALE CASABLANCA', NULL),
 ('pc', 'Banque CENTRALE-SUPELEC', 'CENTRALE CASABLANCA - CI', NULL),
-('pc', 'Banque CENTRALE-SUPELEC', 'ECOLE NAVALE Brest', NULL),
-('pc', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Base', NULL),
-('pc', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Méca', NULL),
-('pc', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Pilote', NULL),
-('pc', 'Banque épreuves CCINP', 'ESM Saint-Cyr', NULL),
-('pc', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Base', NULL),
-('pc', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Méca', NULL),
-('pc', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Pilote', NULL),
 ('pc', 'Banque épreuves CCINP Inter-Filière', 'ENSCI Limoges', NULL),
-('pc', 'Banque épreuves CCINP Inter-Filière', 'ESM Saint-Cyr', NULL),
 ('pc', 'CCINP : ECOLES RECRUTANT SUR LE CONCOURS PHYSIQUE', 'EISTI Cergy - Pau', NULL),
 ('pc', 'CCINP : ECOLES RECRUTANT SUR LE CONCOURS PHYSIQUE', 'ENSIAME Valenciennes Méca Energ.', NULL),
 ('pc', 'CCINP : ECOLES RECRUTANT SUR LE CONCOURS PHYSIQUE', 'ENSIAME Valenciennes Mécatronique', NULL),
@@ -122,16 +101,7 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('psi', 'Banque CENTRALE-SUPELEC', 'CENTRALE CASABLANCA', NULL),
 ('psi', 'Banque CENTRALE-SUPELEC', 'CENTRALE CASABLANCA - 2', NULL),
 ('psi', 'Banque CENTRALE-SUPELEC', 'CENTRALE CASABLANCA - CI', NULL),
-('psi', 'Banque CENTRALE-SUPELEC', 'ECOLE NAVALE Brest', NULL),
-('psi', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Base', NULL),
-('psi', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Méca', NULL),
-('psi', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Pilote', NULL),
-('psi', 'Banque épreuves CCINP', 'ESM Saint-Cyr', NULL),
-('psi', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Base', NULL),
-('psi', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Méca', NULL),
-('psi', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Pilote', NULL),
 ('psi', 'Banque épreuves CCINP Inter-Filière', 'ENSCI Limoges', NULL),
-('psi', 'Banque épreuves CCINP Inter-Filière', 'ESM Saint-Cyr', NULL),
 ('psi', 'Concours Commun INP', 'EISTI Cergy - Pau', NULL),
 ('psi', 'Concours Commun INP', 'ENSIAME Valenciennes Informatique et Génie Industriel', NULL),
 ('psi', 'Concours Commun INP', 'ENSIAME Valenciennes Méca Energ.', NULL),
@@ -147,9 +117,6 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('psi', 'Groupe INSA', 'INSA Euro-Méditerranée Maroc Génie Electrique MP-PC-PSI-PT', NULL),
 ('psi', 'Groupe INSA', 'INSA Euro-Méditerranée Maroc Génie Mécanique et Energétique PSI-PT', NULL),
 ('psi', 'Groupe INSA', 'INSA Euro-Méditerranée Maroc Systèmes d\'Information et de Communication PC-PSI-PT', NULL),
-('pt', 'AUTRES ECOLES', 'ECOLE DE L\'AIR Base', NULL),
-('pt', 'AUTRES ECOLES', 'ECOLE DE L\'AIR Méca', NULL),
-('pt', 'AUTRES ECOLES', 'ECOLE DE L\'AIR Pilote', NULL),
 ('pt', 'AUTRES ECOLES', 'ESFF - Sèvres', NULL),
 ('pt', 'AUTRES ECOLES', 'ESIGETEL Villejuif', NULL),
 ('pt', 'Avenir Prépas', 'EIGSI Casablanca', NULL),
@@ -187,24 +154,18 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('bcpst', 'CPGE BCPST AGRO', 'INP AGROTOULOUSE', ''),
 ('mp', 'Autres écoles E3A', 'EIJV - Génie Énergétique et Environnement', ''),
 ('mp', 'Autres écoles E3A', 'EIJV - Technologie de l\'Information pour la santé', ''),
-('mp', 'Banque épreuves CCINP', 'ENSAR Poitiers (campus de Niort)', ''),
 ('mp', 'Concours Ingeni’Up', 'ECAM Strasbourg Europe', ''),
 ('mpi', 'Autres écoles E3A', 'EIJV - Technologie de l\'Information pour la santé', ''),
-('mpi', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Pilote', ''),
-('mpi', 'Banque épreuves CCINP', 'ESM Saint-Cyr', ''),
 ('pc', 'Autres écoles E3A', 'EIJV - Génie Énergétique et Environnement', ''),
-('pc', 'Banque épreuves CCINP', 'ENSAR Poitiers (campus de Niort)', ''),
 ('pc', 'Concours Ingeni’Up', 'ECAM Strasbourg Europe', ''),
 ('psi', 'Autres écoles E3A', 'EIJV - Génie Énergétique et Environnement', ''),
 ('psi', 'Autres écoles E3A', 'EIJV - Technologie de l\'Information pour la santé', ''),
-('psi', 'Banque épreuves CCINP', 'ENSAR Poitiers (campus de Niort)', ''),
 ('psi', 'Concours Ingeni’Up', 'ECAM Strasbourg Europe', ''),
 ('pt', 'AUTRES ECOLES', 'EIA Bethune - Génie électrique', ''),
 ('pt', 'AUTRES ECOLES', 'EIJV Amiens - Cybersécurité', ''),
 ('pt', 'AUTRES ECOLES', 'EIJV Saint Quentin - Logistique innovante', ''),
 ('pt', 'Concours Ingeni’Up', 'ECAM Strasbourg Europe', ''),
 ('tb', 'CPGE TB AGRO', 'INP AGROTOULOUSE', ''),
-('tsi', 'Banque épreuves CCINP', 'ENSAR Poitiers (campus de Niort)', ''),
 ('mp', 'Autres écoles E3A', '3iL Ingénieurs Limoges', '3IL Ingénieurs'),
 ('mp', 'Puissance Alpha', '3iL Ingénieurs Limoges', '3IL Ingénieurs'),
 ('mpi', 'Puissance Alpha', '3iL Ingénieurs Limoges', '3IL Ingénieurs'),
@@ -663,8 +624,7 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('pc', 'Concours Ingeni’Up', 'ECAM LaSalle', 'ECAM Lyon'),
 ('psi', 'Concours Ingeni’Up', 'ECAM LaSalle', 'ECAM Lyon'),
 ('pt', 'Concours Ingeni’Up', 'ECAM LaSalle', 'ECAM Lyon'),
-('pt', 'Concours Ingeni’Up', 'ECAM LaSalle - PT', 'ECAM Lyon');
-INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
+('pt', 'Concours Ingeni’Up', 'ECAM LaSalle - PT', 'ECAM Lyon'),
 ('tsi', 'Concours Ingeni’Up', 'ECAM LaSalle', 'ECAM Lyon'),
 ('mp', 'Concours Ingeni’Up', 'ECAM Louis de Broglie', 'ECAM Rennes'),
 ('mp', 'Concours Ingeni’Up', 'ECAM Rennes', 'ECAM Rennes'),
@@ -707,9 +667,34 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('pt', 'AUTRES ECOLES', 'ECE PARIS', 'ECE'),
 ('pt', 'AUTRES ECOLES', 'ECE Paris Apprentissage', 'ECE'),
 ('pt', 'Avenir Prépas', 'ECE BORDEAUX', 'ECE'),
-('pt', 'Avenir Prépas', 'ECE LYON', 'ECE'),
+('pt', 'Avenir Prépas', 'ECE LYON', 'ECE');
+INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
 ('pt', 'Avenir Prépas', 'ECE PARIS', 'ECE'),
 ('pt', 'Avenir Prépas', 'ECE Paris Apprentissage', 'ECE'),
+('mp', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Base', 'ECOLE DE L\'AIR'),
+('mp', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Méca', 'ECOLE DE L\'AIR'),
+('mp', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Pilote', 'ECOLE DE L\'AIR'),
+('mp', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Base', 'ECOLE DE L\'AIR'),
+('mp', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Méca', 'ECOLE DE L\'AIR'),
+('mp', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Pilote', 'ECOLE DE L\'AIR'),
+('mpi', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Base', 'ECOLE DE L\'AIR'),
+('mpi', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Méca', 'ECOLE DE L\'AIR'),
+('mpi', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Pilote', 'ECOLE DE L\'AIR'),
+('pc', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Base', 'ECOLE DE L\'AIR'),
+('pc', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Méca', 'ECOLE DE L\'AIR'),
+('pc', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Pilote', 'ECOLE DE L\'AIR'),
+('pc', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Base', 'ECOLE DE L\'AIR'),
+('pc', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Méca', 'ECOLE DE L\'AIR'),
+('pc', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Pilote', 'ECOLE DE L\'AIR'),
+('psi', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Base', 'ECOLE DE L\'AIR'),
+('psi', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Méca', 'ECOLE DE L\'AIR'),
+('psi', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Pilote', 'ECOLE DE L\'AIR'),
+('psi', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Base', 'ECOLE DE L\'AIR'),
+('psi', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Méca', 'ECOLE DE L\'AIR'),
+('psi', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Pilote', 'ECOLE DE L\'AIR'),
+('pt', 'AUTRES ECOLES', 'ECOLE DE L\'AIR Base', 'ECOLE DE L\'AIR'),
+('pt', 'AUTRES ECOLES', 'ECOLE DE L\'AIR Méca', 'ECOLE DE L\'AIR'),
+('pt', 'AUTRES ECOLES', 'ECOLE DE L\'AIR Pilote', 'ECOLE DE L\'AIR'),
 ('bcpst', 'G2E', 'ECOLE METEOROLOGIE (fonctionnaire)', 'ECOLE Météorologie'),
 ('mp', 'Concours Mines - Télécom', 'ECOLE METEOROLOGIE (fonctionnaire)', 'ECOLE Météorologie'),
 ('mp', 'Concours Mines - Télécom', 'ECOLE METEOROLOGIE (non fonctionnaire)', 'ECOLE Météorologie'),
@@ -718,6 +703,10 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('pc', 'Concours Mines - Télécom', 'ECOLE METEOROLOGIE (non fonctionnaire)', 'ECOLE Météorologie'),
 ('psi', 'Concours Mines - Télécom', 'ECOLE METEOROLOGIE (fonctionnaire)', 'ECOLE Météorologie'),
 ('psi', 'Concours Mines - Télécom', 'ECOLE METEOROLOGIE (non fonctionnaire)', 'ECOLE Météorologie'),
+('mp', 'Banque CENTRALE-SUPELEC', 'ECOLE NAVALE Brest', 'ECOLE NAVALE Brest'),
+('mpi', 'Banque CENTRALE-SUPELEC', 'ECOLE NAVALE Brest', 'ECOLE NAVALE Brest'),
+('pc', 'Banque CENTRALE-SUPELEC', 'ECOLE NAVALE Brest', 'ECOLE NAVALE Brest'),
+('psi', 'Banque CENTRALE-SUPELEC', 'ECOLE NAVALE Brest', 'ECOLE NAVALE Brest'),
 ('bcpst', 'Concours ECOLE POLYTECHNIQUE Etr.', 'ECOLE POLYTECHNIQUE (MP,MPI,PCI,PSI,PT,BCPST)', 'Ecole Polytechnique'),
 ('bcpst', 'X BIO', 'Ecole Polytechnique', 'École Polytechnique'),
 ('mp', 'Banque ECOLE POLYTECHNIQUE - interENS', 'ECOLE POLYTECHNIQUE Info.', 'École Polytechnique'),
@@ -943,6 +932,10 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('pt', 'AUTRES ECOLES', 'ENSAIT Roubaix - Formation en alternance', 'ENSAIT Roubaix'),
 ('tsi', 'Banque épreuves CCINP', 'ENSAIT Roubaix', 'ENSAIT Roubaix'),
 ('tsi', 'Banque épreuves CCINP', 'ENSAIT Roubaix - Formation en alternance', 'ENSAIT Roubaix'),
+('mp', 'Banque épreuves CCINP', 'ENSAR Poitiers (campus de Niort)', 'ENSAR'),
+('pc', 'Banque épreuves CCINP', 'ENSAR Poitiers (campus de Niort)', 'ENSAR'),
+('psi', 'Banque épreuves CCINP', 'ENSAR Poitiers (campus de Niort)', 'ENSAR'),
+('tsi', 'Banque épreuves CCINP', 'ENSAR Poitiers (campus de Niort)', 'ENSAR'),
 ('bcpst', 'CPGE BCPST AGRO', 'ENSAT Toulouse', 'ENSAT Toulouse'),
 ('tb', 'CPGE TB AGRO', 'ENSAT Toulouse', 'ENSAT Toulouse'),
 ('bcpst', 'CPGE PC AGRO', 'ENSC Lille', 'ENSC Lille'),
@@ -1256,9 +1249,9 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('mpi', 'Concours Commun INP', 'SUPMICROTECH ENSMM Besançon', 'ENSMM Besançon'),
 ('pc', 'CCINP : ECOLES RECRUTANT SUR LE CONCOURS PHYSIQUE', 'SUPMICROTECH ENSMM Besançon', 'ENSMM Besançon'),
 ('psi', 'Concours Commun INP', 'SUPMICROTECH ENSMM Besançon', 'ENSMM Besançon'),
-('pt', 'Concours Commun INP', 'SUPMICROTECH ENSMM Besançon', 'ENSMM Besançon');
+('pt', 'Concours Commun INP', 'SUPMICROTECH ENSMM Besançon', 'ENSMM Besançon'),
+('tsi', 'Concours Commun INP', 'SUPMICROTECH ENSMM Besançon', 'ENSMM Besançon');
 INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
-('tsi', 'Concours Commun INP', 'SUPMICROTECH ENSMM Besançon', 'ENSMM Besançon'),
 ('mp', 'Concours Commun INP', 'Bordeaux INP - ENSPIMA', 'ENSPIMA'),
 ('mpi', 'Concours Commun INP', 'Bordeaux INP - ENSPIMA', 'ENSPIMA'),
 ('psi', 'Concours Commun INP', 'Bordeaux INP - ENSPIMA', 'ENSPIMA'),
@@ -1718,6 +1711,13 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('tsi', 'Concours CENTRALE-SUPELEC', 'ESIX Cherbourg - Génie Industriel', 'ESIX'),
 ('tsi', 'Concours CENTRALE-SUPELEC', 'ESIX Cherbourg GSI', 'ESIX'),
 ('tsi', 'Concours CENTRALE-SUPELEC', 'ESIX Normandie - Caen - Cherbourg', 'ESIX'),
+('mp', 'Banque épreuves CCINP', 'ESM Saint-Cyr', 'ESM Saint-Cyr'),
+('mp', 'Banque épreuves CCINP Inter-Filière', 'ESM Saint-Cyr', 'ESM Saint-Cyr'),
+('mpi', 'Banque épreuves CCINP', 'ESM Saint-Cyr', 'ESM Saint-Cyr'),
+('pc', 'Banque épreuves CCINP', 'ESM Saint-Cyr', 'ESM Saint-Cyr'),
+('pc', 'Banque épreuves CCINP Inter-Filière', 'ESM Saint-Cyr', 'ESM Saint-Cyr'),
+('psi', 'Banque épreuves CCINP', 'ESM Saint-Cyr', 'ESM Saint-Cyr'),
+('psi', 'Banque épreuves CCINP Inter-Filière', 'ESM Saint-Cyr', 'ESM Saint-Cyr'),
 ('mp', 'Autres écoles E3A', 'ESME - FISA', 'ESME'),
 ('mp', 'EPITA - ESME - IPSA', 'ESME', 'ESME'),
 ('mp', 'EPITA - ESME - IPSA', 'ESME - FISA', 'ESME'),
@@ -1917,12 +1917,12 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('pt', 'Concours Commun INP', 'Grenoble INP - Pagora', 'Grenoble INP - Pagora'),
 ('tpc', 'Concours Commun INP', 'Grenoble INP - Pagora', 'Grenoble INP - Pagora'),
 ('tsi', 'Concours Commun INP', 'Grenoble INP - Pagora', 'Grenoble INP - Pagora'),
-('bcpst', 'CPGE PC AGRO', 'Grenoble INP - Phelma (Physique Matériaux Procédés)', 'Grenoble INP - Phelma'),
+('bcpst', 'CPGE PC AGRO', 'Grenoble INP - Phelma (Physique Matériaux Procédés)', 'Grenoble INP - Phelma');
+INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
 ('mp', 'Concours Commun INP', 'Grenoble INP - Phelma (Physique Electronique Télécoms)', 'Grenoble INP - Phelma'),
 ('mp', 'Concours Commun INP', 'Grenoble INP - Phelma (Physique Matériaux Procédés)', 'Grenoble INP - Phelma'),
 ('mpi', 'Concours Commun INP', 'Grenoble INP - Phelma (Physique Electronique Télécoms)', 'Grenoble INP - Phelma'),
-('pc', 'CCINP : ECOLES RECRUTANT SUR LE CONCOURS PHYSIQUE', 'Grenoble INP - Phelma (Physique Electronique Télécoms)', 'Grenoble INP - Phelma');
-INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
+('pc', 'CCINP : ECOLES RECRUTANT SUR LE CONCOURS PHYSIQUE', 'Grenoble INP - Phelma (Physique Electronique Télécoms)', 'Grenoble INP - Phelma'),
 ('pc', 'CCINP : ECOLES RECRUTANT SUR LE CONCOURS PHYSIQUE', 'Grenoble INP - Phelma (Physique Matériaux Procédés)', 'Grenoble INP - Phelma'),
 ('psi', 'Concours Commun INP', 'Grenoble INP - Phelma (Physique Electronique Télécoms)', 'Grenoble INP - Phelma'),
 ('psi', 'Concours Commun INP', 'Grenoble INP - Phelma (Physique Matériaux Procédés)', 'Grenoble INP - Phelma'),
@@ -2475,14 +2475,14 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('psi', 'Groupe INSA', 'INSA Rennes Génie Civil et Urbain PSI-PT', 'INSA Rennes'),
 ('psi', 'Groupe INSA', 'INSA Rennes Génie Mécanique et Automatique', 'INSA Rennes'),
 ('psi', 'Groupe INSA', 'INSA Rennes Génie Mécanique et Automatique (PSI-PT)', 'INSA Rennes'),
-('psi', 'Groupe INSA', 'INSA Rennes Génie Mécanique et Automatique PSI-PT', 'INSA Rennes'),
+('psi', 'Groupe INSA', 'INSA Rennes Génie Mécanique et Automatique PSI-PT', 'INSA Rennes');
+INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
 ('psi', 'Groupe INSA', 'INSA Rennes Génie Physique et Matériaux', 'INSA Rennes'),
 ('psi', 'Groupe INSA', 'INSA Rennes Génie Physique et Matériaux (MP-PC-PSI)', 'INSA Rennes'),
 ('psi', 'Groupe INSA', 'INSA Rennes Génie Physique et Matériaux - 2', 'INSA Rennes'),
 ('psi', 'Groupe INSA', 'INSA Rennes Informatique', 'INSA Rennes'),
 ('psi', 'Groupe INSA', 'INSA Rennes Informatique (PC-PSI-PT)', 'INSA Rennes'),
-('psi', 'Groupe INSA', 'INSA Rennes Informatique PC-PSI-PT', 'INSA Rennes');
-INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
+('psi', 'Groupe INSA', 'INSA Rennes Informatique PC-PSI-PT', 'INSA Rennes'),
 ('psi', 'Groupe INSA', 'INSA Rennes Science et Génie des Matériaux MP-PC-PSI', 'INSA Rennes'),
 ('psi', 'Groupe INSA', 'INSA Rennes Science et Génie des Matériaux TSI-PT', 'INSA Rennes'),
 ('psi', 'Groupe INSA', 'INSA Rennes Science et Génie des Matériaux TSI-PT-TPC', 'INSA Rennes'),
@@ -3047,14 +3047,14 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('mp', 'Puissance Alpha', 'ISEN Yncréa Ouest - Brest', 'ISEN Yncrea Ouest'),
 ('mp', 'Puissance Alpha', 'ISEN Yncréa Ouest - Caen', 'ISEN Yncrea Ouest'),
 ('mp', 'Puissance Alpha', 'ISEN Yncréa Ouest - Nantes', 'ISEN Yncrea Ouest'),
-('mpi', 'Puissance Alpha', 'ISEN Ouest - Brest - Caen - Nantes', 'ISEN Yncrea Ouest'),
+('mpi', 'Puissance Alpha', 'ISEN Ouest - Brest - Caen - Nantes', 'ISEN Yncrea Ouest');
+INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
 ('mpi', 'Puissance Alpha', 'ISEN Yncréa Ouest - Brest', 'ISEN Yncrea Ouest'),
 ('mpi', 'Puissance Alpha', 'ISEN Yncréa Ouest - Caen', 'ISEN Yncrea Ouest'),
 ('mpi', 'Puissance Alpha', 'ISEN Yncréa Ouest - Nantes', 'ISEN Yncrea Ouest'),
 ('pc', 'Concours Ingeni’Up', 'ISEN Yncréa Ouest - Brest', 'ISEN Yncrea Ouest'),
 ('pc', 'Concours Ingeni’Up', 'ISEN Yncréa Ouest - Nantes', 'ISEN Yncrea Ouest'),
-('pc', 'Puissance Alpha', 'ISEN Ouest - Brest - Caen - Nantes', 'ISEN Yncrea Ouest');
-INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
+('pc', 'Puissance Alpha', 'ISEN Ouest - Brest - Caen - Nantes', 'ISEN Yncrea Ouest'),
 ('pc', 'Puissance Alpha', 'ISEN Yncréa Ouest - Brest', 'ISEN Yncrea Ouest'),
 ('pc', 'Puissance Alpha', 'ISEN Yncréa Ouest - Caen', 'ISEN Yncrea Ouest'),
 ('pc', 'Puissance Alpha', 'ISEN Yncréa Ouest - Nantes', 'ISEN Yncrea Ouest'),
@@ -3542,11 +3542,11 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('psi', 'Concours POLYTECH Inter-Filière', 'Polytech Nice-Sophia - Électronique', 'Polytech Nice-Sophia'),
 ('psi', 'Concours POLYTECH Inter-Filière', 'Polytech Nice-Sophia - Électronique et Systèmes Embarqués', 'Polytech Nice-Sophia'),
 ('psi', 'Concours POLYTECH Inter-Filière', 'Polytech Nice-Sophia - Génie biologique', 'Polytech Nice-Sophia'),
-('psi', 'Concours POLYTECH Inter-Filière', 'Polytech Nice-Sophia - Génie de l\'eau', 'Polytech Nice-Sophia'),
+('psi', 'Concours POLYTECH Inter-Filière', 'Polytech Nice-Sophia - Génie de l\'eau', 'Polytech Nice-Sophia');
+INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
 ('psi', 'Concours POLYTECH Inter-Filière', 'Polytech Nice-Sophia - Informatique', 'Polytech Nice-Sophia'),
 ('psi', 'Concours POLYTECH Inter-Filière', 'Polytech Nice-Sophia - Mathématiques Appliquées et Modélisation sous statut étudiant (FISE)', 'Polytech Nice-Sophia'),
-('psi', 'Concours POLYTECH Inter-Filière', 'Polytech Nice-Sophia - Maths Appliquées - Etudiant en 3A puis Apprenti en 4A et 5A (FISEA)', 'Polytech Nice-Sophia');
-INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
+('psi', 'Concours POLYTECH Inter-Filière', 'Polytech Nice-Sophia - Maths Appliquées - Etudiant en 3A puis Apprenti en 4A et 5A (FISEA)', 'Polytech Nice-Sophia'),
 ('psi', 'Concours POLYTECH Inter-Filière', 'Polytech Nice-Sophia - Robotique - Systèmes Autonomes', 'Polytech Nice-Sophia'),
 ('psi', 'Concours POLYTECH Inter-Filière', 'Polytech Nice-Sophia - Systèmes autonomes', 'Polytech Nice-Sophia'),
 ('pt', 'Concours POLYTECH', 'Polytech Nice-Sophia - Bâtiments', 'Polytech Nice-Sophia'),
