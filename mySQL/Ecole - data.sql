@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : jeu. 15 oct. 2026 à 13:42
+-- Généré le : mar. 20 oct. 2026 à 10:13
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -110,12 +110,12 @@ INSERT INTO `Ecole` (`IdEcole`, `Ecole`, `UrlEcole`) VALUES
 (82, 'SupOptique', 'https://www.institutoptique.fr'),
 (83, 'Télécom Paris', 'https://www.telecom-paristech.fr'),
 (84, 'ENSTIB Épinal', 'https://www.enstib.univ-lorraine.fr'),
-(85, 'ESBS', 'https://www.esbs.unistra.fr'),
+(85, 'ESBS', 'https://esbs.unistra.fr'),
 (86, 'ENSTBB', 'https://enstbb.bordeaux-inp.fr'),
 (87, 'EPISEN', 'https://episen.u-pec.fr'),
 (88, 'ESIAB Brest', 'https://www.univ-brest.fr/esiab'),
 (89, 'ESIPE', 'https://esipe.u-pem.fr'),
-(90, 'ESIR Rennes', 'http://www.esir.univ-rennes1.fr'),
+(90, 'ESIR Rennes', 'https://esir.univ-rennes.fr'),
 (91, 'ESIROI', 'https://esiroi.univ-reunion.fr'),
 (92, 'ISIFC Besançon', 'https://isifc.univ-fcomte.fr'),
 (93, 'Polytech Angers', 'http://www.polytech-angers.fr/fr/index.html'),
@@ -131,7 +131,7 @@ INSERT INTO `Ecole` (`IdEcole`, `Ecole`, `UrlEcole`) VALUES
 (103, 'Polytech Sorbonne', 'https://www.polytech.sorbonne-universite.fr'),
 (104, 'Polytech Tours', 'https://www.polytech.univ-tours.fr'),
 (105, 'SupBiotech', 'https://www.supbiotech.fr'),
-(106, 'ENSAT Toulouse', 'https://www.ensat.fr'),
+(106, 'INP AGROTOULOUSE', 'https://www.ensat.fr'),
 (107, 'Institut Agro – Montpellier', 'https://www.institut-agro-montpellier.fr'),
 (108, 'Institut Agro – Rennes', 'https://www.agrocampus-ouest.fr'),
 (109, 'VetAgro Sup', 'https://www.vetagrosup.fr'),
@@ -205,7 +205,9 @@ INSERT INTO `Ecole` (`IdEcole`, `Ecole`, `UrlEcole`) VALUES
 (182, 'ECOLE DE L\'AIR', 'https://www.ecole-air-espace.fr'),
 (183, 'ENSAR', 'https://ensar.univ-poitiers.fr'),
 (184, 'ESM Saint-Cyr', 'https://www.terre.defense.gouv.fr/amscc'),
-(185, 'ECOLE NAVALE Brest', 'https://www.ecole-navale.fr');
+(185, 'ECOLE NAVALE Brest', 'https://www.ecole-navale.fr'),
+(186, 'École nationale vétérinaire d’Alfort', 'https://www.vet-alfort.fr'),
+(187, 'ENSP Versailles école du paysage', 'https://www.ecole-paysage.fr/fr');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

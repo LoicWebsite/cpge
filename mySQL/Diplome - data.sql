@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : jeu. 15 oct. 2026 à 13:42
+-- Généré le : mar. 20 oct. 2026 à 10:13
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -137,7 +137,7 @@ INSERT INTO `Diplome` (`IdEcole`, `IdDiplome`, `Diplome`, `UrlFormation`) VALUES
 (76, 109, 'Télécom St Étienne', 'https://www.telecom-st-etienne.fr/formations/ingenierie/ingenieur-generaliste-telecom-saint-etienne'),
 (77, 110, 'Télécom SudParis', 'https://www.telecom-sudparis.eu/options'),
 (64, 111, 'ENSSAT Lannion - Informatique', 'https://www.enssat.fr/fr_FR/formations/formation-ingenieur-informatique'),
-(78, 112, 'ENAC Toulouse', 'cursus 3A/Plaquette ENAC.pdf'),
+(78, 112, 'ENAC Toulouse', 'https://www.enac.fr/fr/ingenieure-enac'),
 (79, 113, 'ENSG Nancy', 'https://wiki.univ-lorraine.fr/bin/view/interne/comp/ensg/ensgdir/FORMATION%20ING%C3%89NIEUR%20ENSG/Structure%20du%20programme/'),
 (80, 114, 'Ecole Polytechnique', 'https://programmes.polytechnique.edu/cycle-ingenieur-polytechnicien/details-du-programme/troisieme-annee-du-cycle-ingenieur'),
 (81, 115, 'PONTS ParisTech', 'https://ecoledesponts.fr/formation-initiale/formation-dingenieur'),
@@ -371,7 +371,29 @@ INSERT INTO `Diplome` (`IdEcole`, `IdDiplome`, `Diplome`, `UrlFormation`) VALUES
 (138, 343, 'ESTACA - Aéronautique', 'https://www.estaca.fr/'),
 (138, 344, 'ESTACA - Spatial', 'https://www.estaca.fr/'),
 (138, 345, 'ESTACA - Ferroviaire', 'https://www.estaca.fr/'),
-(185, 346, 'ECOLE NAVALE Brest', 'https://www.ecole-navale.fr/wp-content/uploads/2026/09/plaquette-Bordaches.pdf');
+(185, 346, 'ECOLE NAVALE Brest', 'https://www.ecole-navale.fr/wp-content/uploads/2026/09/plaquette-Bordaches.pdf'),
+(90, 347, 'ESIR - Technologies de l’Information pour la Santé', 'https://esir.univ-rennes.fr/specialite-technologies-de-linformation-pour-la-sante'),
+(87, 348, 'EPISEN - Systèmes d\'information', 'https://episen.u-pec.fr/formations/systemes-d-information-si/formation-classique'),
+(87, 349, 'EPISEN - Génie biomédical et santé', 'https://episen.u-pec.fr/formations/biomedical-et-sante-isbs/formation-classique'),
+(108, 350, 'L’Institut Agro Rennes-Angers - Ingénieur agronome', 'https://www.institut-agro-rennes-angers.fr/formation/ingenieurs/ingenieur-agronome'),
+(90, 351, 'ESIR - Systèmes Numériques et Réseaux', 'https://esir.univ-rennes.fr/specialite-systemes-numeriques-et-reseaux-en-apprentissage'),
+(106, 352, 'ENSAT - Ingénieur agronome d\'AgroToulouse', 'https://www.agrotoulouse.fr/fr/formations/formation-ingenieur/specialisations.html'),
+(88, 353, 'ESIAB - Ingénieur Production, Innovation et Biotechnologies en Agroalimentaire', 'https://www.univ-brest.fr/esiab/fr/page/formation-ingenieur-production-innovation-et-biotechnologies-en-agroalimentaire'),
+(85, 354, 'ESBS - Ingénieur en biotechnologie', 'https://esbs.unistra.fr/formations/diplomes-dingenieur/diplome-dingenieur-en-biotechnologie/odf-parcours-diplome-dingenieur-en-biotechnologie-PR1-29917/?tab=cours'),
+(107, 355, 'L’Institut Agro Montpellier - Ingénieur en Agronomie', 'https://www.institut-agro-montpellier.fr/sites/supagro/files/documents/2026/01/06/Plaquette-Ingenieurs-Institut-Agro-Montpellier-2026.pdf'),
+(108, 356, 'L’Institut Agro Rennes-Angers - Ingénieur en horticulture', 'https://www.institut-agro-rennes-angers.fr/formation/ingenieurs/ingenieur-en-horticulture'),
+(186, 357, 'École nationale vétérinaire d’Alfort - Docteur vétérinaire', 'https://www.vet-alfort.fr/devenir-veterinaire/le-deroulement-des-etudes/la-a6-une-annee-thematique'),
+(90, 358, 'ESIR - Informatique', 'https://esir.univ-rennes.fr/deroulement-des-etudes'),
+(107, 359, 'L’Institut Agro Montpellier - Ingénieur Systèmes Agricoles et Agroalimentaires Durables au Sud (Agronomie et Agroalimentaire)', 'https://www.institut-agro-montpellier.fr/formations/catalogue-des-formations/recherche-d-une-formation/ingenieur-saads'),
+(187, 360, 'ENSP Versailles école du paysage - Diplôme d’État de Paysagiste', 'https://www.ecole-paysage.fr/sites/default/files/media/downloads/plaquette_devenirpc_a4_web_0.pdf'),
+(108, 361, 'L’Institut Agro Rennes-Angers - Ingénieur en alimentation', 'https://www.institut-agro-rennes-angers.fr/formation/ingenieurs/ingenieur-en-alimentation'),
+(88, 362, 'ESIAB - Ingénieur en Microbiologie et Qualité', 'https://www.univ-brest.fr/esiab/fr/page/formation-ingenieur-microbiologie-et-qualite'),
+(110, 363, 'ENSC Lille - Ingénieur chimiste', 'https://www.ensc-lille.fr/fr/formation/cycle-ingenieur/'),
+(87, 364, 'EPISEN - Technologies pour la santé', 'https://episen.u-pec.fr/formations'),
+(108, 365, 'L’Institut Agro Rennes-Angers - Ingénieur en paysage', 'https://www.institut-agro-rennes-angers.fr/formation/ingenieurs/ingenieur-en-paysage'),
+(111, 366, 'ESPCI Paris – PSL', 'https://www.espci.psl.eu/formation/cycle-ingenieur/#par-annees'),
+(109, 367, 'VetAgro Sup - Ingénieur agronome', 'https://www.vetagro-sup.fr/formations/ingenieur-agronome/deroulement-des-etudes/'),
+(109, 368, 'VetAgro Sup - Docteur vétérinaire (d’État)', 'https://www.vetagro-sup.fr/formations/veterinaire/deroulement-des-etudes/');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : jeu. 15 oct. 2026 à 13:43
+-- Généré le : mar. 20 oct. 2026 à 10:13
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -28,9 +28,7 @@ SET time_zone = "+00:00";
 INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
 ('bcpst', 'Concours POLYTECH BCPST', 'ISBS Créteil', NULL),
 ('bcpst', 'Concours POLYTECH BCPST', 'ISTIA Angers', NULL),
-('bcpst', 'CPGE BCPST AGRO', 'ENSP Versailles école du paysage', NULL),
 ('bcpst', 'CPGE BCPST VETO', 'École nationale vétérinaire de Toulouse', NULL),
-('bcpst', 'CPGE BCPST VETO', 'École nationale vétérinaire d’Alfort', NULL),
 ('bcpst', 'Groupe INSA', 'INSA Euro-Méditerranée Maroc Génie Electrique MP-PC-PSI-PT', NULL),
 ('bcpst', 'Groupe INSA', 'INSA Euro-Méditerranée Maroc Génie Mécanique et Energétique PSI-PT', NULL),
 ('bcpst', 'Groupe INSA', 'INSA Euro-Méditerranée Maroc Systèmes d\'Information et de Communication PC-PSI-PT', NULL),
@@ -133,7 +131,6 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('pt', 'Groupe INSA', 'INSA Euro-Méditerranée Maroc Systèmes d\'Information et de Communication PC-PSI-PT', NULL),
 ('tb', 'Concours POLYTECH TB', 'ISTIA Angers', NULL),
 ('tb', 'CPGE TB VETO', 'École nationale vétérinaire de Toulouse', NULL),
-('tb', 'CPGE TB VETO', 'École nationale vétérinaire d’Alfort', NULL),
 ('tpc', 'Concours Commun INP', 'ENSIAME Valenciennes Méca Energ.', NULL),
 ('tsi', 'Concours CENTRALE-SUPELEC', 'CENTRALE CASABLANCA', NULL),
 ('tsi', 'Concours CENTRALE-SUPELEC', 'CENTRALE CASABLANCA - 2', NULL),
@@ -151,7 +148,6 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('tsi', 'Réseau Polytech', 'Polytech Dijon - Matériaux', NULL),
 ('tsi', 'Réseau Polytech', 'Polytech Dijon - Robotique', NULL),
 ('﻿pt', 'CENTRALE-SUPELEC', 'Centrale Casablanca', NULL),
-('bcpst', 'CPGE BCPST AGRO', 'INP AGROTOULOUSE', ''),
 ('mp', 'Autres écoles E3A', 'EIJV - Génie Énergétique et Environnement', ''),
 ('mp', 'Autres écoles E3A', 'EIJV - Technologie de l\'Information pour la santé', ''),
 ('mp', 'Concours Ingeni’Up', 'ECAM Strasbourg Europe', ''),
@@ -165,7 +161,6 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('pt', 'AUTRES ECOLES', 'EIJV Amiens - Cybersécurité', ''),
 ('pt', 'AUTRES ECOLES', 'EIJV Saint Quentin - Logistique innovante', ''),
 ('pt', 'Concours Ingeni’Up', 'ECAM Strasbourg Europe', ''),
-('tb', 'CPGE TB AGRO', 'INP AGROTOULOUSE', ''),
 ('mp', 'Autres écoles E3A', '3iL Ingénieurs Limoges', '3IL Ingénieurs'),
 ('mp', 'Puissance Alpha', '3iL Ingénieurs Limoges', '3IL Ingénieurs'),
 ('mpi', 'Puissance Alpha', '3iL Ingénieurs Limoges', '3IL Ingénieurs'),
@@ -667,13 +662,13 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('pt', 'AUTRES ECOLES', 'ECE PARIS', 'ECE'),
 ('pt', 'AUTRES ECOLES', 'ECE Paris Apprentissage', 'ECE'),
 ('pt', 'Avenir Prépas', 'ECE BORDEAUX', 'ECE'),
-('pt', 'Avenir Prépas', 'ECE LYON', 'ECE');
-INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
+('pt', 'Avenir Prépas', 'ECE LYON', 'ECE'),
 ('pt', 'Avenir Prépas', 'ECE PARIS', 'ECE'),
 ('pt', 'Avenir Prépas', 'ECE Paris Apprentissage', 'ECE'),
 ('mp', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Base', 'ECOLE DE L\'AIR'),
 ('mp', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Méca', 'ECOLE DE L\'AIR'),
-('mp', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Pilote', 'ECOLE DE L\'AIR'),
+('mp', 'Banque épreuves CCINP', 'ECOLE DE L\'AIR Pilote', 'ECOLE DE L\'AIR');
+INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
 ('mp', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Base', 'ECOLE DE L\'AIR'),
 ('mp', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Méca', 'ECOLE DE L\'AIR'),
 ('mp', 'Banque épreuves CCINP Inter-Filière', 'ECOLE DE L\'AIR Pilote', 'ECOLE DE L\'AIR'),
@@ -703,6 +698,8 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('pc', 'Concours Mines - Télécom', 'ECOLE METEOROLOGIE (non fonctionnaire)', 'ECOLE Météorologie'),
 ('psi', 'Concours Mines - Télécom', 'ECOLE METEOROLOGIE (fonctionnaire)', 'ECOLE Météorologie'),
 ('psi', 'Concours Mines - Télécom', 'ECOLE METEOROLOGIE (non fonctionnaire)', 'ECOLE Météorologie'),
+('bcpst', 'CPGE BCPST VETO', 'École nationale vétérinaire d’Alfort', 'École nationale vétérinaire d’Alfort'),
+('tb', 'CPGE TB VETO', 'École nationale vétérinaire d’Alfort', 'École nationale vétérinaire d’Alfort'),
 ('mp', 'Banque CENTRALE-SUPELEC', 'ECOLE NAVALE Brest', 'ECOLE NAVALE Brest'),
 ('mpi', 'Banque CENTRALE-SUPELEC', 'ECOLE NAVALE Brest', 'ECOLE NAVALE Brest'),
 ('pc', 'Banque CENTRALE-SUPELEC', 'ECOLE NAVALE Brest', 'ECOLE NAVALE Brest'),
@@ -936,8 +933,6 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('pc', 'Banque épreuves CCINP', 'ENSAR Poitiers (campus de Niort)', 'ENSAR'),
 ('psi', 'Banque épreuves CCINP', 'ENSAR Poitiers (campus de Niort)', 'ENSAR'),
 ('tsi', 'Banque épreuves CCINP', 'ENSAR Poitiers (campus de Niort)', 'ENSAR'),
-('bcpst', 'CPGE BCPST AGRO', 'ENSAT Toulouse', 'ENSAT Toulouse'),
-('tb', 'CPGE TB AGRO', 'ENSAT Toulouse', 'ENSAT Toulouse'),
 ('bcpst', 'CPGE PC AGRO', 'ENSC Lille', 'ENSC Lille'),
 ('mp', 'Concours Commun INP', 'ENSC Lille', 'ENSC Lille'),
 ('pc', 'CCINP : ECOLES RECRUTANT SUR LE CONCOURS CHIMIE', 'ENSC Lille', 'ENSC Lille'),
@@ -1250,10 +1245,11 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('pc', 'CCINP : ECOLES RECRUTANT SUR LE CONCOURS PHYSIQUE', 'SUPMICROTECH ENSMM Besançon', 'ENSMM Besançon'),
 ('psi', 'Concours Commun INP', 'SUPMICROTECH ENSMM Besançon', 'ENSMM Besançon'),
 ('pt', 'Concours Commun INP', 'SUPMICROTECH ENSMM Besançon', 'ENSMM Besançon'),
-('tsi', 'Concours Commun INP', 'SUPMICROTECH ENSMM Besançon', 'ENSMM Besançon');
-INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
+('tsi', 'Concours Commun INP', 'SUPMICROTECH ENSMM Besançon', 'ENSMM Besançon'),
+('bcpst', 'CPGE BCPST AGRO', 'ENSP Versailles école du paysage', 'ENSP Versailles école du paysage'),
 ('mp', 'Concours Commun INP', 'Bordeaux INP - ENSPIMA', 'ENSPIMA'),
-('mpi', 'Concours Commun INP', 'Bordeaux INP - ENSPIMA', 'ENSPIMA'),
+('mpi', 'Concours Commun INP', 'Bordeaux INP - ENSPIMA', 'ENSPIMA');
+INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
 ('psi', 'Concours Commun INP', 'Bordeaux INP - ENSPIMA', 'ENSPIMA'),
 ('pt', 'Concours Commun INP', 'Bordeaux INP - ENSPIMA', 'ENSPIMA'),
 ('tsi', 'Concours Commun INP', 'Bordeaux INP - ENSPIMA', 'ENSPIMA'),
@@ -1917,9 +1913,9 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('pt', 'Concours Commun INP', 'Grenoble INP - Pagora', 'Grenoble INP - Pagora'),
 ('tpc', 'Concours Commun INP', 'Grenoble INP - Pagora', 'Grenoble INP - Pagora'),
 ('tsi', 'Concours Commun INP', 'Grenoble INP - Pagora', 'Grenoble INP - Pagora'),
-('bcpst', 'CPGE PC AGRO', 'Grenoble INP - Phelma (Physique Matériaux Procédés)', 'Grenoble INP - Phelma');
+('bcpst', 'CPGE PC AGRO', 'Grenoble INP - Phelma (Physique Matériaux Procédés)', 'Grenoble INP - Phelma'),
+('mp', 'Concours Commun INP', 'Grenoble INP - Phelma (Physique Electronique Télécoms)', 'Grenoble INP - Phelma');
 INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VALUES
-('mp', 'Concours Commun INP', 'Grenoble INP - Phelma (Physique Electronique Télécoms)', 'Grenoble INP - Phelma'),
 ('mp', 'Concours Commun INP', 'Grenoble INP - Phelma (Physique Matériaux Procédés)', 'Grenoble INP - Phelma'),
 ('mpi', 'Concours Commun INP', 'Grenoble INP - Phelma (Physique Electronique Télécoms)', 'Grenoble INP - Phelma'),
 ('pc', 'CCINP : ECOLES RECRUTANT SUR LE CONCOURS PHYSIQUE', 'Grenoble INP - Phelma (Physique Electronique Télécoms)', 'Grenoble INP - Phelma'),
@@ -2032,6 +2028,8 @@ INSERT INTO `EcoleConcours` (`Filiere`, `Concours`, `EcoleConcours`, `Ecole`) VA
 ('pt', 'AUTRES ECOLES', 'Mines Douai - ISPA Alençon', 'IMT Nord Europe'),
 ('pt', 'Concours Mines - Télécom', 'IMT Nord Europe', 'IMT Nord Europe'),
 ('tsi', 'Concours Mines - Télécom', 'IMT Nord Europe', 'IMT Nord Europe'),
+('bcpst', 'CPGE BCPST AGRO', 'INP AGROTOULOUSE', 'INP AGROTOULOUSE'),
+('tb', 'CPGE TB AGRO', 'INP AGROTOULOUSE', 'INP AGROTOULOUSE'),
 ('bcpst', 'Groupe INSA', 'INSA Centre Val de Loire Génie des Systèmes Industriels', 'INSA Centre Val de Loire'),
 ('bcpst', 'Groupe INSA', 'INSA Centre Val de Loire Génie des Systèmes Industriels PSI-PT', 'INSA Centre Val de Loire'),
 ('bcpst', 'Groupe INSA', 'INSA Centre Val de Loire Maîtrise des Risques Industriels', 'INSA Centre Val de Loire'),
