@@ -72,7 +72,7 @@
 						<br/>&bull;  Pour les concours Polytechnique et Mines-Telecom, le rang du dernier admis par école est connu pour toutes les filières.<br/>
 						<br/>&bull;  Pour les concours de la filière BCPST G2E, A ENV, A BIO et A PC BIO, le rang du dernier admis est connu pour toutes les années.<br/>
 						<br/>&bull;  Pour tous les autres concours, le rang du dernier admis est connu uniquement pour les années 2016 et 2017.'></i></p>
-				<p>Les informations sur les spécialités sont en cours d'enrichissement. Elles portent pour l'instant sur les écoles des concours X-ENS, CentraleSupélec, Mines-Ponts, Mines-Télécom et CCINP, et seront complétées progressivement.</p>
+				<p>Les informations sur les spécialités couvrent les écoles des concours Agro, CCINP, CentraleSupélec, Ecoles Militaires, Groupe INSA, Mines-Ponts, Mines-Télécom, Polytech, Puissance Alpha, Veto, X-ENS. Les écoles restantes seront couvertes progressivement</p>
 			</div>
 			<br/>
 		</section>

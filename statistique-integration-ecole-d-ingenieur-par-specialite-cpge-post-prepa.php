@@ -302,8 +302,8 @@
 			<div id="listeEcoles"></div>
 			<div class='border-top mt-4 pt-3'>
 				<ul class='text-muted small mb-0'>
-					<li>Les spécialités recensées à ce jour sont celles des écoles des concours X-ENS, CentraleSupélec, Mines-Ponts, Mines-Télécom, CCINP, Groupe INSA, Polytech, Ecoles Militaires et Puissance Alpha.</li>
-					<li>Les autres concours seront couverts progressivement.</li>
+					<li>Les spécialités recensées à ce jour sont celles des écoles des concours Agro, CCINP, CentraleSupélec, Ecoles Militaires, Groupe INSA, Mines-Ponts, Mines-Télécom, Polytech, Puissance Alpha, Veto, X-ENS.</li>
+					<li>Les autres écoles seront couvertes progressivement.</li>
 					<li>Les spécialités correspondent aux spécialisations choisies par les étudiants. Elles se distinguent des enseignements fondamentaux et des orientations professionnelles (recherche, conseil, entrepreneuriat, etc.) qui peuvent compléter le parcours.</li>
 				</ul>
 			</div>

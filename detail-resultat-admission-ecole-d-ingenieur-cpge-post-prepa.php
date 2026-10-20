@@ -1,5 +1,3 @@
-<!doctype html>
-
 <?php
 
 	// récupération-contrôle des paramètres
@@ -32,11 +30,24 @@
 	}
 
 	$ecoleAffichee = str_replace("\\'", "'", remettreEsperluete($ecole));
+	require_once "php/detailEntete.php";
+	if ($ecoleAffichee !== '' && $ecoleAffichee !== 'toutes') {
+		try {
+			$db = openDatabase();
+			$ecoleCanoniqueFiche = obtenirNomEcoleFiche($db, $ecoleAffichee);
+		} catch (RuntimeException $erreur) {
+			error_log('Fiche école : ' . $erreur->getMessage());
+			http_response_code(503);
+			die("<p>Impossible de charger l'identité de l'école. Veuillez réessayer.</p>");
+		}
+		$ecoleAffichee = $ecoleCanoniqueFiche;
+	}
 	$titrePage = ($ecoleAffichee !== '' && $ecoleAffichee !== 'toutes')
 		? $ecoleAffichee . " : admissions, classements et spécialités"
 		: "Détail admissions en école d'ingénieurs";
 
 ?>
+<!doctype html>
 
 <html lang="fr">
   <head>

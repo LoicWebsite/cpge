@@ -4,19 +4,13 @@ require_once __DIR__ . '/detailEntete.php';
 
 // Affiche le contenu de l'onglet "Spécialités" à partir des tables Ecole, Diplome et Specialite.
 // La collecte est en cours : un message d'attente est affiché tant qu'aucune donnée n'existe pour l'école.
-function afficherSpecialites(PDO $db, string $ecole, bool $debug = false): void {
+function afficherSpecialites(PDO $db, string $ecole, bool $debug = false, ?int $idDiplome = null): void {
 	afficherTitreSection($ecole, 'Spécialités');
 
 	// Ecole.Ecole porte le nom canonique, alors que la page reçoit le libellé concours
 	$ecoleCanonique = $ecole;
 	try {
-		$stmt = $db->prepare("SELECT Ecole FROM EcoleConcours WHERE EcoleConcours = :ecole AND Ecole IS NOT NULL LIMIT 1");
-		$stmt->execute([':ecole' => $ecole]);
-		$ligne = $stmt->fetch(PDO::FETCH_ASSOC);
-		$stmt->closeCursor();
-		if ($ligne && $ligne['Ecole'] !== '') {
-			$ecoleCanonique = $ligne['Ecole'];
-		}
+		$ecoleCanonique = obtenirNomEcoleFiche($db, $ecole);
 	}
 	catch (PDOException $erreur) {
 		echo "<div class='alert alert-warning'>Erreur SELECT EcoleConcours : " . escapeHtml($erreur->getMessage()) . "</div>";
@@ -52,8 +46,8 @@ function afficherSpecialites(PDO $db, string $ecole, bool $debug = false): void 
 		echo "</div>";
 		echo "<div class='border-top mt-4 pt-3'>";
 		echo "<ul class='text-muted small mb-0'>";
-		echo "<li>Les spécialités recensées à ce jour sont celles des écoles des concours X-ENS, CentraleSupélec, Mines-Ponts, Mines-Télécom, CCINP, Groupe INSA, Polytech, Ecoles Militaires et Puissance Alpha.</li>";
-		echo "<li>Les autres concours seront couverts progressivement.</li>";
+		echo "<li>Les spécialités recensées à ce jour sont celles des écoles des concours Agro, CCINP, CentraleSupélec, Ecoles Militaires, Groupe INSA, Mines-Ponts, Mines-Télécom, Polytech, Puissance Alpha, Veto, X-ENS.</li>";
+		echo "<li>Les autres écoles seront couvertes progressivement.</li>";
 		echo "</ul>";
 		echo "</div>";
 		return;
@@ -77,7 +71,10 @@ function afficherSpecialites(PDO $db, string $ecole, bool $debug = false): void 
 	// plusieurs diplômes : toujours l'accordéon, sinon deux écoles comparables
 	// s'afficheraient différemment selon leur seul nombre de spécialités
 	if (count($diplomes) > 1) {
-		afficherSpecialitesRepliees($diplomes, $anneeUnique);
+		if ($idDiplome === null) {
+			echo "<p class='text-center text-secondary small'>Choisissez un diplôme pour découvrir ses spécialités. Les admissions conservent leur propre périmètre.</p>";
+		}
+		afficherSpecialitesRepliees($diplomes, $anneeUnique, $idDiplome);
 	} else {
 		foreach ($diplomes as $diplome) {
 			afficherTitreDiplome($diplome, $ecoleCanonique, count($diplomes));
@@ -191,19 +188,16 @@ function badgesSpecialite(array $specialite, string $anneeUnique): string {
 	return $html;
 }
 
-// Accordéon utilisé dès que l'école a plusieurs diplômes : le premier reste ouvert
-// pour que l'onglet ne s'affiche jamais entièrement vide, sauf s'il n'a qu'une
-// seule spécialité (son titre y ressemble déjà, le déplier n'apporterait rien).
-function afficherSpecialitesRepliees(array $diplomes, string $anneeUnique): void {
+// Sans diplôme explicitement identifié, ne pas attribuer au visiteur le premier par ordre alphabétique.
+function afficherSpecialitesRepliees(array $diplomes, string $anneeUnique, ?int $idDiplome = null): void {
 	echo "<div class='accordion' id='accordeon-specialites'>";
-	$premier = true;
 	foreach ($diplomes as $diplome) {
 		$idPanneau = 'specialite-diplome-' . $diplome['id'];
 		$nombre = 0;
 		foreach ($diplome['groupes'] as $specialites) {
 			$nombre += count($specialites);
 		}
-		$ouvrir = $premier && $nombre > 1;
+		$ouvrir = $idDiplome === $diplome['id'];
 
 		echo "<div class='accordion-item'>";
 		echo "<h3 class='accordion-header'>";
@@ -224,7 +218,6 @@ function afficherSpecialitesRepliees(array $diplomes, string $anneeUnique): void
 		}
 		afficherGroupesDiplome($diplome, $anneeUnique);
 		echo "</div></div></div>";
-		$premier = false;
 	}
 	echo "</div>";
 }

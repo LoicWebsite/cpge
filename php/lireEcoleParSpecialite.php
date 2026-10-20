@@ -4,6 +4,8 @@
  * Valide les parametres, appelle le service commun de paysageSpecialites.php,
  * puis traduit ses lignes en JSON et construit les liens vers les fiches.
  * Aucune regle de rapprochement, de score, de tri ou de comptage n'est definie ici.
+ * Le lien cible un diplome deja identifie par le service ou par un couple exact
+ * ecole / diplome unique ; un libelle ambigu ne produit aucun identifiant devine.
  */
 
 include "controleParametre.php";
@@ -29,7 +31,15 @@ if (strlen(normaliserRecherche($requete)) < 2) {
 }
 
 try {
-    $recherche = rechercherSpecialitesReferentiel(openDatabase(), $requete, $rechercheStricte, $filiereRecherche);
+    $db = openDatabase();
+    $recherche = rechercherSpecialitesReferentiel($db, $requete, $rechercheStricte, $filiereRecherche);
+    $idsDiplomes = [];
+    if ($recherche['results']) {
+        foreach ($db->query('SELECT d.IdDiplome, d.Diplome, e.Ecole FROM Diplome d JOIN Ecole e ON e.IdEcole = d.IdEcole') as $diplome) {
+            $cle = $diplome['Ecole'] . "\0" . $diplome['Diplome'];
+            $idsDiplomes[$cle][] = (int) $diplome['IdDiplome'];
+        }
+    }
 
     // la recherche est réinjectée dans le lien pour que la fiche école puisse
     // proposer un retour qui relance la même recherche
@@ -46,7 +56,12 @@ try {
 
     $resultats = [];
     foreach ($recherche['results'] as $ligne) {
+        $ids = $idsDiplomes[$ligne['Ecole'] . "\0" . $ligne['Diplome']] ?? [];
+        $idDiplome = isset($ligne['IdDiplome']) ? (int) $ligne['IdDiplome'] : (count($ids) === 1 ? $ids[0] : null);
+        $paramsFormation = $paramsDetail + ['ecole' => $ligne['Ecole']];
+        if ($idDiplome !== null) $paramsFormation['diplome'] = $idDiplome;
         $resultats[] = [
+            'idDiplome'   => $idDiplome,
             'idSpecialite' => $recherche['domaine'] !== null ? (int) $ligne['IdSpecialite'] : null,
             'ecole'       => $ligne['Ecole'],
             'diplome'     => $ligne['Diplome'],
@@ -57,7 +72,8 @@ try {
             'score'       => $ligne['score'],
             'matches'     => $ligne['matches'],
             'detail_url'  => 'detail-resultat-admission-par-ecole.php?'
-                . http_build_query($paramsDetail + ['ecole' => $ligne['Ecole']], '', '&amp;', PHP_QUERY_RFC3986),
+                . http_build_query($paramsFormation, '', '&amp;', PHP_QUERY_RFC3986)
+                . '#onglet-specialites',
         ];
     }
 

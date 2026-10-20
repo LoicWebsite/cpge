@@ -160,15 +160,12 @@ function trierFormationsParImportanceRecente(array &$parFormations): void {
 // tooltip discret sans modifier la signature de afficherTitreSection(), utilisée
 // par les autres onglets.
 function afficherTitreFiliere(string $ecole, string $filiere, string $aide = ''): void {
-	$section = "Filière " . strtoupper($filiere);
+	$section = "Admissions — " . strtoupper($filiere);
 	if ($aide === '') {
 		afficherTitreSection($ecole, $section);
 		return;
 	}
 	echo "<h2 class='h5 text-center mb-1'>";
-	if ($ecole !== '') {
-		echo "<span class='text-secondary'>" . escapeHtml($ecole) . "</span><span class='text-secondary'> &middot; </span>";
-	}
 	echo escapeHtml($section);
 	echo "&nbsp;<i class='bi bi-info-circle-fill text-secondary' data-bs-toggle='tooltip' data-bs-html='true' title='" . escapeHtml($aide) . "'></i>";
 	echo "</h2>";

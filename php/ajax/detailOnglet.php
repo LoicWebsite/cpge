@@ -51,12 +51,14 @@ elseif ($onglet === 'classements') {
 	$classements = chargerClassements($db, $ecoleFiltre, $debug);
 	$attractivite = chargerAttractivite($db, $ecoleFiltre);
 	afficherClassements($classements, $ecoleFiltre, $attractivite);
+	echo "<p class='small text-secondary'>Ces classements concernent le périmètre retenu par chaque source ; ils ne sont pas une évaluation individuelle du diplôme consulté.</p>";
 }
 elseif ($onglet === 'salaire') {
 	// Le fragment reste léger : le navigateur chargera ensuite les données JSON
 	// et le module Chart.js seulement après l'ouverture de l'onglet.
 	echo "<section class='salaire-ecole-detail'>";
 	echo "<h2 class='h5 text-center mb-3'><i class='bi bi-cash-stack'></i>&nbsp; Salaires des diplômés</h2>";
+	echo "<p class='small text-secondary text-center'>Données agrégées des formations d'ingénieurs de l'établissement, non spécifiques au diplôme consulté.</p>";
 	echo "<p class='text-muted text-center'><small>Salaire mensuel net en équivalent temps plein, mesuré 12, 18, 24 et 30 mois après le diplôme.</small></p>";
 	echo "<details class='mb-3'><summary>À propos des données</summary>";
 	echo "<p class='mt-2 mb-0'><small>Source : dispositif InserSup du Ministère de l'Enseignement supérieur. Q1 : 25 % des diplômés gagnent moins ; médiane : 50 % gagnent moins ; Q3 : 75 % gagnent moins. <a href='https://data.enseignementsup-recherche.gouv.fr/explore/assets/fr-esr-insersup/' target='_blank' rel='noopener'>Source officielle</a>.</small></p></details>";

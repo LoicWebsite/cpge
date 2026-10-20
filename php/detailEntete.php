@@ -27,12 +27,25 @@ function identifiantOnglet(string $cle): string {
 	return 'onglet-' . preg_replace('/[^a-z0-9\-]/', '', strtolower($cle));
 }
 
-// Titre d'un onglet, qui rappelle le nom de l'école restée en haut de page.
+function obtenirNomEcoleFiche(PDO $db, string $ecole): string {
+	$stmt = $db->prepare("SELECT DISTINCT Ecole FROM EcoleConcours WHERE EcoleConcours = :ecole AND Ecole IS NOT NULL AND Ecole <> ''");
+	$stmt->execute([':ecole' => $ecole]);
+	$noms = $stmt->fetchAll(PDO::FETCH_COLUMN);
+	$stmt->closeCursor();
+	if (count($noms) > 1) {
+		throw new RuntimeException("Plusieurs écoles sont rattachées à cette voie d'admission.");
+	}
+	return $noms ? $noms[0] : $ecole;
+}
+
+function libelleFormationFiche(string $ecole, string $formation): string {
+	$prefixe = $ecole . ' - ';
+	return strpos($formation, $prefixe) === 0 ? substr($formation, strlen($prefixe)) : $formation;
+}
+
+// L'identité et le contexte sont portés par le bandeau, pas répétés dans chaque onglet.
 function afficherTitreSection(string $ecole, string $section): void {
 	echo "<h2 class='h5 text-center mb-1'>";
-	if ($ecole !== '') {
-		echo "<span class='text-secondary'>" . escapeHtml($ecole) . "</span><span class='text-secondary'> &middot; </span>";
-	}
 	echo escapeHtml($section);
 	echo "</h2>";
 }
@@ -72,7 +85,7 @@ function chargerAttractivite(PDO $db, string $ecole): array {
 // Bandeau statique : ne dépend que de l'URL officielle (1 requête légère) et de la
 // liste des filières déjà connue. Les classements/attractivité (plus coûteux, ~9
 // requêtes) sont chargés en arrière-plan par AJAX et injectés dans #badges-entete.
-function afficherEnteteEcole(string $ecole, string $urlEcole, array $filieres): void {
+function afficherEnteteEcole(string $ecole, string $urlEcole, array $filieres, string $contexte = ''): void {
 	$libelles = libellesFilieres();
 
 	echo "<header class='container'>";
@@ -80,7 +93,9 @@ function afficherEnteteEcole(string $ecole, string $urlEcole, array $filieres): 
 
 	echo "<h1 class='h3 mb-3 text-center'><i class='bi bi-bank2'></i>&nbsp;&nbsp;" . escapeHtml($ecole) . "</h1>";
 
-	echo "<p class='text-center mb-3'><span class='text-secondary'>Admissions, classements et spécialités de l'école d'ingénieurs</span></p>";
+	if ($contexte !== '') {
+		echo "<p class='fiche-contexte text-center mb-3'>" . escapeHtml($contexte) . "</p>";
+	}
 
 	if ($urlEcole !== '') {
 		echo "<p class='text-center mb-3'>";
@@ -93,7 +108,7 @@ function afficherEnteteEcole(string $ecole, string $urlEcole, array $filieres): 
 	echo "<p class='text-center mb-3' id='badges-entete'><span class='spinner-border spinner-border-sm text-secondary' role='status' aria-label='Chargement des classements'></span></p>";
 
 	if (!empty($filieres)) {
-		echo "<p class='text-center mb-0 small text-secondary'>Accessible depuis ";
+		echo "<p class='text-center mb-0 small text-secondary'>Admissions disponibles depuis ";
 		echo count($filieres) > 1 ? "les filières " : "la filière ";
 		$noms = [];
 		foreach ($filieres as $cle) {

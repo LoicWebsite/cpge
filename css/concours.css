@@ -86,30 +86,59 @@ th {
 }
 
 .onglets-ecole .nav-tabs {
-	flex-wrap: nowrap;
-	white-space: nowrap;
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: auto;
 	border-bottom-width: 1px;
 }
 
 .onglets-ecole .nav-link {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: .4rem;
 	white-space: nowrap;
-	flex: 0 0 auto;
+	min-width: 0;
+	min-height: 44px;
 }
 
-/* sur mobile les onglets passent à la ligne : aucun n'est masqué hors écran */
+.fiche-contexte {
+	color: #495057;
+	font-size: .95rem;
+	overflow-wrap: anywhere;
+}
+
+.filieres-admissions {
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: .35rem;
+}
+
+.filieres-admissions .nav-link {
+	min-height: 44px;
+	min-width: 3rem;
+	border: 1px solid #dee2e6;
+}
+
+/* Deux colonnes sur petit écran préservent les icônes et des libellés lisibles. */
 @media (max-width: 767.98px) {
 	.onglets-ecole {
 		overflow-x: visible;
 	}
 
-	.onglets-ecole .nav-tabs {
-		flex-wrap: wrap;
-		justify-content: center;
-	}
-
 	.onglets-ecole .nav-link {
-		padding: 0.35rem 0.6rem;
-		font-size: 0.9rem;
+		padding: .35rem .2rem;
+		font-size: .85rem;
+	}
+}
+
+@media (max-width: 575.98px) {
+	.onglets-ecole .nav-tabs {
+		grid-auto-flow: row;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.onglets-ecole .nav-link {
+		font-size: .9rem;
 	}
 }
 

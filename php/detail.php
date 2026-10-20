@@ -5,6 +5,9 @@
  * rend les spécialités disponibles immédiatement et délègue les contenus
  * lourds aux endpoints AJAX au premier clic. Les tests Salaire/Spécialités
  * servent à ne pas afficher d'onglet sans donnée exploitable.
+ * Essai visuel sans évolution de la base : identité canonique, contexte conservé,
+ * quatre rubriques et sous-onglets de filière à l'intérieur d'Admissions. Seul un identifiant
+ * explicite et vérifié peut sélectionner un diplôme, jamais son nom approchant.
  */
 
 	$debug = isset($debug) ? $debug : false;
@@ -31,7 +34,9 @@
 	// les onglets (Classements, une filière) sont chargés à la demande par
 	// ajax/detailOnglet.php, donc le premier affichage reste léger (~4 requêtes).
 	try {
-		$db = openDatabase();
+		if (!isset($db) || !($db instanceof PDO)) {
+			$db = openDatabase();
+		}
 	}
 	catch (PDOException $erreur) {
 		die('Erreur connexion base : ' . $erreur->getMessage());
@@ -44,9 +49,28 @@
 		$filieresEcole = obtenirFilieresEcole($db, $ecolesConcoursRecherchees, $debug);
 		$urlEcole = obtenirUrlEcole($db, $ecoleFiltre);
 		// Résout le nom canonique utilisé par Diplome, Specialite et EcoleSalaire.
-		$stmtCanonique = $db->prepare("SELECT Ecole FROM EcoleConcours WHERE EcoleConcours = :ecole AND Ecole IS NOT NULL LIMIT 1");
-		$stmtCanonique->execute([':ecole' => $ecoleFiltre]);
-		$ecoleCanonique = $stmtCanonique->fetchColumn() ?: $ecoleFiltre;
+		$ecoleCanonique = $ecoleCanoniqueFiche ?? obtenirNomEcoleFiche($db, $ecoleFiltre);
+		$idDiplomeConsulte = null;
+		$contexteFiche = $ecoleFiltre !== $ecoleCanonique
+			? "Voie d'admission consultée : " . libelleFormationFiche($ecoleCanonique, $ecoleFiltre) : '';
+		$erreurDiplome = '';
+		if (isset($_GET['diplome']) && $_GET['diplome'] !== '') {
+			$idDemande = filter_var($_GET['diplome'], FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+			$diplome = false;
+			if ($idDemande !== false) {
+				$stmtDiplome = $db->prepare("SELECT d.IdDiplome, d.Diplome FROM Diplome d
+					JOIN Ecole e ON e.IdEcole = d.IdEcole WHERE d.IdDiplome = :id AND e.Ecole = :ecole");
+				$stmtDiplome->execute([':id' => $idDemande, ':ecole' => $ecoleCanonique]);
+				$diplome = $stmtDiplome->fetch(PDO::FETCH_ASSOC);
+				$stmtDiplome->closeCursor();
+			}
+			if ($diplome) {
+				$idDiplomeConsulte = (int) $diplome['IdDiplome'];
+				$contexteFiche = "Diplôme consulté : " . libelleFormationFiche($ecoleCanonique, $diplome['Diplome']);
+			} else {
+				$erreurDiplome = "Le diplôme demandé n'appartient pas à cette école ou n'est plus disponible. Aucun autre diplôme n'a été sélectionné automatiquement.";
+			}
+		}
 
 		// Un diplôme seul ne suffit pas : l'onglet exige une spécialité collectée.
 		$stmtSpecialites = $db->prepare("SELECT 1 FROM Ecole e
@@ -74,76 +98,80 @@
 		$stmtSalaires->execute([':ecole' => $ecoleCanonique]);
 		$hasSalaires = (bool) $stmtSalaires->fetchColumn();
 		$ongletActif = $hasSpecialites ? 'specialites' : ($hasSalaires ? 'salaire' : 'classements');
+		$filiereDemandee = strtolower($filiere);
+		$filiereSelectionnee = $filiereDemandee !== ''
+			? (in_array($filiereDemandee, $filieresEcole, true) ? $filiereDemandee : '')
+			: ($filieresEcole[0] ?? '');
+		if (in_array($origine, ['classement', 'attractivite'], true)) {
+			$ongletActif = 'classements';
+		} elseif ($origine === 'salaire' && $hasSalaires) {
+			$ongletActif = 'salaire';
+		} elseif ($filiereDemandee !== '' && $origine !== 'specialite' && !empty($filieresEcole)) {
+			$ongletActif = 'admissions';
+		}
 
 		// Spécialités est rendu immédiatement côté serveur : son contenu ne doit
 		// jamais porter data-onglet, sinon le gestionnaire AJAX le remplacerait.
 		// Salaire, Classements et les filières sont des fragments AJAX différés.
-		afficherEnteteEcole($ecoleFiltre, $urlEcole, $filieresEcole);
+		afficherEnteteEcole($ecoleCanonique, $urlEcole, $filieresEcole, $contexteFiche);
 
 		echo "<main class='container' style='margin-top:24px;'>";
+		if ($erreurDiplome !== '') echo "<p class='alert alert-warning'>" . escapeHtml($erreurDiplome) . "</p>";
 
-		// barre d'onglets (défilement horizontal sur petit écran)
+		// Quatre rubriques au maximum ; les filières ne concurrencent plus les rubriques.
 		echo "<nav class='onglets-ecole'>";
 		echo "<div class='nav nav-tabs' id='nav-ecole' role='tablist'>";
 
-		$idClassements = identifiantOnglet('classements');
-		echo "<button class='nav-link" . ($ongletActif === 'classements' ? ' active' : '') . "' id='tab-" . $idClassements . "'"
-		   . " data-bs-toggle='tab' data-bs-target='#" . $idClassements . "' data-onglet='classements' type='button' role='tab'"
-		   . " aria-controls='" . $idClassements . "' aria-selected='" . ($ongletActif === 'classements' ? 'true' : 'false') . "'>"
-		   . "<i class='bi bi-trophy'></i>&nbsp; Classements</button>";
-
-		foreach ($filieresEcole as $cle) {
+		$rubriques = [];
+		if (!empty($filieresEcole)) $rubriques['admissions'] = 'Admissions';
+		if ($hasSpecialites) $rubriques['specialites'] = 'Spécialités';
+		$rubriques['classements'] = 'Classements';
+		if ($hasSalaires) $rubriques['salaire'] = 'Salaires';
+		$iconesRubriques = ['admissions' => 'person-check', 'specialites' => 'diagram-3', 'classements' => 'trophy', 'salaire' => 'cash-stack'];
+		foreach ($rubriques as $cle => $libelle) {
 			$id = identifiantOnglet($cle);
-			echo "<button class='nav-link' id='tab-" . $id . "'"
-			   . " data-bs-toggle='tab' data-bs-target='#" . $id . "' data-onglet='" . escapeHtml($cle) . "' type='button' role='tab'"
-			   . " aria-controls='" . $id . "' aria-selected='false'>"
-			   . escapeHtml(strtoupper($cle)) . "</button>";
+			echo "<button class='nav-link" . ($ongletActif === $cle ? ' active' : '') . "' id='tab-" . $id . "'"
+			   . " data-bs-toggle='tab' data-bs-target='#" . $id . "' type='button' role='tab'"
+			   . " aria-controls='" . $id . "' aria-selected='" . ($ongletActif === $cle ? 'true' : 'false') . "'>"
+			   . "<i class='bi bi-" . $iconesRubriques[$cle] . "' aria-hidden='true'></i><span>" . escapeHtml($libelle) . "</span></button>";
 		}
-
-		$idSpecialites = identifiantOnglet('specialites');
-		$idSalaire = identifiantOnglet('salaire');
-		if ($hasSalaires) {
-			echo "<button class='nav-link" . ($ongletActif === 'salaire' ? ' active' : '') . "' id='tab-" . $idSalaire . "'"
-			   . " data-bs-toggle='tab' data-bs-target='#" . $idSalaire . "' data-onglet='salaire' type='button' role='tab'"
-			   . " aria-controls='" . $idSalaire . "' aria-selected='" . ($ongletActif === 'salaire' ? 'true' : 'false') . "'>"
-			   . "<i class='bi bi-cash-stack'></i>&nbsp; Salaire</button>";
-		}
-		if ($hasSpecialites) {
-			echo "<button class='nav-link" . ($ongletActif === 'specialites' ? ' active' : '') . "' id='tab-" . $idSpecialites . "'"
-		   . " data-bs-toggle='tab' data-bs-target='#" . $idSpecialites . "' type='button' role='tab'"
-		   . " aria-controls='" . $idSpecialites . "' aria-selected='" . ($ongletActif === 'specialites' ? 'true' : 'false') . "'>"
-		   . "<i class='bi bi-diagram-3'></i>&nbsp; Spécialités</button>";
-		}
-
-		echo "</div>";
-		echo "</nav>";
-
-		// Contenu : Spécialités est déjà rempli côté serveur ; Salaire, Classements
-		// et chaque filière démarrent avec un spinner et sont remplis par
-		// ajax/detailOnglet.php au premier affichage.
+		echo "</div></nav>";
 		echo "<div class='tab-content p-3 p-md-4 border border-top-0 bg-light' id='nav-ecoleContent'>";
-
-		echo "<div class='tab-pane fade" . ($ongletActif === 'classements' ? ' show active' : '') . "' id='" . $idClassements . "' role='tabpanel' aria-labelledby='tab-" . $idClassements . "' data-onglet='classements'>";
-		echo "<div class='text-center text-secondary py-4'><span class='spinner-border spinner-border-sm'></span>&nbsp; Chargement...</div>";
-		echo "</div>";
-
-		foreach ($filieresEcole as $cle) {
-			$id = identifiantOnglet($cle);
-			echo "<div class='tab-pane fade' id='" . $id . "' role='tabpanel' aria-labelledby='tab-" . $id . "' data-onglet='" . escapeHtml($cle) . "'>";
-			echo "<div class='text-center text-secondary py-4'><span class='spinner-border spinner-border-sm'></span>&nbsp; Chargement...</div>";
+		if (!empty($filieresEcole)) {
+			echo "<div class='tab-pane fade" . ($ongletActif === 'admissions' ? ' show active' : '') . "' id='onglet-admissions' role='tabpanel' aria-labelledby='tab-onglet-admissions'>";
+			echo "<p class='text-center small text-secondary mb-2' id='titre-filieres-admissions'>Filière CPGE</p>";
+			echo "<div class='nav nav-pills filieres-admissions mb-3' id='filieres-admissions' role='tablist' aria-labelledby='titre-filieres-admissions'>";
+			foreach ($filieresEcole as $cle) {
+				$id = 'admissions-' . $cle;
+				$selectionnee = $cle === $filiereSelectionnee;
+				echo "<button class='nav-link" . ($selectionnee ? ' active' : '') . "' id='tab-" . escapeHtml($id) . "'"
+				   . " data-bs-toggle='pill' data-bs-target='#" . escapeHtml($id) . "' data-filiere='" . escapeHtml($cle) . "' type='button' role='tab'"
+				   . " aria-controls='" . escapeHtml($id) . "' aria-selected='" . ($selectionnee ? 'true' : 'false') . "'"
+				   . " title='" . escapeHtml(libellesFilieres()[$cle] ?? $cle) . "'>"
+				   . escapeHtml(strtoupper($cle)) . "</button>";
+			}
 			echo "</div>";
+			if ($filiereDemandee !== '' && $filiereSelectionnee === '') {
+				echo "<p class='alert alert-info'>Aucun résultat disponible pour la filière demandée. Sélectionnez une autre filière.</p>";
+			}
+			echo "<div class='tab-content' id='contenu-admissions'>";
+			// Sans fondu : Bootstrap 5.0 peut réactiver un ancien panneau après un changement rapide.
+			foreach ($filieresEcole as $cle) {
+				echo "<div class='tab-pane" . ($cle === $filiereSelectionnee ? ' show active' : '') . "' id='admissions-" . escapeHtml($cle) . "'"
+				   . " role='tabpanel' aria-labelledby='tab-admissions-" . escapeHtml($cle) . "' data-onglet='" . escapeHtml($cle) . "'>"
+				   . "<p class='text-secondary' role='status'>Chargement des admissions…</p></div>";
+			}
+			echo "</div></div>";
 		}
-
+		echo "<div class='tab-pane fade" . ($ongletActif === 'classements' ? ' show active' : '') . "' id='onglet-classements' role='tabpanel' aria-labelledby='tab-onglet-classements' data-onglet='classements'>";
+		echo "<div class='text-center text-secondary py-4'><span class='spinner-border spinner-border-sm'></span>&nbsp; Chargement...</div></div>";
 		if ($hasSalaires) {
-			echo "<div class='tab-pane fade" . ($ongletActif === 'salaire' ? ' show active' : '') . "' id='" . $idSalaire . "' role='tabpanel' aria-labelledby='tab-" . $idSalaire . "' data-onglet='salaire'>";
-			echo "<div class='text-center text-secondary py-4'><span class='spinner-border spinner-border-sm'></span>&nbsp; Chargement...</div>";
-			echo "</div>";
+			echo "<div class='tab-pane fade" . ($ongletActif === 'salaire' ? ' show active' : '') . "' id='onglet-salaire' role='tabpanel' aria-labelledby='tab-onglet-salaire' data-onglet='salaire'>";
+			echo "<div class='text-center text-secondary py-4'><span class='spinner-border spinner-border-sm'></span>&nbsp; Chargement...</div></div>";
 		}
-
 		if ($hasSpecialites) {
-			// Spécialités est déjà rendu côté serveur : il ne doit pas passer par l'AJAX.
-			echo "<div class='tab-pane fade" . ($ongletActif === 'specialites' ? ' show active' : '') . "' id='" . $idSpecialites . "' role='tabpanel' aria-labelledby='tab-" . $idSpecialites . "'>";
-			afficherSpecialites($db, $ecoleFiltre, $debug);
+			echo "<div class='tab-pane fade" . ($ongletActif === 'specialites' ? ' show active' : '') . "' id='onglet-specialites' role='tabpanel' aria-labelledby='tab-onglet-specialites'>";
+			afficherSpecialites($db, $ecoleFiltre, $debug, $idDiplomeConsulte);
 			echo "</div>";
 		}
 
@@ -165,8 +193,8 @@
 			ecole: <?php echo json_encode($ecole, JSON_UNESCAPED_UNICODE); ?>,
 			origine: <?php echo json_encode($origine, JSON_UNESCAPED_UNICODE); ?>
 		};
-		var ongletInitial = <?php echo json_encode($filiere, JSON_UNESCAPED_UNICODE); ?>;
-		var ongletActif = <?php echo json_encode($ongletActif, JSON_UNESCAPED_UNICODE); ?>;
+		var ecoleCanonique = <?php echo json_encode($ecoleCanonique, JSON_UNESCAPED_UNICODE); ?>;
+		var barreFilieres = document.getElementById('filieres-admissions');
 
 		// Les contenus d'onglets sont injectés en AJAX après le chargement initial de
 		// la page. Bootstrap ne détecte pas automatiquement les nouveaux attributs
@@ -184,7 +212,10 @@
 		function chargerFragment(onglet) {
 			var params = new URLSearchParams(parametresOnglets);
 			params.set('onglet', onglet);
-			return fetch('php/ajax/detailOnglet.php?' + params.toString()).then(function (reponse) { return reponse.text(); });
+			return fetch('php/ajax/detailOnglet.php?' + params.toString()).then(function (reponse) {
+				if (!reponse.ok) { throw new Error('Erreur HTTP ' + reponse.status); }
+				return reponse.text();
+			});
 		}
 
 		// bandeau classements/attractivité : chargé indépendamment des onglets
@@ -195,7 +226,10 @@
 					badges.innerHTML = html;
 					initialiserTooltips(badges);
 				})
-				.catch(function () { badges.innerHTML = ''; });
+				.catch(function (erreur) {
+					console.error('Classements :', erreur);
+					badges.textContent = 'Repères de classement temporairement indisponibles.';
+				});
 		}
 
 		var barre = document.getElementById('nav-ecole');
@@ -206,6 +240,10 @@
 		// Spécialités n'en porte pas : il a déjà été rendu par PHP.
 		/** Charge une seule fois le contenu du panneau demandé par l'utilisateur. */
 		function chargerOnglet(panneau) {
+			if (panneau && panneau.id === 'onglet-admissions') {
+				chargerOnglet(document.querySelector('#contenu-admissions > .tab-pane.active'));
+				return;
+			}
 			if (!panneau || !panneau.dataset.onglet || panneau.dataset.charge === '1') { return; }
 			panneau.dataset.charge = '1';
 			chargerFragment(panneau.dataset.onglet)
@@ -214,15 +252,29 @@
 					initialiserTooltips(panneau);
 					if (panneau.dataset.onglet === 'salaire') { chargerDonneesSalaire(panneau); }
 				})
-				.catch(function () { panneau.innerHTML = "<div class='alert alert-danger'>Erreur de chargement.</div>"; });
+				.catch(function (erreur) {
+					console.error('Onglet :', erreur);
+					delete panneau.dataset.charge;
+					panneau.innerHTML = "<div class='alert alert-danger'>Erreur de chargement. Rouvrez l'onglet pour réessayer.</div>";
+				});
 		}
 
+		if (barreFilieres) {
+			barreFilieres.querySelectorAll('button[data-filiere]').forEach(function (bouton) {
+				bouton.addEventListener('show.bs.tab', function () {
+					chargerOnglet(document.querySelector(bouton.getAttribute('data-bs-target')));
+				});
+				bouton.addEventListener('shown.bs.tab', function () {
+					history.replaceState(null, '', '#onglet-' + bouton.dataset.filiere);
+				});
+			});
+		}
 		/** Charge les dépendances puis les données et rend le graphique/tableau Salaire. */
 		function chargerDonneesSalaire(panneau) {
 			var canvas = panneau.querySelector('#canvas-salaire-detail');
 			var tableau = panneau.querySelector('#zone-tableau-salaire-detail');
 			var erreur = panneau.querySelector('#erreur-salaire-detail');
-			var params = new URLSearchParams({ ecole: parametresOnglets.ecole });
+			var params = new URLSearchParams({ ecole: ecoleCanonique });
 			/** Ajoute une dépendance JavaScript au premier besoin, sans doublon. */
 			function chargerScript(src, id) {
 				if (document.getElementById(id)) { return Promise.resolve(); }
@@ -251,7 +303,7 @@
 						return;
 					}
 					SalaireEcole.afficherGraphique(donnees, canvas, {});
-					SalaireEcole.construireTableau(donnees, tableau, { id: 'tableau-salaire-detail', titre: parametresOnglets.ecole });
+					SalaireEcole.construireTableau(donnees, tableau, { id: 'tableau-salaire-detail', titre: ecoleCanonique });
 				})
 				.catch(function (e) {
 					erreur.textContent = 'Erreur lors du chargement des salaires : ' + e.message;
@@ -264,25 +316,28 @@
 				chargerOnglet(document.querySelector(evenement.target.getAttribute('data-bs-target')));
 			});
 			bouton.addEventListener('shown.bs.tab', function (evenement) {
-				history.replaceState(null, '', evenement.target.getAttribute('data-bs-target'));
+				var cible = evenement.target.getAttribute('data-bs-target');
+				var filiereActive = barreFilieres && barreFilieres.querySelector('button.active');
+				if (cible === '#onglet-admissions' && filiereActive) {
+					cible = '#onglet-' + filiereActive.dataset.filiere;
+				}
+				history.replaceState(null, '', cible);
 			});
 		});
-		if (ongletActif === 'salaire' || ongletActif === 'classements') {
-			chargerOnglet(document.getElementById('onglet-' + ongletActif));
-		}
-
-		// ouverture directe d'un onglet via l'ancre de l'URL, ou via le paramètre
-		// filiere (lien provenant d'une autre page) : l'affichage initial reste sur
-		// Spécialités, seul le contenu de l'onglet ciblé est chargé après coup.
+		// Les anciennes ancres #onglet-mp, etc. restent des liens directs valides.
 		var ancre = window.location.hash;
+		var boutonFiliere = barreFilieres && Array.from(barreFilieres.querySelectorAll('button[data-filiere]')).find(function (bouton) {
+			return ancre === '#onglet-' + bouton.dataset.filiere;
+		});
+		if (boutonFiliere) {
+			bootstrap.Tab.getOrCreateInstance(boutonFiliere).show();
+			ancre = '#onglet-admissions';
+		}
 		if (/^#onglet-[a-z0-9\-]+$/.test(ancre)) {
 			var bouton = barre.querySelector('[data-bs-target="' + ancre + '"]');
 			if (bouton) { bootstrap.Tab.getOrCreateInstance(bouton).show(); }
 		}
-		else if (ongletInitial) {
-			var boutonFiliere = document.getElementById('tab-onglet-' + ongletInitial);
-			if (boutonFiliere) { bootstrap.Tab.getOrCreateInstance(boutonFiliere).show(); }
-		}
+		chargerOnglet(document.querySelector('#nav-ecoleContent > .tab-pane.active'));
 	});
 
 	// le retour à la liste n'a de sens que si l'on arrive d'une page de résultats
