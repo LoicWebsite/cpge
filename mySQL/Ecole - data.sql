@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : mar. 20 oct. 2026 à 10:13
+-- Généré le : mar. 20 oct. 2026 à 16:53
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -207,7 +207,8 @@ INSERT INTO `Ecole` (`IdEcole`, `Ecole`, `UrlEcole`) VALUES
 (184, 'ESM Saint-Cyr', 'https://www.terre.defense.gouv.fr/amscc'),
 (185, 'ECOLE NAVALE Brest', 'https://www.ecole-navale.fr'),
 (186, 'École nationale vétérinaire d’Alfort', 'https://www.vet-alfort.fr'),
-(187, 'ENSP Versailles école du paysage', 'https://www.ecole-paysage.fr/fr');
+(187, 'ENSP Versailles école du paysage', 'https://www.ecole-paysage.fr/fr'),
+(188, 'École nationale vétérinaire de Toulouse', 'https://envt.fr');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

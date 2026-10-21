@@ -502,7 +502,7 @@
 				if (filiere !== '' && filiere !== 'toutes') {
 					url += '&filiere=' + encodeURIComponent(filiere);
 				}
-				window.location.href = url;
+				window.location.href = NavigationRetour.urlDestination(url);
 			});
 
 			actualiser();

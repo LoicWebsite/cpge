@@ -340,13 +340,4 @@
 		chargerOnglet(document.querySelector('#nav-ecoleContent > .tab-pane.active'));
 	});
 
-	// le retour à la liste n'a de sens que si l'on arrive d'une page de résultats
-	document.addEventListener('DOMContentLoaded', function () {
-		var venantDUneListe = /\/resultat-d-integration-ecole-d-ingenieur-par-(ecole|filiere)-cpge-post-prepa\.php/.test(document.referrer);
-		if (!venantDUneListe) { return; }
-		['retourListe', 'filStatistiques'].forEach(function (id) {
-			var element = document.getElementById(id);
-			if (element) { element.hidden = false; }
-		});
-	});
 </script>

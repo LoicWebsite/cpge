@@ -29,33 +29,17 @@
 		$canonical .= '?' . http_build_query(['ecole' => $ecole], '', '&', PHP_QUERY_RFC3986);
 	}
 
-	$vientRechercheSpecialite = ($origine === 'specialite');
-	$retourSpecialite = '';
-	if ($vientRechercheSpecialite && isset($specialite) && $specialite !== '') {
-		$paramsRetourSpecialite = ['specialite' => $specialite, 'rechercher' => '1'];
-		if ($strict) {
-			$paramsRetourSpecialite['strict'] = '1';
-		}
-		// Preserve les correspondances du Panorama lors du retour depuis une fiche ecole.
-		$idDomaineRetour = filter_var($_GET['domaine'] ?? '', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: null;
-		if ($idDomaineRetour !== null) {
-			$paramsRetourSpecialite['domaine'] = $idDomaineRetour;
-		}
-		if ($filiere !== '') {
-			$paramsRetourSpecialite['filiere'] = strtolower($filiere);
-		}
-		$retourSpecialite = 'statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php?' . http_build_query($paramsRetourSpecialite, '', '&', PHP_QUERY_RFC3986);
-	}
-	$vientAttractivite = ($origine === 'attractivite');
-	// L'origine salaire permet d'afficher un retour vers la page Salaires.
-	$vientSalaire = ($origine === 'salaire');
-	$vientClassement = ($origine === 'classement');
 	if ($origine === '' && isset($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'resultat-d-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php') !== false) {
 		$origine = 'ecole';
 	}
 
-	$vientFiliere = ($origine === 'filiere');
-	$vientEcole = ($origine === 'ecole');
+	$navigationRetour = destinationRetourNavigation(array_replace($_GET, [
+		'origine' => $origine, 'ecole' => $ecole, 'filiere' => $filiere,
+		'concours' => $concours, 'reference' => $reference, 'specialite' => $specialite,
+		'strict' => $strict ? '1' : '',
+	]), $_SERVER);
+	$urlCriteres = urlPageNavigation('statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php',
+		$ecole !== '' && $ecole !== 'toutes' ? ['ecole' => $ecole] : []);
 
 ?>
 <!doctype html>
@@ -93,8 +77,8 @@
 			<div class="col-sm">
 			  <ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php"><i class="bi bi-house-door-fill"></i></a></li>
-				<li class="breadcrumb-item"><a href="#" onclick="questionnaire()">Ecole</a></li>
-				<li class="breadcrumb-item" id="filStatistiques" hidden><a href="javascript:window.history.back();">Statistiques</a></li>
+				<li class="breadcrumb-item"><a data-retour-navigation href="<?php echo escapeHtml($urlCriteres); ?>">Ecole</a></li>
+				<li class="breadcrumb-item" id="filStatistiques"><a data-retour-navigation href="<?php echo escapeHtml($navigationRetour['url']); ?>"><?php echo escapeHtml($navigationRetour['rubrique']); ?></a></li>
 				<li class="breadcrumb-item active" aria-current="page"><?php echo escapeHtml(($ecoleAffichee !== '' && $ecoleAffichee !== 'toutes') ? $ecoleAffichee : 'Détail'); ?></li>
 			  </ol>
 			</div>
@@ -111,21 +95,7 @@
 		<br/>
 		<div class="d-flex flex-wrap justify-content-center gap-2">
 			<a class="btn btn-primary" href="#hautdepage">&uarr; Haut de page</a>
-			<?php if ($retourSpecialite !== '') { ?>
-				<a class="btn btn-primary" href="<?php echo escapeHtml($retourSpecialite); ?>" onclick="if (window.history.length > 1) { window.history.back(); return false; }">&larr; Retour à la recherche par spécialité</a>
-			<?php } elseif ($vientAttractivite) { ?>
-				<a class="btn btn-primary" href="statistique-attractivite-ecoles.php" onclick="if (window.history.length > 1) { window.history.back(); return false; }">&larr; Retour à l'attractivité</a>
-			<?php } elseif ($vientSalaire) { ?>
-				<a class="btn btn-primary" href="salaire-ingenieur-cpge-post-prepa.php" onclick="if (window.history.length > 1) { window.history.back(); return false; }">&larr; Retour aux salaires</a>
-			<?php } elseif ($vientClassement) { ?>
-				<a class="btn btn-primary" href="classement-ecole-d-ingenieur.php" onclick="if (window.history.length > 1) { window.history.back(); return false; }">&larr; Retour au classement</a>
-			<?php } elseif ($vientFiliere) { ?>
-				<a class="btn btn-primary" href="statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php" onclick="if (window.history.length > 1) { window.history.back(); return false; }">&larr; Retour à la liste d'écoles</a>
-			<?php } elseif ($vientEcole) { ?>
-				<a class="btn btn-primary" href="resultat-d-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php" onclick="if (window.history.length > 1) { window.history.back(); return false; }">&larr; Retour à la liste d'écoles</a>
-			<?php } else { ?>
-				<button class="btn btn-primary" onclick="questionnaire()">&larr; Retour au choix de l'école</button>
-			<?php } ?>
+			<a class="btn btn-primary" data-retour-navigation href="<?php echo escapeHtml($navigationRetour['url']); ?>">&larr; <?php echo escapeHtml($navigationRetour['libelle']); ?></a>
 		</div>
 	</footer>
 
@@ -142,24 +112,5 @@
 			})		
 	</script>
 
-	<!-- navigation -->
-	<script>
-		// pour retourner à la sélection de critères
-		function questionnaire() {
-			<?php
-				// On ne garde que les paramètres réellement utiles pour éviter les URLs dupliquées.
-				$queryQuestionnaireParams = [];
-				if (($ecole !== "") && ($ecole !== "toutes")) {
-					$queryQuestionnaireParams['ecole'] = $ecole;
-				}
-				$queryQuestionnaire = http_build_query($queryQuestionnaireParams, '', '&', PHP_QUERY_RFC3986);
-				$questionnaireUrl = 'statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php';
-				if ($queryQuestionnaire !== '') {
-					$questionnaireUrl .= '?' . $queryQuestionnaire;
-				}
-				echo 'window.location.href = ' . encodeJs($questionnaireUrl) . ';';
-			?>
-		}
-	</script>		
   </body>
 </html>

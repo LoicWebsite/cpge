@@ -45,6 +45,11 @@
 	$titrePage = ($ecoleAffichee !== '' && $ecoleAffichee !== 'toutes')
 		? $ecoleAffichee . " : admissions, classements et spécialités"
 		: "Détail admissions en école d'ingénieurs";
+	$navigationRetour = destinationRetourNavigation(array_replace($_GET, [
+		'origine' => $origine, 'ecole' => $ecole, 'filiere' => $filiere,
+		'concours' => $concours, 'reference' => $reference,
+	]), $_SERVER, 'filiere');
+	$urlCriteres = urlPageNavigation('statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php', $canonicalParams);
 
 ?>
 <!doctype html>
@@ -79,8 +84,8 @@
 			<div class="col-sm">
 			  <ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php"><i class="bi bi-house-door-fill"></i></a></li>
-				<li class="breadcrumb-item"><a href="#" onclick="questionnaire()">Filière</a></li>
-				<li class="breadcrumb-item" id="filStatistiques" hidden><a href="javascript:window.history.back();">Statistiques</a></li>
+				<li class="breadcrumb-item"><a data-retour-navigation href="<?php echo escapeHtml($urlCriteres); ?>">Filière</a></li>
+				<li class="breadcrumb-item" id="filStatistiques"><a data-retour-navigation href="<?php echo escapeHtml($navigationRetour['url']); ?>"><?php echo escapeHtml($navigationRetour['rubrique']); ?></a></li>
 				<li class="breadcrumb-item active" aria-current="page"><?php echo escapeHtml(($ecoleAffichee !== '' && $ecoleAffichee !== 'toutes') ? $ecoleAffichee : 'Détail'); ?></li>
 			  </ol>
 			</div>
@@ -96,9 +101,9 @@
 	<footer class="container" style='margin-top:40px; margin-bottom:80px;'>
 		<br/>
 		<p class=text-center>
-			<button class="btn btn-primary" onclick="questionnaire()">|&larr; Retour aux critères</button>
+			<a class="btn btn-primary" data-retour-navigation href="<?php echo escapeHtml($urlCriteres); ?>">|&larr; Retour aux critères</a>
 &nbsp;&nbsp;&nbsp;
-			<button class="btn btn-primary" id="retourListe" hidden onclick="javascript:window.history.back();">&larr; Retour à la liste</button>
+			<a class="btn btn-primary" id="retourListe" data-retour-navigation href="<?php echo escapeHtml($navigationRetour['url']); ?>">&larr; <?php echo escapeHtml($navigationRetour['libelle']); ?></a>
 		</p>
 	</footer>
 
@@ -115,32 +120,5 @@
 			})		
 	</script>
 
-	<!-- navigation -->
-	<script>
-		// pour retourner à la sélection de critères
-		function questionnaire() {
-			<?php
-				$queryQuestionnaireParams = [];
-				if ($reference !== '' && $reference !== 'toutes') {
-					$queryQuestionnaireParams['reference'] = $reference;
-				}
-				if ($filiere !== '') {
-					$queryQuestionnaireParams['filiere'] = $filiere;
-				}
-				if ($concours !== '') {
-					$queryQuestionnaireParams['concours'] = $concours;
-				}
-				if ($ecole !== '' && $ecole !== 'toutes') {
-					$queryQuestionnaireParams['ecole'] = $ecole;
-				}
-				$queryQuestionnaire = http_build_query($queryQuestionnaireParams, '', '&', PHP_QUERY_RFC3986);
-				$questionnaireUrl = 'statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php';
-				if ($queryQuestionnaire !== '') {
-					$questionnaireUrl .= '?' . $queryQuestionnaire;
-				}
-				echo 'window.location.href = ' . encodeJs($questionnaireUrl) . ';';
-			?>
-		}
-	</script>		
   </body>
 </html>

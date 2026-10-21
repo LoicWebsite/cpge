@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : mar. 20 oct. 2026 à 10:14
+-- Généré le : mar. 20 oct. 2026 à 16:54
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -1430,7 +1430,23 @@ INSERT INTO `Specialite` (`IdDiplome`, `IdSpecialite`, `Groupe`, `Specialite`, `
 (368, 1413, NULL, 'Activités cliniques dans le secteur équin', 'FISE', NULL),
 (368, 1414, NULL, 'Santé publique vétérinaire', 'FISE', NULL),
 (368, 1415, NULL, 'Activités dans le secteur de la recherche', 'FISE', NULL),
-(368, 1416, NULL, 'Activités dans le secteur des entreprises', 'FISE', NULL);
+(368, 1416, NULL, 'Activités dans le secteur des entreprises', 'FISE', NULL),
+(369, 1417, NULL, 'Activités dans le secteur des animaux de production', 'FISE', NULL),
+(369, 1418, NULL, 'Activités dans le secteur des animaux de compagnie', 'FISE', NULL),
+(369, 1419, NULL, 'Activités dans le secteur des équidés', 'FISE', NULL),
+(369, 1420, NULL, 'Activités en santé publique vétérinaire', 'FISE', NULL),
+(369, 1421, NULL, 'Activités dans le secteur de la recherche', 'FISE', NULL),
+(369, 1422, NULL, 'Activités dans le secteur de l’industrie', 'FISE', NULL),
+(370, 1423, 'Domaines cliniques', 'Animaux de compagnie', 'FISE', NULL),
+(370, 1424, 'Domaines cliniques', 'Equidés', 'FISE', NULL),
+(370, 1425, 'Domaines cliniques', 'Nouveaux animaux de compagnie, médecine zoologique', 'FISE', NULL),
+(370, 1426, 'Animaux de production', 'Clinique aviaire', 'FISE', NULL),
+(370, 1427, 'Animaux de production', 'Clinique porcine', 'FISE', NULL),
+(370, 1428, 'Animaux de production', 'Clinique des ruminants', 'FISE', NULL),
+(370, 1429, 'Animaux de production', 'Médecine de population des ruminants', 'FISE', NULL),
+(370, 1430, 'Domaines non cliniques', 'Activités dans le secteur de la recherche (masters)', 'FISE', NULL),
+(370, 1431, 'Domaines non cliniques', 'Activités dans le secteur de l’entreprise', 'FISE', NULL),
+(370, 1432, 'Domaines non cliniques', 'Activités en santé publique vétérinaire', 'FISE', NULL);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

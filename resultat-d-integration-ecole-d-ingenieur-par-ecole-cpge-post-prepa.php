@@ -71,6 +71,13 @@
 	if (!empty($canonicalParams)) {
 		$canonicalUrl .= '?' . http_build_query($canonicalParams, '', '&', PHP_QUERY_RFC3986);
 	}
+	$retourListe = urlPageNavigation(basename(__FILE__), $_GET);
+	$urlCriteres = urlPageNavigation('statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php', [
+		'ecole' => $ecole, 'recherche' => $recherche, 'anneeEcole' => $anneeEcole,
+	]);
+	$navigationRetour = destinationRetourNavigation(array_replace($_GET, [
+		'origine' => $origine, 'ecole' => $ecole, 'recherche' => $recherche, 'anneeEcole' => $anneeEcole,
+	]), $_SERVER);
 ?>
 
 
@@ -170,7 +177,7 @@
 						<i class="bi bi-house-door-fill"></i>
 					</a>
 				</li>
-				<li class="breadcrumb-item"><a href="#" onclick="questionnaire()">Ecole</a></li>
+				<li class="breadcrumb-item"><a data-retour-navigation href="<?php echo escapeHtml($urlCriteres); ?>">Ecole</a></li>
 				<li class="breadcrumb-item active" aria-current="page">Statistiques</li>
 			  </ol>
 			</div>
@@ -262,6 +269,7 @@
 					'filiere' => $Filiere,
 					'concours' => $Concours,
 					'ecole' => $Ecole,
+					'retour' => $retourListe,
 				], '', '&', PHP_QUERY_RFC3986);
 
 				$notesAnnee = [];
@@ -526,17 +534,7 @@
 			&nbsp;&nbsp;&nbsp;&nbsp;
 
 	<?php
-		// Un seul retour contextuel est affiché selon la page d'origine.
-		if (in_array($origine, ['specialite', 'classement', 'attractivite'], true)) {
-			$libelleRetour = [
-				'specialite' => 'Retour à la recherche par spécialité',
-				'classement' => 'Retour au classement',
-				'attractivite' => "Retour à l'attractivité",
-			][$origine];
-			echo "<button class='btn btn-primary' onclick='javascript:window.history.back();'>&larr; " . escapeHtml($libelleRetour) . "</button>";
-		} else {
-			echo "<button class='btn btn-primary' onclick='questionnaire()'>&larr; Retour aux critères</button>";
-		}
+		echo "<a class='btn btn-primary' data-retour-navigation href='" . escapeHtml($navigationRetour['url']) . "'>&larr; " . escapeHtml($navigationRetour['libelle']) . "</a>";
 	?>
 		</div>
 
@@ -569,8 +567,9 @@
 					'origine' => 'ecole',
 					'reference' => $reference,
 					'an' => 'toutes',
+					'retour' => $retourListe,
 				], '', '&', PHP_QUERY_RFC3986);
-				echo 'window.location.href = ' . encodeJs($baseZoom) . " + '&filiere=' + encodeURIComponent(filiere) + '&concours=' + encodeURIComponent(concours) + '&ecole=' + encodeURIComponent(ecole);";
+				echo 'window.location.href = NavigationRetour.urlDestination(' . encodeJs($baseZoom) . " + '&filiere=' + encodeURIComponent(filiere) + '&concours=' + encodeURIComponent(concours) + '&ecole=' + encodeURIComponent(ecole));";
 			?>
 		}
 	</script>
@@ -615,29 +614,6 @@
 		}
 	</script>
 
-	<script>
-		// pour retourner en arrière dans l'historique du navigateur
-		function questionnaire() {
-			<?php
-				$queryQuestionnaireParams = [];
-				if (($ecole !== "") && ($ecole !== "toutes")) {
-					$queryQuestionnaireParams['ecole'] = $ecole;
-				}
-				if ($recherche !== "") {
-					$queryQuestionnaireParams['recherche'] = $recherche;
-				}
-				if ($anneeUnique) {
-					$queryQuestionnaireParams['anneeEcole'] = $anneeEcole;
-				}
-				$queryQuestionnaire = http_build_query($queryQuestionnaireParams, '', '&', PHP_QUERY_RFC3986);
-				$questionnaireUrl = 'statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php';
-				if ($queryQuestionnaire !== '') {
-					$questionnaireUrl .= '?' . $queryQuestionnaire;
-				}
-				echo 'window.location.href = ' . encodeJs($questionnaireUrl) . ';';
-			?>
-		}
-	</script>
 
 	<script>
 	<?php

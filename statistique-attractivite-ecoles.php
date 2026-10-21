@@ -27,6 +27,7 @@
     <?php
         include "php/controleParametre.php";
         include "php/fonctionConcours.php";
+        $retourListe = urlPageNavigation(basename(__FILE__), $_GET);
 
         // récupération des données
         try {
@@ -113,7 +114,7 @@
                     // utiliser la fonction qui extrait le nom d'école adapté pour la recherche
                     echo '<tr ondblclick="zoom(&apos;'.supprimerApostrophe(extraireNomEcolePourRecherche($Formation)).'&apos;)" title="Double-cliquer sur la ligne pour afficher le détail">';
                     echo "<td style='text-align:center'>" . escapeHtml($Rang) . "</td>";
-                    echo "<td style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=attractivite&amp;ecole=" . rawurlencode(extraireNomEcolePourRecherche($Formation)) . "'><strong>" . escapeHtml($Formation) . "</strong></a></td>";
+                    echo "<td style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=attractivite&amp;retour=" . rawurlencode($retourListe) . "&amp;ecole=" . rawurlencode(extraireNomEcolePourRecherche($Formation)) . "'><strong>" . escapeHtml($Formation) . "</strong></a></td>";
                     echo "<td style='text-align:center'>" . escapeHtml($Effectif) . "</td>";
                     echo "<td style='text-align:center'>" . escapeHtml($Attractivite) . "</td>";
                     echo "</tr>";
@@ -175,7 +176,7 @@
         // pour zoomer sur une école
         function zoom(ecole) {
             <?php
-                    echo "window.location.href='detail-resultat-admission-par-ecole.php?origine=attractivite&ecole=' + encodeURIComponent(ecole)";
+                    echo "window.location.href=NavigationRetour.urlDestination('detail-resultat-admission-par-ecole.php?origine=attractivite&ecole=' + encodeURIComponent(ecole));";
             ?>
         }
 
@@ -229,12 +230,18 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            trierTableau('attractivite');
+            var parametres = new URLSearchParams(window.location.search);
+            var colonne = parametres.get('tri');
+            if (!['ecole', 'effectif', 'attractivite'].includes(colonne)) colonne = 'attractivite';
+            var direction = parametres.get('direction') === 'asc' ? 'asc' : 'desc';
             etatTri = {
-                colonne: 'attractivite',
-                direction: 'desc'
+                colonne: colonne,
+                direction: direction === 'asc' ? 'desc' : 'asc'
             };
-            majIndicateursTri('attractivite', 'desc');
+            trierTableau(colonne);
+        });
+        NavigationRetour.configurer(function () {
+            return { tri: etatTri.colonne, direction: etatTri.direction };
         });
 
   		// pour changer le texte et le symbole du bouton détail

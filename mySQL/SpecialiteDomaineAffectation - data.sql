@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : mar. 20 oct. 2026 à 10:14
+-- Généré le : mar. 20 oct. 2026 à 16:54
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -2150,7 +2150,35 @@ INSERT INTO `SpecialiteDomaineAffectation` (`IdSpecialite`, `IdDomaine`, `Decisi
 (1408, 25, 'inclure', 'manuel', '2026-10-19 15:00:14'),
 (1409, 3, 'inclure', 'manuel', '2026-10-19 15:00:14'),
 (1410, 3, 'inclure', 'manuel', '2026-10-19 15:00:14'),
-(1410, 25, 'inclure', 'manuel', '2026-10-19 15:00:14');
+(1410, 25, 'inclure', 'manuel', '2026-10-19 15:00:14'),
+(1411, 1, 'inclure', 'manuel', '2026-10-20 15:05:56'),
+(1411, 3, 'inclure', 'manuel', '2026-10-20 15:05:56'),
+(1412, 1, 'inclure', 'manuel', '2026-10-20 15:05:56'),
+(1413, 1, 'inclure', 'manuel', '2026-10-20 15:05:56'),
+(1414, 1, 'inclure', 'manuel', '2026-10-20 15:05:56'),
+(1415, 1, 'inclure', 'manuel', '2026-10-20 15:05:56'),
+(1416, 1, 'inclure', 'manuel', '2026-10-20 15:05:56'),
+(1417, 1, 'inclure', 'manuel', '2026-10-20 15:20:04'),
+(1417, 3, 'inclure', 'manuel', '2026-10-20 15:20:04'),
+(1418, 1, 'inclure', 'manuel', '2026-10-20 15:20:04'),
+(1419, 1, 'inclure', 'manuel', '2026-10-20 15:20:04'),
+(1420, 1, 'inclure', 'manuel', '2026-10-20 15:20:04'),
+(1421, 1, 'inclure', 'manuel', '2026-10-20 15:20:04'),
+(1422, 1, 'inclure', 'manuel', '2026-10-20 15:20:04'),
+(1423, 1, 'inclure', 'manuel', '2026-10-20 15:39:37'),
+(1424, 1, 'inclure', 'manuel', '2026-10-20 15:39:37'),
+(1425, 1, 'inclure', 'manuel', '2026-10-20 15:39:37'),
+(1426, 1, 'inclure', 'manuel', '2026-10-20 15:39:37'),
+(1426, 3, 'inclure', 'manuel', '2026-10-20 15:39:37'),
+(1427, 1, 'inclure', 'manuel', '2026-10-20 15:39:37'),
+(1427, 3, 'inclure', 'manuel', '2026-10-20 15:39:37'),
+(1428, 1, 'inclure', 'manuel', '2026-10-20 15:39:37'),
+(1428, 3, 'inclure', 'manuel', '2026-10-20 15:39:37'),
+(1429, 1, 'inclure', 'manuel', '2026-10-20 15:39:37'),
+(1429, 3, 'inclure', 'manuel', '2026-10-20 15:39:37'),
+(1430, 1, 'inclure', 'manuel', '2026-10-20 15:39:37'),
+(1431, 1, 'inclure', 'manuel', '2026-10-20 15:39:37'),
+(1432, 1, 'inclure', 'manuel', '2026-10-20 15:39:37');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

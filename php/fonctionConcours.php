@@ -1,5 +1,7 @@
 <?php 
 
+require_once __DIR__ . '/navigationRetour.php';
+
 // ouvre la base de données
 function openDatabase() {
     static $db = null; // Pour éviter de recréer la connexion à chaque appel

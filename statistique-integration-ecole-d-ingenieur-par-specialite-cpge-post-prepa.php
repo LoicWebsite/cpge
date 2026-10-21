@@ -336,9 +336,22 @@
 	<script>
 		var resultatsSpecialite = [];
 		var etatTriSpecialite = { colonne: 'pertinence', direction: 'desc' };
+		var parametresNavigationSpecialite = new URLSearchParams(window.location.search);
+		var triNavigationSpecialiteRestaure = false;
 		var domainePanoramaSpecialite = <?php echo encodeJs(filter_var($_GET['domaine'] ?? '', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) ?: null); ?>;
 		var motClePanoramaSpecialite = <?php echo encodeJs($specialite ?? ''); ?>;
-		var positionnerResultatsAuChargement = domainePanoramaSpecialite !== null || window.location.hash === '#resultats';
+		var positionnerResultatsAuChargement = !parametresNavigationSpecialite.has('positionRetour')
+			&& (domainePanoramaSpecialite !== null || window.location.hash === '#resultats');
+		NavigationRetour.configurer(function () {
+			var specialite = valeurSpecialiteRecherche();
+			var strict = document.getElementById('rechercheStricte').checked;
+			return {
+				specialite: specialite, rechercher: '1', strict: strict ? '1' : null,
+				filiere: document.getElementById('filiereSpecialite').value,
+				domaine: domainePanoramaSpecialite && strict && specialite === motClePanoramaSpecialite ? domainePanoramaSpecialite : null,
+				tri: etatTriSpecialite.colonne, direction: etatTriSpecialite.direction
+			};
+		});
 
 		// Lance la recherche des que le DOM est pret, sans attendre images et scripts externes asynchrones.
 		window.addEventListener('DOMContentLoaded', function() {
@@ -481,6 +494,7 @@
 				masquerChoixAffichageSpecialite();
 				masquerTermesRechercheMobile();
 				positionnerResultatsSpecialites();
+				NavigationRetour.restaurerPosition();
 				return;
 			}
 
@@ -495,8 +509,16 @@
 			resume.textContent = bilan;
 			afficherTermesRechercheMobile(termesRecherche, mode + filtreFiliere, data.query || valeurSpecialiteRecherche());
 			afficherChoixAffichageSpecialite();
-			dessinerResultatsSpecialites();
+			var colonne = parametresNavigationSpecialite.get('tri');
+			if (!triNavigationSpecialiteRestaure && ['pertinence', 'diplome', 'specialite'].includes(colonne)) {
+				etatTriSpecialite = { colonne: colonne, direction: parametresNavigationSpecialite.get('direction') === 'asc' ? 'desc' : 'asc' };
+				trierResultatsSpecialite(colonne);
+			} else {
+				dessinerResultatsSpecialites();
+			}
+			triNavigationSpecialiteRestaure = true;
 			positionnerResultatsSpecialites();
+			NavigationRetour.restaurerPosition();
 		}
 
 		// Recale l'arrivee apres l'AJAX puis la mise en page finale, sans deplacer les recherches suivantes.

@@ -223,7 +223,7 @@
 
       // Construit l'URL canonique de la fiche en conservant l'origine salaire.
       function urlFicheEcole(ecole) {
-        return 'detail-resultat-admission-par-ecole.php?origine=salaire&ecole=' + encodeURIComponent(ecole);
+        return NavigationRetour.urlDestination('detail-resultat-admission-par-ecole.php?origine=salaire&ecole=' + encodeURIComponent(ecole));
       }
 
       // Ouvre la fiche d'une école lorsqu'un rattachement EcoleSalaire existe.
@@ -250,6 +250,27 @@
       // ──────────────────────────────────────────────────────────────────
 
       var _tousEtablissements = []; // copie complète pour le filtre
+      var parametresNavigation = new URLSearchParams(window.location.search);
+      NavigationRetour.configurer(function () {
+        var selection = document.getElementById('select-etablissement');
+        var option = selection.options[selection.selectedIndex];
+        return {
+          promotion: document.getElementById('select-promotion').value || 'toutes',
+          horizon: document.getElementById('select-horizon').value,
+          etablissement: selection.value,
+          col: option ? (option.dataset.col || 'etablissement') : 'etablissement',
+          filtre: document.getElementById('filtre-etablissement').value,
+          tri: etatTriClassement.colonne,
+          direction: etatTriClassement.direction
+        };
+      });
+
+      function etablissementsFiltres() {
+        var terme = document.getElementById('filtre-etablissement').value.toLowerCase();
+        return _tousEtablissements.filter(function (item) {
+          return item.label.toLowerCase().indexOf(terme) !== -1;
+        });
+      }
 
       function remplirSelect(items) {
         var sel = document.getElementById('select-etablissement');
@@ -278,7 +299,14 @@
             throw new Error('Format de réponse invalide pour la liste des établissements.');
           }
           _tousEtablissements = liste;
-          remplirSelect(liste);
+          document.getElementById('filtre-etablissement').value = parametresNavigation.get('filtre') || '';
+          remplirSelect(etablissementsFiltres());
+          var sel = document.getElementById('select-etablissement');
+          Array.from(sel.options).forEach(function (option) {
+            if (option.value === parametresNavigation.get('etablissement')
+                && option.dataset.col === (parametresNavigation.get('col') || 'etablissement')) option.selected = true;
+          });
+          if (sel.value) sel.dispatchEvent(new Event('change'));
         })
         .catch(function (err) {
           var sel = document.getElementById('select-etablissement');
@@ -287,12 +315,7 @@
         });
 
       document.getElementById('filtre-etablissement').addEventListener('input', function () {
-        var terme = this.value.toLowerCase();
-        var filtres = terme
-          ? _tousEtablissements.filter(function (item) {
-              return item.label.toLowerCase().indexOf(terme) !== -1;
-            })
-          : _tousEtablissements;
+        var filtres = etablissementsFiltres();
         remplirSelect(filtres);
         if (filtres.length === 1) {
           var sel = document.getElementById('select-etablissement');
@@ -350,6 +373,7 @@
 
             afficherGraphique(data);
             afficherTableau(data, label);
+            if (window.location.hash === '#tab-ecole') NavigationRetour.restaurerPosition();
           })
           .catch(function (err) {
             masquer('#zone-chargement');
@@ -592,6 +616,10 @@
           if (liste.length > 0) {
             sel.value = liste[0];
           }
+          if (parametresNavigation.get('promotion') === 'toutes') sel.value = '';
+          else if (liste.map(String).includes(parametresNavigation.get('promotion'))) sel.value = parametresNavigation.get('promotion');
+          var horizon = parametresNavigation.get('horizon');
+          if (['12', '18', '24', '30'].includes(horizon)) document.getElementById('select-horizon').value = horizon;
           // Charger le classement avec l'année la plus récente
           chargerClassement();
         })
@@ -609,6 +637,7 @@
       // colonne : 'etab', 'q1', 'med' (défaut), ou 'q3'
       // direction : 'asc' ou 'desc'
       var etatTriClassement = { colonne: 'med', direction: 'desc' };
+      var triNavigationRestaure = false;
 
       /**
        * chargerClassement()
@@ -689,6 +718,15 @@
 
         html += '</tbody></table>';
         document.getElementById('zone-classement').innerHTML = html;
+        if (!triNavigationRestaure) {
+          triNavigationRestaure = true;
+          var colonne = parametresNavigation.get('tri');
+          if (['etab', 'q1', 'med', 'q3'].includes(colonne)) {
+            etatTriClassement = { colonne: colonne, direction: parametresNavigation.get('direction') === 'asc' ? 'desc' : 'asc' };
+            trierClassement(colonne);
+          }
+        }
+        if (window.location.hash !== '#tab-ecole') NavigationRetour.restaurerPosition();
       }
 
       /**

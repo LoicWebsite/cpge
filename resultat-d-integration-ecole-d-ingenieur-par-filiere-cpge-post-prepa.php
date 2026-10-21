@@ -53,6 +53,8 @@
 	if (!empty($canonicalParams)) {
 		$canonicalUrl .= '?' . http_build_query($canonicalParams, '', '&', PHP_QUERY_RFC3986);
 	}
+	$retourListe = urlPageNavigation(basename(__FILE__), $_GET);
+	$urlCriteres = urlPageNavigation('statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php', $canonicalParams);
 ?>
 
 <html lang="fr">
@@ -154,7 +156,7 @@
 						<i class="bi bi-house-door-fill"></i>
 					</a>
 				</li>
-				<li class="breadcrumb-item"><a href="#" onclick="questionnaire()">Filière</a></li>
+				<li class="breadcrumb-item"><a data-retour-navigation href="<?php echo escapeHtml($urlCriteres); ?>">Filière</a></li>
 				<li class="breadcrumb-item active" aria-current="page">Statistiques</li>
 			  </ol>
 			</div>
@@ -340,7 +342,12 @@
 				if (($concours == "tous") or ($concours == "")) {
 					echo "<td".$class.">". $Concours ."</td>";
 				}
-				echo "<td class='colonne-ecole-fixe" . ($class !== "" ? " nouvelEcole" : "") . "'><a href='detail-resultat-admission-par-ecole.php?origine=filiere&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
+				$detailUrl = 'detail-resultat-admission-par-ecole.php?' . http_build_query([
+					'origine' => 'filiere',
+					'ecole' => $Ecole,
+					'retour' => $retourListe,
+				], '', '&', PHP_QUERY_RFC3986);
+				echo "<td class='colonne-ecole-fixe" . ($class !== "" ? " nouvelEcole" : "") . "'><a href='" . escapeHtml($detailUrl) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
 				echo "<td".$class." style='text-align:center;'>" . $An . "</td>";
 				echo "<td".$class." style='text-align:right;'>" . $Place . "&nbsp;</td>";
 				echo "<td".$class." style='text-align:right;'>" . formater($Inscrit, 0) . "&nbsp;</td>";
@@ -432,6 +439,7 @@
 				$detailUrlCarte = 'detail-resultat-admission-par-ecole.php?' . http_build_query([
 					'origine' => 'filiere',
 					'ecole' => $ligneCarte['ecole'],
+					'retour' => $retourListe,
 				], '', '&', PHP_QUERY_RFC3986);
 				if ($nombreEcolesDistinctes > 1 && ($indexCarte === 0 || $ligneCarte['nouvelleEcole'])) {
 					echo "<a href='" . escapeHtml($detailUrlCarte) . "' class='d-block text-decoration-none bg-light border-start border-4 border-primary rounded-1 px-2 py-1 mt-4 mb-2 fw-bold'>"
@@ -484,7 +492,7 @@
 		<div class='d-flex justify-content-center'>
 			<a class="btn btn-primary" href="#">&uarr; Haut de liste</a>
 			&nbsp;&nbsp;&nbsp;&nbsp;
-			<button class="btn btn-primary" onclick="questionnaire()">&larr; Retour aux critères</button>
+			<a class="btn btn-primary" data-retour-navigation href="<?php echo escapeHtml($urlCriteres); ?>">&larr; Retour aux critères</a>
 		</div>
 	</footer>
 
@@ -549,8 +557,9 @@
 					'an' => 'toutes',
 					'filiere' => $filiere,
 					'concours' => $concours,
+					'retour' => $retourListe,
 				], '', '&', PHP_QUERY_RFC3986);
-				echo 'window.location.href = ' . encodeJs($baseZoom) . " + '&ecole=' + encodeURIComponent(ecole);";
+				echo 'window.location.href = NavigationRetour.urlDestination(' . encodeJs($baseZoom) . " + '&ecole=' + encodeURIComponent(ecole));";
 			?>
 		}
 
@@ -649,38 +658,22 @@
 
 		// tri par école au chargement de la page
 		document.addEventListener('DOMContentLoaded', () => {
-			trierTableau('ecole');
+			if (!document.querySelector('#tableau-par-filiere')) return;
+			var parametres = new URLSearchParams(window.location.search);
+			var colonne = parametres.get('tri');
+			var direction = parametres.get('direction') === 'desc' ? 'desc' : 'asc';
+			if (!['ecole', 'concours', 'selectiviteMediane', 'selectiviteDernier'].includes(colonne)
+				|| (colonne === 'concours' && !document.getElementById('concours'))) colonne = 'ecole';
 			etatTri = {
-				colonne: 'ecole',
-				direction: 'asc'
+				colonne: colonne,
+				direction: direction === 'asc' ? 'desc' : 'asc'
 			};
-			majIndicateursTri('ecole', 'asc');
+			trierTableau(colonne);
+		});
+		NavigationRetour.configurer(function () {
+			return { tri: etatTri.colonne, direction: etatTri.direction };
 		});
 
-		// pour retourner en arrière dans l'historique du navigateur
-		function questionnaire() {
-			<?php
-				$queryQuestionnaireParams = [];
-				if ($reference !== '' && $reference !== 'toutes') {
-					$queryQuestionnaireParams['reference'] = $reference;
-				}
-				if ($filiere !== '') {
-					$queryQuestionnaireParams['filiere'] = $filiere;
-				}
-				if ($concours !== '') {
-					$queryQuestionnaireParams['concours'] = $concours;
-				}
-				if ($ecole !== '' && $ecole !== 'toutes') {
-					$queryQuestionnaireParams['ecole'] = $ecole;
-				}
-				$queryQuestionnaire = http_build_query($queryQuestionnaireParams, '', '&', PHP_QUERY_RFC3986);
-				$questionnaireUrl = 'statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php';
-				if ($queryQuestionnaire !== '') {
-					$questionnaireUrl .= '?' . $queryQuestionnaire;
-				}
-				echo 'window.location.href = ' . encodeJs($questionnaireUrl) . ';';
-			?>
-		}
 	</script>
 
 	<script>

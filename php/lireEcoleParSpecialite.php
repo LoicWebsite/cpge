@@ -53,6 +53,10 @@ try {
     if ($filiereRecherche !== '') {
         $paramsDetail['filiere'] = $filiereRecherche;
     }
+    $paramsDetail['retour'] = urlPageNavigation(
+        'statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php',
+        $paramsDetail + ['rechercher' => '1']
+    );
 
     $resultats = [];
     foreach ($recherche['results'] as $ligne) {

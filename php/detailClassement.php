@@ -10,9 +10,9 @@ function configurationClassements(): array {
 			'table'    => 'DAUR',
 			'an'       => '2024',
 			'libelle'  => 'DAUR 2025',
-			'total'    => 32,
+			'total'    => 185,
 			'groupe'   => true,
-			'tooltip'  => "La notation de l&apos;école en 2025 est définie par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 60<br>AA : 59 à 47<br>Le Rang est le résultat du classement par note finale décroissante (de 1 à 32)<br>La note finale est attribuée à partir de 6 critères détaillés sur le site de DAUR Rankings.",
+			'tooltip'  => "La notation de l&apos;école en 2025 est définie par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : ≥ 60<br>AA : 50 à 59<br>A : 45 à 49 points<br>BBB : 40 à 44<br>BB : 35 à 39<br>B : 30 à 34<br>CCC : 25 à 29<br>CC : 20 à 24<br>C : < 20<br>Le Rang est le résultat du classement par note finale décroissante (de 1 à 185)<br>La note finale est attribuée à partir de 6 critères détaillés sur le site de DAUR Rankings.",
 		],
 		[
 			'cle'      => 'daur2024',

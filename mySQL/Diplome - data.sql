@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : mar. 20 oct. 2026 à 10:13
+-- Généré le : mar. 20 oct. 2026 à 16:53
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -393,7 +393,9 @@ INSERT INTO `Diplome` (`IdEcole`, `IdDiplome`, `Diplome`, `UrlFormation`) VALUES
 (108, 365, 'L’Institut Agro Rennes-Angers - Ingénieur en paysage', 'https://www.institut-agro-rennes-angers.fr/formation/ingenieurs/ingenieur-en-paysage'),
 (111, 366, 'ESPCI Paris – PSL', 'https://www.espci.psl.eu/formation/cycle-ingenieur/#par-annees'),
 (109, 367, 'VetAgro Sup - Ingénieur agronome', 'https://www.vetagro-sup.fr/formations/ingenieur-agronome/deroulement-des-etudes/'),
-(109, 368, 'VetAgro Sup - Docteur vétérinaire (d’État)', 'https://www.vetagro-sup.fr/formations/veterinaire/deroulement-des-etudes/');
+(109, 368, 'VetAgro Sup - Docteur vétérinaire (d’État)', 'https://www.vetagro-sup.fr/formations/veterinaire/deroulement-des-etudes/'),
+(35, 369, 'ONIRIS Nantes - Docteur vétérinaire (d’État)', 'https://www.oniris-nantes.fr/formations/les-formations-veterinaires/formation-initiale-veterinaire'),
+(188, 370, 'École nationale vétérinaire de Toulouse - Docteur vétérinaire (d’État)', 'https://envt.fr/decouvrir-toutes-les-formations/formation-initiale/annee-dapprofondissement/');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -7,6 +7,7 @@
 
 	// fonctions communes du site
 	include "php/fonctionConcours.php";
+	$retourListe = urlPageNavigation(basename(__FILE__), $_GET);
 ?>
 
 <html lang="fr">
@@ -69,8 +70,8 @@
 		<div class="collapse" id="detail" style="margin-left:20px;">
 			<p>3 classements sont présentés :
 				<ul>
-					<li><strong>Le classement du site <a href='https://www.daur-rankings.com/rankings/' target=_blank tittle='vers le site DAUR'>DAUR</a></strong> a évalué 190 écoles sous statut étudiant en 2025, 185 en 2024 et 176 en 2023.
-						En 2025, ce classement a analysé les écoles à travers 6 critères (niveau moyen, sélectivité, attractivité, employabilité, recherche, entrepreneuriat) et a publié les 32 premières. Les formules de calcul utilisées sont publiées sur le site.
+					<li><strong>Le classement du site <a href='https://www.daur-rankings.com/rankings/' target=_blank tittle='vers le site DAUR'>DAUR</a></strong> a évalué 185 écoles sous statut étudiant en 2025, 185 en 2024 et 176 en 2023.
+						En 2025, ce classement a analysé les écoles à travers 6 critères (niveau moyen, sélectivité, attractivité, employabilité, recherche, entrepreneuriat). Les formules de calcul utilisées sont publiées sur le site.
 						Certaines écoles sont absentes de ce classement, par exemple les ENS, l'Ecole Navale ou l'Ecole de l'Air.
 						Le classement DAUR inclut certaines écoles post bac et post  prépas.
 						<br>Le classement DAUR est considéré comme le plus pertinent du point de vu statistiques basées sur les données de SCEI, de Parcoursup, de la campagne de certification annuelle de la CTI et de l'enquête sur l'insertion professionnelle de la CDEFI.
@@ -131,12 +132,12 @@
 			<!-- ouverture de l'onglet DAUR 2025 -->
 			<div class="tab-pane fade show active" id="daur-2025" role="tabpanel" aria-labelledby="tab-daur-2025">
 			<?php
-				// exécution de la requête SQL pour le classement DAUR 2025 (sur data 2024)
+				// exécution de la requête SQL pour le classement DAUR 2025 (sur data 2025)
 				$sql = "SELECT DISTINCT DAUR.Ecole, DAUR.Rang, DAUR.Groupe, DAUR.Point, Ecole.UrlEcole
 						FROM DAUR
 						INNER JOIN EcoleConcours ON EcoleConcours.Ecole LIKE CONCAT('%',DAUR.Ecole,'%')
 						LEFT JOIN Ecole ON Ecole.Ecole = DAUR.Ecole
-						WHERE DAUR.Ecole IS NOT NULL AND DAUR.An = '2024'
+						WHERE DAUR.Ecole IS NOT NULL AND DAUR.An = '2025'
 						ORDER BY DAUR.Rang;";
 				
 				if ($debug) echo "SQL = " . $sql ."<br>";
@@ -150,7 +151,7 @@
 					echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='bi bi-download'></i> csv</button></caption>";
 					echo "<thead class='text-center'>";
 					echo "<tr>";
-					echo "<th>&nbsp;Notation&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La notation de l&apos;école en 2025 est défini par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 60<br>AA : 59 à 47'></i></th>";
+					echo "<th>&nbsp;Notation&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La notation de l&apos;école en 2025 est défini par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : ≥ 60<br>AA : 50 à 59<br>A : 45 à 49 points<br>BBB : 40 à 44<br>BB : 35 à 39<br>B : 30 à 34<br>CCC : 25 à 29<br>CC : 20 à 24<br>C : < 20'></i></th>";
 					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 28). Lorsque plusieurs écoles ont la même note finale, elles partagent alors le même rang.'></i></th>";
 					echo "<th>&nbsp;Note finale&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='La note finale est attribuée à partie de 6 critères détaillés sur le site de DAUR Rankings.'></i></th>";
 					echo "<th>&nbsp;Ecole&nbsp;</th>";
@@ -179,7 +180,7 @@
 						echo "<td ".$class." style='text-align:center'>" . $Groupe . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
-						echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
+						echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;retour=" . rawurlencode($retourListe) . "&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEcole . "' target=_blank>" . $UrlEcole . "</a></td>";
 						echo "</tr>";	
 
@@ -247,7 +248,7 @@
 						echo "<td ".$class." style='text-align:center'>" . $Groupe . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
-							echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
+							echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;retour=" . rawurlencode($retourListe) . "&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEcole . "' target=_blank>" . $UrlEcole . "</a></td>";
 						echo "</tr>";	
 
@@ -315,7 +316,7 @@
 						echo "<td ".$class." style='text-align:center'>" . $Groupe . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
-							echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
+							echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;retour=" . rawurlencode($retourListe) . "&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEcole . "' target=_blank>" . $UrlEcole . "</a></td>";
 						echo "</tr>";	
 
@@ -372,7 +373,7 @@
 						echo "<tr ondblclick='zoom(" . $jsEcole . ")'>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
-							echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
+							echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;retour=" . rawurlencode($retourListe) . "&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlFigaro . "' target=_blank>" . $Ecole . "</a></td>";
 						echo "</tr>";	
 					}
@@ -425,7 +426,7 @@
 						echo "<tr ondblclick='zoom(" . $jsEcole . ")'>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
-						echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
+						echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;retour=" . rawurlencode($retourListe) . "&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlFigaro . "' target=_blank>" . $Ecole . "</a></td>";
 						echo "</tr>";	
 					}
@@ -489,7 +490,7 @@
 						echo "<td ".$class." style='text-align:center'>" . $Groupe . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
-						echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
+						echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;retour=" . rawurlencode($retourListe) . "&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEcole . "' target=_blank>" . $UrlEcole . "</a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEtudiant . "' target=_blank>Fiche " . $Ecole . "</a></td>";
 						echo "</tr>";	
@@ -559,7 +560,7 @@
 						echo "<td ".$class." style='text-align:center'>" . $Groupe . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
 						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
-						echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
+						echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;retour=" . rawurlencode($retourListe) . "&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEcole . "' target=_blank>" . $UrlEcole . "</a></td>";
 						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlEtudiant . "' target=_blank>Fiche " . $Ecole . "</a></td>";
 						echo "</tr>";	
@@ -613,7 +614,7 @@
 		function zoom(ecole) {
 			<?php
 				$baseZoom = 'detail-resultat-admission-par-ecole.php?origine=classement&ecole=';
-				echo 'window.location.href = ' . encodeJs($baseZoom) . ' + encodeURIComponent(ecole);';
+				echo 'window.location.href = NavigationRetour.urlDestination(' . encodeJs($baseZoom) . ' + encodeURIComponent(ecole));';
 			?>
 		}
 		

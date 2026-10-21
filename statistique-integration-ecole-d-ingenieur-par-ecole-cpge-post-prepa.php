@@ -33,8 +33,7 @@
 		// fonctions communes du site
 		include "php/fonctionConcours.php";
 
-		// Année de référence conservée au retour depuis la page résultat (voir
-		// questionnaire() dans resultat-d-integration-ecole-d-ingenieur-par-ecole...).
+		// Année de référence conservée dans le lien de retour depuis les résultats.
 		$anneeEcole = isset($_GET['anneeEcole']) ? trim($_GET['anneeEcole']) : 'toutes';
 		$anneeEcole = preg_replace('/[^0-9a-zA-Z]/', '', $anneeEcole);
 		$anneeEcole = substr($anneeEcole, 0, 6);
@@ -300,7 +299,7 @@
 
 			bouton.addEventListener('click', function () {
 				if (!ecoleValide()) { return; }
-				window.location.href = 'detail-resultat-admission-par-ecole.php?ecole=' + encodeURIComponent(champEcole.value);
+				window.location.href = NavigationRetour.urlDestination('detail-resultat-admission-par-ecole.php?ecole=' + encodeURIComponent(champEcole.value));
 			});
 
 			actualiser();
