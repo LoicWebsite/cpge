@@ -8,7 +8,7 @@ function configurationClassements(): array {
 		[
 			'cle'      => 'daur2025',
 			'table'    => 'DAUR',
-			'an'       => '2024',
+			'an'       => '2025',
 			'libelle'  => 'DAUR 2025',
 			'total'    => 185,
 			'groupe'   => true,
