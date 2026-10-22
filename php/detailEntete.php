@@ -81,10 +81,41 @@ function chargerAttractivite(PDO $db, string $ecole): array {
 		: ['rang' => '', 'total' => 0];
 }
 
+// Dernière médiane à 12 mois disponible pour une école, toutes ses formations
+// InserSup rattachées confondues.
+function chargerSalaireReference(PDO $db, string $ecole): ?array {
+	$sql = "SELECT Salaire.promo_annee AS promotion,
+				   AVG(NULLIF(NULLIF(Salaire.salaire_q2_12, 'nd'), '')) AS mediane
+			FROM Salaire
+			INNER JOIN EcoleSalaire
+				ON EcoleSalaire.uo_lib = Salaire.uo_lib
+			   AND (EcoleSalaire.denomination_principale = ''
+					OR EcoleSalaire.denomination_principale = Salaire.denomination_principale)
+			   AND EcoleSalaire.Ecole = :ecole
+			WHERE Salaire.type_diplome = 'Formation ingénieur'
+			  AND Salaire.libelle_diplome = 'Tout diplôme d\\'ingénieur'
+			  AND Salaire.obtention_diplome = 'diplômé'
+			  AND Salaire.nationalite = 'ensemble'
+			  AND Salaire.genre = 'ensemble'
+			  AND Salaire.regime_inscription = 'ensemble'
+			  AND Salaire.promo_annee IS NOT NULL
+			  AND Salaire.promo_annee NOT IN ('2023','2024')
+			  AND Salaire.uo_lib <> 'National'
+			GROUP BY Salaire.promo_annee
+			HAVING mediane IS NOT NULL AND mediane > 0
+			ORDER BY Salaire.promo_annee DESC
+			LIMIT 1";
+	$stmt = $db->prepare($sql);
+	$stmt->execute([':ecole' => $ecole]);
+	$reference = $stmt->fetch(PDO::FETCH_ASSOC);
+	$stmt->closeCursor();
+	return $reference ?: null;
+}
+
 // Affiche l'en-tête de la page : nom de l'école, site web et repères de classement.
 // Bandeau statique : ne dépend que de l'URL officielle (1 requête légère) et de la
-// liste des filières déjà connue. Les classements/attractivité (plus coûteux, ~9
-// requêtes) sont chargés en arrière-plan par AJAX et injectés dans #badges-entete.
+// liste des filières déjà connue. Les classements, l'attractivité et le salaire de
+// référence sont chargés en arrière-plan par AJAX et injectés dans #badges-entete.
 function afficherEnteteEcole(string $ecole, string $urlEcole, array $filieres, string $contexte = ''): void {
 	$libelles = libellesFilieres();
 
@@ -105,7 +136,7 @@ function afficherEnteteEcole(string $ecole, string $urlEcole, array $filieres, s
 	}
 
 	// rempli après coup par ajax/detailOnglet.php?onglet=entete (voir script en bas de detail.php)
-	echo "<p class='text-center mb-3' id='badges-entete'><span class='spinner-border spinner-border-sm text-secondary' role='status' aria-label='Chargement des classements'></span></p>";
+	echo "<p class='text-center mb-3' id='badges-entete'><span class='spinner-border spinner-border-sm text-secondary' role='status' aria-label='Chargement des repères'></span></p>";
 
 	if (!empty($filieres)) {
 		echo "<p class='text-center mb-0 small text-secondary'>Admissions disponibles depuis ";
@@ -124,7 +155,7 @@ function afficherEnteteEcole(string $ecole, string $urlEcole, array $filieres, s
 
 // Fragment des badges de classement/attractivité, calculé une fois les données
 // disponibles (chargement direct ou via AJAX) et injecté dans #badges-entete.
-function afficherBadgesEntete(array $classements, array $attractivite = []): void {
+function afficherBadgesEntete(array $classements, array $attractivite = [], ?array $salaireReference = null): void {
 	// repères rapides : le classement DAUR et le classement Le Figaro les plus récents disponibles
 	$badges = [];
 	$famillesRetenues = ['DAUR' => false, 'Figaro' => false];
@@ -154,5 +185,10 @@ function afficherBadgesEntete(array $classements, array $attractivite = []): voi
 	elseif (!empty($attractivite) && $attractivite['rang'] !== '') {
 		echo "<span class='badge rounded-pill bg-white border text-secondary fw-normal me-1 mb-1'>Attractivité <span class='fw-semibold'>"
 		   . escapeHtml($attractivite['rang'] . '/' . $attractivite['total']) . "</span></span>";
+	}
+	if ($salaireReference !== null) {
+		echo "<span class='badge rounded-pill bg-white border text-secondary fw-normal me-1 mb-1' title='Salaire mensuel net médian en équivalent temps plein'>";
+		echo "Salaire médian à 12 mois <span class='fw-semibold'>" . escapeHtml(formater($salaireReference['mediane'], 0))
+		   . " € (promotion " . escapeHtml($salaireReference['promotion']) . ")</span></span>";
 	}
 }

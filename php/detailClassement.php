@@ -139,15 +139,16 @@ function afficherClassements(array $classements, string $ecole = '', array $attr
 		return;
 	}
 
-	echo "<br><p class='text-muted small'>Position de l'école dans les principaux classements d'écoles d'ingénieurs. "
-	   . "Passez sur <i class='bi bi-info-circle-fill'></i> pour connaître la méthode de chaque palmarès.</p>";
 	if (!empty($attractivite) && $attractivite['rang'] !== '') {
-		echo "<div class='p-3 border bg-white rounded text-center mb-3'>";
+		echo "<div class='row justify-content-center g-2 g-md-3 mt-1 mb-3'>";
+		echo "<div class='col-12 col-md-6 col-xl-4'><div class='p-3 border bg-white rounded h-100 text-center'>";
 		echo "<div class='text-secondary small'><i class='bi bi-clipboard2-heart'></i>&nbsp; Attractivité DAUR</div>";
 		echo "<div class='h4 mb-1 mt-1 text-primary'>" . escapeHtml($attractivite['rang'] . '/' . $attractivite['total']) . "</div>";
 		// echo "<div class='text-muted small'>Meilleur rang de l'école parmi les formations évaluées.</div>";
-		echo "</div>";
+		echo "</div></div></div>";
 	}
+	echo "<p class='text-muted small mt-3'>Position de l'école dans les principaux classements d'écoles d'ingénieurs. "
+	   . "Passez sur <i class='bi bi-info-circle-fill'></i> pour connaître la méthode de chaque palmarès.</p>";
 
 	echo "<div class='table-responsive'>";
 	echo "<table class='table-classements'>";

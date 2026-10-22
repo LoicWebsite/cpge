@@ -12,9 +12,10 @@
     <?php include "php/style.php"; ?>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="js/salaireEcole.js"></script>
+    <script src="js/salaireEcole.js?v=<?php echo filemtime(__DIR__ . '/js/salaireEcole.js'); ?>"></script>
     <style>
       th, td { font-size: 100%; }
+      #tab-ecole .form-label { color: #808080; font-size: 1rem; }
       #zone-tableau { overflow-x: auto; }
       #zone-tableau table { width: 100%; }
       .legende-couleur { display: inline-block; width: 14px; height: 14px; border-radius: 3px; margin-right: 5px; vertical-align: middle; }
@@ -97,46 +98,56 @@
         <!-- ── Onglet 1 : Par établissement ── -->
         <div class="tab-pane fade" id="tab-ecole" role="tabpanel">
 
-          <div class="row mb-4">
-            <div class="col-md-1"></div>
-            <div class="col-md-3">
-              <label for="select-etablissement" class="form-label fw-bold">
-                <i class="bi bi-building"></i>&nbsp; Choisir un établissement
-              </label>
+          <section class="border bg-light rounded p-3 p-md-4 mb-4" aria-labelledby="titre-selection-etablissement">
+            <h2 id="titre-selection-etablissement" class="h5 text-start mb-3">
+              <i class="bi bi-building"></i>&nbsp; Choisir un établissement
+            </h2>
+            <div class="row align-items-start">
+              <div class="col-md-4">
+                <label for="filtre-etablissement" class="form-label">Rechercher un établissement</label>
+                <input type="text" id="filtre-etablissement" class="form-control mb-3 mb-md-0"
+                       placeholder="&#128269; Tapez un nom pour filtrer la liste..."
+                       autocomplete="off">
+              </div>
+              <div class="col-md-8">
+                <label for="select-etablissement" class="form-label">Sélectionner dans la liste</label>
+                <select id="select-etablissement" class="form-select" aria-describedby="aide-selection-etablissement">
+                  <option value="">-- Sélectionner un établissement --</option>
+                </select>
+                <small id="aide-selection-etablissement" class="text-muted">Filtrez par saisie, puis sélectionnez dans la liste.</small>
+              </div>
             </div>
-            <div class="col-md-7">
-              <input type="text" id="filtre-etablissement" class="form-control mb-1"
-                     placeholder="&#128269; Tapez un nom pour filtrer la liste..."
-                     autocomplete="off">
-              <select id="select-etablissement" class="form-select">
-                <option value="">-- Sélectionner un établissement --</option>
-              </select>
-              <small class="text-muted">Filtrez par saisie, puis sélectionnez dans la liste.</small>
+          </section>
+
+          <section class="border bg-light rounded p-3 p-md-4" aria-labelledby="titre-resultats-etablissement">
+            <h2 id="titre-resultats-etablissement" class="h5 mb-3">Salaires de l'établissement</h2>
+            <p id="zone-attente-etablissement" class="text-center mb-0">Sélectionnez un établissement pour consulter ses salaires.</p>
+
+            <div id="carte-salaire-reference" aria-live="polite"></div>
+
+            <!-- Légende graphique -->
+            <div id="zone-legende" class="mb-2" style="display:none;">
+              <small class="text-muted">Salaire mensuel net médian en équivalent temps plein (€) &mdash; une courbe par promotion</small>
             </div>
-          </div>
 
-          <!-- Légende graphique -->
-          <div id="zone-legende" class="mb-2" style="display:none;">
-            <small class="text-muted">Salaire mensuel net médian en équivalent temps plein (€) &mdash; une courbe par promotion</small>
-          </div>
-
-          <!-- Graphique Chart.js -->
-          <div id="zone-graphique" style="display:none;">
-            <canvas id="canvas-salaire"></canvas>
-          </div>
-
-          <!-- Tableau détaillé -->
-          <div id="zone-tableau" class="mt-4" style="display:none;"></div>
-
-          <!-- Spinner de chargement -->
-          <div id="zone-chargement" class="text-center my-4" style="display:none;">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Chargement…</span>
+            <!-- Graphique Chart.js -->
+            <div id="zone-graphique" style="display:none;">
+              <canvas id="canvas-salaire"></canvas>
             </div>
-          </div>
 
-          <!-- Message d'erreur -->
-          <div id="zone-erreur" class="alert alert-danger mt-3" style="display:none;"></div>
+            <!-- Tableau détaillé -->
+            <div id="zone-tableau" class="mt-4" style="display:none;"></div>
+
+            <!-- Spinner de chargement -->
+            <div id="zone-chargement" class="text-center my-4" style="display:none;">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Chargement…</span>
+              </div>
+            </div>
+
+            <!-- Message d'erreur -->
+            <div id="zone-erreur" class="alert alert-danger mt-3" style="display:none;"></div>
+          </section>
 
         </div><!-- /tab-ecole -->
 
@@ -222,13 +233,14 @@
       function masquer(selector)  { document.querySelector(selector).style.display = 'none'; }
 
       // Construit l'URL canonique de la fiche en conservant l'origine salaire.
-      function urlFicheEcole(ecole) {
-        return NavigationRetour.urlDestination('detail-resultat-admission-par-ecole.php?origine=salaire&ecole=' + encodeURIComponent(ecole));
+      function urlFicheEcole(ecole, onglet) {
+        return NavigationRetour.urlDestination('detail-resultat-admission-par-ecole.php?origine=salaire&ecole=' + encodeURIComponent(ecole)
+          + (onglet === 'admissions' ? '#onglet-admissions' : ''));
       }
 
       // Ouvre la fiche d'une école lorsqu'un rattachement EcoleSalaire existe.
-      function ouvrirFicheEcole(ecole) {
-        if (ecole) window.location.href = urlFicheEcole(ecole);
+      function ouvrirFicheEcole(ecole, onglet) {
+        if (ecole) window.location.href = urlFicheEcole(ecole, onglet);
       }
 
       // Rend le libellé cliquable uniquement quand il possède une fiche canonique.
@@ -317,17 +329,18 @@
       document.getElementById('filtre-etablissement').addEventListener('input', function () {
         var filtres = etablissementsFiltres();
         remplirSelect(filtres);
+        var sel = document.getElementById('select-etablissement');
         if (filtres.length === 1) {
-          var sel = document.getElementById('select-etablissement');
           sel.selectedIndex = 1;
-          sel.dispatchEvent(new Event('change'));
         }
+        sel.dispatchEvent(new Event('change'));
       });
 
       // Référence à l'instance Chart.js active.
       // Conservée pour pouvoir appeler destroy() avant de créer un nouveau
       // graphique (sinon Chart.js empilement les canvas et génère des artefacts).
       var monChart = null;
+      var numeroRequeteEtablissement = 0;
 
       // ──────────────────────────────────────────────────────────────────
       // Handler de sélection d'établissement (onglet 1)
@@ -339,6 +352,7 @@
       // ──────────────────────────────────────────────────────────────────
 
       document.getElementById('select-etablissement').addEventListener('change', function () {
+        var numeroRequete = ++numeroRequeteEtablissement;
         var selectedOpt = this.options[this.selectedIndex];
         var val = selectedOpt.value;
         var col = selectedOpt.dataset.col || 'etablissement';
@@ -349,11 +363,17 @@
         masquer('#zone-graphique');
         masquer('#zone-tableau');
         masquer('#zone-erreur');
+        masquer('#zone-chargement');
+        afficher('#zone-attente-etablissement');
+        document.getElementById('titre-resultats-etablissement').textContent = 'Salaires de l\'établissement';
+        document.getElementById('carte-salaire-reference').innerHTML = '';
         document.getElementById('zone-tableau').innerHTML = '';
         document.getElementById('zone-erreur').textContent = '';
 
         if (val === '') return;
 
+        masquer('#zone-attente-etablissement');
+        document.getElementById('titre-resultats-etablissement').textContent = label;
         afficher('#zone-chargement');
 
         fetch('php/ajax/load_salaire.php?etablissement=' + encodeURIComponent(val) + '&col=' + encodeURIComponent(col))
@@ -362,6 +382,7 @@
             return r.json();
           })
           .then(function (data) {
+            if (numeroRequete !== numeroRequeteEtablissement) return;
             masquer('#zone-chargement');
 
             if (!Array.isArray(data) || data.length === 0) {
@@ -371,11 +392,13 @@
               return;
             }
 
+            SalaireEcole.afficherCarteSalaireReference(data, document.getElementById('carte-salaire-reference'));
             afficherGraphique(data);
             afficherTableau(data, label);
             if (window.location.hash === '#tab-ecole') NavigationRetour.restaurerPosition();
           })
           .catch(function (err) {
+            if (numeroRequete !== numeroRequeteEtablissement) return;
             masquer('#zone-chargement');
             afficher('#zone-erreur');
             document.getElementById('zone-erreur').textContent =
@@ -400,145 +423,28 @@
         afficher('#zone-legende');
         afficher('#zone-graphique');
         monChart = SalaireEcole.afficherGraphique(data, document.getElementById('canvas-salaire'), { chart: monChart });
-        return;
-
-        var labels = ['12 mois', '18 mois', '24 mois', '30 mois'];
-
-        // Une courbe par promotion, sur les 4 horizons en abscisse
-        var datasets = [];
-        // Palette de couleurs : cyclée si plus de 10 promotions
-        var couleurs = [
-          '#4e79a7','#f28e2b','#e15759','#76b7b2',
-          '#59a14f','#edc948','#b07aa1','#ff9da7',
-          '#9c755f','#bab0ac'
-        ];
-
-        data.forEach(function (row, i) {
-          var col = couleurs[i % couleurs.length];
-          var promo = row.promotion;
-
-          // round() convertit 0 en null pour éviter les courbes qui tombent à 0
-          var med = [round(row.med_12), round(row.med_18), round(row.med_24), round(row.med_30)];
-
-          // Médiane uniquement (une courbe par promotion)
-          // col + '33' = même couleur avec 20% d'opacité pour backgroundColor
-          datasets.push({
-            label: promo,
-            data: med,
-            borderColor: col,
-            backgroundColor: col + '33',
-            borderWidth: 2,
-            tension: 0.3,
-            pointRadius: 5,
-            fill: false,
-            spanGaps: false
-          });
-        });
-
-        afficher('#zone-legende');
-        afficher('#zone-graphique');
-
-        // Destruction de l'instance précédente si elle existe
-        // (obligatoire avant de réutiliser le même <canvas>)
-        if (monChart) {
-          monChart.destroy();
-        }
-
-        var ctx = document.getElementById('canvas-salaire').getContext('2d');
-        monChart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: labels,
-            datasets: datasets
-          },
-          options: {
-            responsive: true,
-            interaction: { mode: 'index', intersect: false },
-            plugins: {
-              legend: { position: 'bottom', labels: { boxWidth: 20, font: { size: 12 } } },
-              tooltip: {
-                callbacks: {
-                  label: function (ctx) {
-                    return ctx.dataset.label + ' : ' +
-                      (ctx.parsed.y !== null ? ctx.parsed.y + ' €' : 'n/d');
-                  }
-                }
-              }
-            },
-            scales: {
-              y: {
-                title: { display: true, text: 'Salaire mensuel net ETP (€)' },
-                ticks: {
-                  callback: function (val) { return val + ' €'; }
-                }
-              },
-              x: {
-                title: { display: true, text: 'Délai après obtention du diplôme' }
-              }
-            }
-          }
-        });
       }
 
       // ──────────────────────────────────────────────────────────────────
       // afficherTableau(data, etab)
       //
-      // Construit un tableau HTML (sans classes Bootstrap pour conserver le
-      // style CSS défini dans concours.css : th { background: DarkSlateBlue }).
-      // Structure : une ligne par promotion avec rowspan=3, puis 3 sous-lignes
-      // Q1 / Médiane / Q3, chacune avec les 4 horizons en colonnes.
-      // Un bouton CSV permet l'export via la fonction tableToCSV() du fichier
-      // js/tableToCSV.js.
+      // Délègue le rendu commun à SalaireEcole et fournit les options propres
+      // à cette vue : lien vers la fiche, double-clic et export CSV.
       // ──────────────────────────────────────────────────────────────────
 
       function afficherTableau(data, etab) {
         var idT = 'tableau-salaire';
         var ecole = data.length > 0 ? data[0].ecole : null;
-        var html = '<table id="' + idT + '">';
-        html += '<caption style="caption-side:top;"><small>';
-        html += 'Salaires mensuels nets ETP (€) &ndash; ';
-        html += afficherLienEcole(ecole, etab) + '.';
-        html += '<br>Cliquer pour télécharger au format CSV&nbsp;: </small>';
-        html += '<button type="button" class="btn btn-secondary btn-sm" ';
-        html += 'onclick="tableToCSV(\'#' + idT + '\',\'promotion;indicateur;12 mois;18 mois;24 mois;30 mois\')"><i class="bi bi-download"></i> csv</button>';
-        html += '</caption>';
-        html += '<thead class="text-center"><tr>';
-        html += '<th>Promotion</th>';
-        html += '<th>Indicateur</th>';
-        html += '<th>12 mois</th>';
-        html += '<th>18 mois</th>';
-        html += '<th>24 mois</th>';
-        html += '<th>30 mois</th>';
-        html += '</tr></thead><tbody>';
-
-        data.forEach(function (row) {
-          function cel(v) {
-            var n = round(v);
-            return '<td class="text-center">' + (n !== null ? n + '&nbsp;€' : '<span class="text-muted">n/d</span>') + '</td>';
-          }
-
-          // Q1
-          html += '<tr' + (ecole ? ' data-ecole="' + escHtml(ecole) + '" ondblclick="ouvrirFicheEcole(this.dataset.ecole)" style="cursor:pointer"' : '') + '>';
-          html += '<td rowspan="3" class="align-middle text-center fw-bold">' + escHtml(row.promotion) + '</td>';
-          html += '<td>1er quartile (Q1)</td>';
-          html += cel(row.q1_12) + cel(row.q1_18) + cel(row.q1_24) + cel(row.q1_30);
-          html += '</tr>';
-          // Médiane
-          html += '<tr>';
-          html += '<td><strong>Médiane</strong></td>';
-          html += cel(row.med_12) + cel(row.med_18) + cel(row.med_24) + cel(row.med_30);
-          html += '</tr>';
-          // Q3
-          html += '<tr>';
-          html += '<td>3e quartile (Q3)</td>';
-          html += cel(row.q3_12) + cel(row.q3_18) + cel(row.q3_24) + cel(row.q3_30);
-          html += '</tr>';
-        });
-
-        html += '</tbody></table>';
-
         var zone = document.getElementById('zone-tableau');
-        zone.innerHTML = html;
+        SalaireEcole.construireTableau(data, zone, {
+          id: idT,
+          titre: etab,
+          lienTitre: ecole ? { label: etab, href: urlFicheEcole(ecole, 'admissions') } : null,
+          ongletDestination: 'admissions',
+          ecole: ecole,
+          csvHeaders: 'promotion;indicateur;12 mois;18 mois;24 mois;30 mois',
+          lienLigne: true
+        });
         afficher('#zone-tableau');
       }
 

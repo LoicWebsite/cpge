@@ -66,12 +66,44 @@
     });
   }
 
+  /** Affiche la dernière médiane à 12 mois disponible dans une carte partagée. */
+  function afficherCarteSalaireReference(data, conteneur) {
+    var reference = data
+      .filter(function (row) { return arrondir(row.med_12) !== null; })
+      .sort(function (a, b) { return Number(b.promotion) - Number(a.promotion); })[0];
+
+    if (!reference) {
+      conteneur.innerHTML = '';
+      return;
+    }
+
+    conteneur.innerHTML = '<div class="row justify-content-center g-2 g-md-3 mb-3">' +
+      '<div class="col-12 col-md-6 col-xl-4"><div class="p-3 border bg-white rounded h-100 text-center">' +
+      '<div class="text-secondary small"><i class="bi bi-cash-coin"></i>&nbsp; Médiane à 12 mois</div>' +
+      '<div class="h4 mb-0 mt-1 text-primary">' +
+      new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(arrondir(reference.med_12)) + ' €</div>' +
+      '<div class="text-secondary small mt-1">(promotion ' + echapper(reference.promotion) + ')</div>' +
+      '</div></div></div>';
+  }
+
   /** Construit dans conteneur le tableau des quartiles par promotion. */
   function construireTableau(data, conteneur, options) {
     var id = options.id || 'tableau-salaire-ecole';
     var titre = options.titre || '';
     var html = '<table id="' + id + '"><caption style="caption-side:top;"><small>';
-    html += 'Salaires mensuels nets ETP (€) &ndash; ' + echapper(titre) + '.</small></caption>';
+    html += 'Salaires mensuels nets ETP (€) &ndash; ';
+    if (options.lienTitre) {
+      html += '<a href="' + echapper(options.lienTitre.href) + '"><strong>' + echapper(options.lienTitre.label) + '</strong></a>';
+    } else {
+      html += echapper(titre);
+    }
+    html += '.';
+    if (options.csvHeaders) {
+      html += '<br><br>Cliquer pour télécharger au format CSV&nbsp;: ';
+      html += '<button type="button" class="btn btn-secondary btn-sm" data-csv-export="' + echapper(id) + '" ';
+      html += 'data-csv-headers="' + echapper(options.csvHeaders) + '"><i class="bi bi-download"></i> csv</button>';
+    }
+    html += '</small></caption>';
     html += '<thead class="text-center"><tr><th>Promotion</th><th>Indicateur</th><th>12 mois</th><th>18 mois</th><th>24 mois</th><th>30 mois</th></tr></thead><tbody>';
     data.forEach(function (row) {
       /** Formate une cellule monétaire et affiche n/d pour une valeur absente. */
@@ -79,15 +111,26 @@
         var n = arrondir(v);
         return '<td class="text-center">' + (n !== null ? n + '&nbsp;€' : '<span class="text-muted">n/d</span>') + '</td>';
       }
-      html += '<tr><td rowspan="3" class="align-middle text-center fw-bold">' + echapper(row.promotion) + '</td><td>1er quartile (Q1)</td>' + cellule(row.q1_12) + cellule(row.q1_18) + cellule(row.q1_24) + cellule(row.q1_30) + '</tr>';
+      var attributsEcole = options.lienLigne && options.ecole
+        ? ' data-ecole="' + echapper(options.ecole) + '" data-onglet="' + echapper(options.ongletDestination || '') +
+          '" ondblclick="ouvrirFicheEcole(this.dataset.ecole, this.dataset.onglet)" style="cursor:pointer"'
+        : '';
+      html += '<tr' + attributsEcole + '><td rowspan="3" class="align-middle text-center fw-bold">' + echapper(row.promotion) + '</td><td>1er quartile (Q1)</td>' + cellule(row.q1_12) + cellule(row.q1_18) + cellule(row.q1_24) + cellule(row.q1_30) + '</tr>';
       html += '<tr><td><strong>Médiane</strong></td>' + cellule(row.med_12) + cellule(row.med_18) + cellule(row.med_24) + cellule(row.med_30) + '</tr>';
       html += '<tr><td>3e quartile (Q3)</td>' + cellule(row.q3_12) + cellule(row.q3_18) + cellule(row.q3_24) + cellule(row.q3_30) + '</tr>';
     });
     conteneur.innerHTML = html + '</tbody></table>';
+    if (options.csvHeaders) {
+      conteneur.querySelector('[data-csv-export]').addEventListener('click', function (event) {
+        var bouton = event.currentTarget;
+        window.tableToCSV('#' + bouton.dataset.csvExport, bouton.dataset.csvHeaders);
+      });
+    }
   }
 
   window.SalaireEcole = {
     afficherGraphique: afficherGraphique,
+    afficherCarteSalaireReference: afficherCarteSalaireReference,
     construireTableau: construireTableau,
     arrondir: arrondir
   };

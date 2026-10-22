@@ -60,7 +60,7 @@ try {
             WHERE $BASE_FILTER
             GROUP BY Salaire.promo_annee
             HAVING med_12 IS NOT NULL OR med_18 IS NOT NULL OR med_24 IS NOT NULL OR med_30 IS NOT NULL
-            ORDER BY Salaire.promo_annee ASC";
+            ORDER BY Salaire.promo_annee DESC";
 
     $stmt = $db->prepare($sql);
     $stmt->execute([':ecole' => $ecole]);

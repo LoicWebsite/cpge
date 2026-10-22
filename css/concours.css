@@ -108,6 +108,12 @@ th {
 	overflow-wrap: anywhere;
 }
 
+.salaire-ecole-detail details.salaire-donnees,
+.salaire-ecole-detail details.salaire-donnees summary,
+.salaire-ecole-detail details.salaire-donnees p {
+	color: #808080;
+}
+
 .filieres-admissions {
 	justify-content: center;
 	flex-wrap: wrap;

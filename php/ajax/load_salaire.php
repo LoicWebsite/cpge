@@ -349,7 +349,7 @@ try {
               AND $BASE_FILTER
             GROUP BY $ANNEE_PROMO
             HAVING med_12 IS NOT NULL OR med_18 IS NOT NULL OR med_24 IS NOT NULL OR med_30 IS NOT NULL
-            ORDER BY $ANNEE_PROMO ASC";
+            ORDER BY $ANNEE_PROMO DESC";
 
     $stmt = $db->prepare($sql);
     $stmt->execute([':valeur' => $etablissement]);

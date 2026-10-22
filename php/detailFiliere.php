@@ -5,14 +5,14 @@ require_once __DIR__ . '/detailEntete.php';
 // Libellés EcoleConcours à rechercher dans Note pour une école : par défaut, ou
 // depuis une ligne École/Filière, seul le libellé exact compte (ne pas agréger
 // les autres formations de l'école canonique). Les pages qui veulent une fiche
-// canonique élargie (spécialité, classement, attractivité) le demandent avec
-// leur origine explicite.
+// canonique élargie (spécialité, classement, attractivité, salaire) le demandent
+// avec leur origine explicite.
 // Un simple "OR ... IN (sous-requête)" empêche MySQL d'utiliser l'index sur
 // Note.EcoleConcours (confirmé par EXPLAIN le 2026-09-01 : scan complet de la
 // table). Résoudre la liste ici, puis filtrer Note avec un simple IN (...),
 // permet un vrai lookup indexé.
 function obtenirEcolesConcoursRecherchees(PDO $db, string $ecole, string $origine): array {
-	if (!in_array($origine, ['specialite', 'classement', 'attractivite'], true)) {
+	if (!in_array($origine, ['specialite', 'classement', 'attractivite', 'salaire'], true)) {
 		return [$ecole];
 	}
 	$stmt = $db->prepare("SELECT EcoleConcours FROM EcoleConcours WHERE Ecole = :ecole");

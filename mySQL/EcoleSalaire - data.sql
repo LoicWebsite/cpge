@@ -2,10 +2,10 @@
 -- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost
--- Généré le : sam. 05 sep. 2026 à 16:17
--- Version du serveur : 5.7.39
--- Version de PHP : 8.2.0
+-- Hôte : localhost:8889
+-- Généré le : jeu. 22 oct. 2026 à 13:17
+-- Version du serveur : 5.7.44
+-- Version de PHP : 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -54,7 +54,7 @@ INSERT INTO `EcoleSalaire` (`uo_lib`, `denomination_principale`, `Ecole`, `Origi
 ('École d\'ingénieurs de Purpan', '', NULL, NULL),
 ('École d\'ingénieurs des sciences aérospatiales', '', NULL, NULL),
 ('École de biologie industrielle', '', NULL, NULL),
-('Ecole de l\'air et de l\'espace', '', NULL, NULL),
+('Ecole de l\'air et de l\'espace', '', 'ECOLE DE L\'AIR', NULL),
 ('École des Ingénieurs de la Ville de Paris', '', 'EIVP Paris', 'auto'),
 ('École nationale d\'ingénieurs de Brest', '', 'ENIB', 'auto'),
 ('École nationale d\'ingénieurs de Saint-Étienne', '', 'CENTRALE Lyon', NULL),
@@ -79,12 +79,12 @@ INSERT INTO `EcoleSalaire` (`uo_lib`, `denomination_principale`, `Ecole`, `Origi
 ('École nationale supérieure des sciences agronomiques de Bordeaux Aquitaine', '', 'Bordeaux Sciences Agro', NULL),
 ('École nationale supérieure des sciences agronomiques, de l\'alimentation et de l\'environnement', '', 'Institut Agro – Dijon', NULL),
 ('École nationale supérieure maritime', '', 'ENSM', 'auto'),
-('École navale', '', NULL, NULL),
+('École navale', '', 'ECOLE NAVALE Brest', NULL),
 ('École polytechnique', '', 'Ecole Polytechnique', 'auto'),
 ('École pour l\'informatique et les techniques avancées', '', 'EPITA', NULL),
 ('École spéciale de mécanique et d\'électricité', '', 'ESME', 'auto'),
 ('École spéciale des travaux publics, du bâtiment et de l\'industrie', '', 'ESTP Paris', NULL),
-('École spéciale militaire de Saint-Cyr', '', NULL, NULL),
+('École spéciale militaire de Saint-Cyr', '', 'ESM Saint-Cyr', NULL),
 ('École supérieure angevine en informatique et productique', '', 'ESAIP Angers', NULL),
 ('École supérieure d\'électronique de l\'Ouest', '', 'ESEO Angers', 'auto'),
 ('École supérieure d\'informatique électronique automatique', '', 'ESIEA Paris', 'auto'),

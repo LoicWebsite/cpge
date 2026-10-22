@@ -273,6 +273,7 @@
 		function chargerDonneesSalaire(panneau) {
 			var canvas = panneau.querySelector('#canvas-salaire-detail');
 			var tableau = panneau.querySelector('#zone-tableau-salaire-detail');
+			var carteReference = panneau.querySelector('#carte-salaire-reference-detail');
 			var erreur = panneau.querySelector('#erreur-salaire-detail');
 			var params = new URLSearchParams({ ecole: ecoleCanonique });
 			/** Ajoute une dépendance JavaScript au premier besoin, sans doublon. */
@@ -288,7 +289,7 @@
 				});
 			}
 			chargerScript('https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js', 'script-chartjs-salaire')
-				.then(function () { return chargerScript('js/salaireEcole.js', 'script-salaire-ecole'); })
+				.then(function () { return chargerScript('js/salaireEcole.js?v=<?php echo filemtime(__DIR__ . '/../js/salaireEcole.js'); ?>', 'script-salaire-ecole'); })
 				.then(function () { return fetch('php/ajax/salaire_ecole.php?' + params.toString()); })
 				.then(function (reponse) {
 					return reponse.json().then(function (donnees) {
@@ -302,6 +303,7 @@
 						erreur.classList.remove('d-none');
 						return;
 					}
+					SalaireEcole.afficherCarteSalaireReference(donnees, carteReference);
 					SalaireEcole.afficherGraphique(donnees, canvas, {});
 					SalaireEcole.construireTableau(donnees, tableau, { id: 'tableau-salaire-detail', titre: ecoleCanonique });
 				})
