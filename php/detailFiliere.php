@@ -6,13 +6,15 @@ require_once __DIR__ . '/detailEntete.php';
 // depuis une ligne École/Filière, seul le libellé exact compte (ne pas agréger
 // les autres formations de l'école canonique). Les pages qui veulent une fiche
 // canonique élargie (spécialité, classement, attractivité, salaire) le demandent
-// avec leur origine explicite.
+// avec leur origine explicite. L'origine 'ecole' (page statistiques par école)
+// agrège aussi : son select envoie le nom canonique (EcoleConcours.Ecole), qui
+// n'existe pas tel quel dans Note (ex. "AgroParisTech" vs "AgroParisTech - Palaiseau").
 // Un simple "OR ... IN (sous-requête)" empêche MySQL d'utiliser l'index sur
 // Note.EcoleConcours (confirmé par EXPLAIN le 2026-09-01 : scan complet de la
 // table). Résoudre la liste ici, puis filtrer Note avec un simple IN (...),
 // permet un vrai lookup indexé.
 function obtenirEcolesConcoursRecherchees(PDO $db, string $ecole, string $origine): array {
-	if (!in_array($origine, ['specialite', 'classement', 'attractivite', 'salaire'], true)) {
+	if (!in_array($origine, ['specialite', 'classement', 'attractivite', 'salaire', 'ecole'], true)) {
 		return [$ecole];
 	}
 	$stmt = $db->prepare("SELECT EcoleConcours FROM EcoleConcours WHERE Ecole = :ecole");
@@ -155,20 +157,28 @@ function trierFormationsParImportanceRecente(array &$parFormations): void {
 	});
 }
 
-// Titre spécifique de l'onglet filière : il conserve le rendu partagé quand il
-// n'y a rien à expliquer, et ajoute seulement pour les fiches élargies un
-// tooltip discret sans modifier la signature de afficherTitreSection(), utilisée
-// par les autres onglets.
+// Titre de l'onglet filière : le libellé long (« Mathématiques - Physique »)
+// suivi du sigle entre parenthèses. Le sigle seul (« MP ») est déjà porté par
+// le bouton actif du sélecteur, et « Admissions » par l'onglet : les répéter
+// dans le titre serait redondant. En fiche élargie, un tooltip discret explique
+// le regroupement des voies.
 function afficherTitreFiliere(string $ecole, string $filiere, string $aide = ''): void {
-	$section = "Admissions — " . strtoupper($filiere);
+	$libelles = libellesFilieres();
+	$libelle = isset($libelles[$filiere]) ? $libelles[$filiere] : '';
+	$section = $libelle !== ''
+		? $libelle . " (" . strtoupper($filiere) . ")"
+		: strtoupper($filiere);
 	if ($aide === '') {
 		afficherTitreSection($ecole, $section);
+		// Espace vertical avant le premier concours (le titre partagé a mb-1).
+		echo "<div class='mb-3'></div>";
 		return;
 	}
 	echo "<h2 class='h5 text-center mb-1'>";
 	echo escapeHtml($section);
 	echo "&nbsp;<i class='bi bi-info-circle-fill text-secondary' data-bs-toggle='tooltip' data-bs-html='true' title='" . escapeHtml($aide) . "'></i>";
 	echo "</h2>";
+	echo "<div class='mb-3'></div>";
 }
 
 // Une tuile "chiffre clé".
@@ -247,9 +257,6 @@ function afficherFiliere(string $filiere, array $parFormations, string $ecole = 
 	}
 
 	afficherTitreFiliere($ecole, $filiere, $aideFicheElargie);
-	if ($libelle !== '') {
-		echo "<p class='text-center text-secondary small mb-4'>" . escapeHtml($libelle) . "</p>";
-	}
 
 	if ($nombreFormations > 1) {
 		trierFormationsParImportanceRecente($parFormations);
@@ -303,8 +310,9 @@ function afficherFiliere(string $filiere, array $parFormations, string $ecole = 
 		// Plusieurs concours dans une même voie traduisent souvent un changement de
 		// banque d'épreuves au fil des ans ; on garde alors un sous-bloc par concours.
 		if (count($parConcours) > 1) {
+			// Note secondaire : même gris clair que la voie d'admission (fiche-contexte).
 			echo "<p class='text-center small mb-4'><i class='bi bi-info-circle'></i>&nbsp; "
-			   . "<span class='text-secondary'>Sur la période couverte, cette voie a recruté en "
+			   . "<span class='fiche-contexte'>Cette école a recruté en "
 			   . escapeHtml(strtoupper($filiere)) . " via " . count($parConcours) . " concours successifs. "
 			   . "Chaque bloc ci-dessous correspond à l'un d'eux, du plus récent au plus ancien.</span></p>";
 		}
@@ -321,17 +329,14 @@ function afficherFiliere(string $filiere, array $parFormations, string $ecole = 
 			$anneeMin = min($annees);
 			$derniere = $lignes[0];
 			$selectivites = calculerSelectivites($derniere);
-			$periode = ($anneeMin === $anneeMax)
-				? "en " . escapeHtml($anneeMax)
-				: "de " . escapeHtml($anneeMin) . " à " . escapeHtml($anneeMax);
-
-			echo "<div class='d-flex flex-wrap align-items-center justify-content-center gap-2 mb-3'>";
+			// Ligne de contexte : concours + année de référence des chiffres clés.
+			// La période complète n'est pas rappelée : le tableau « Effectifs par
+			// année » ci-dessous liste déjà chaque année couverte.
+			echo "<div class='d-flex flex-wrap align-items-baseline justify-content-center gap-2 mb-3'>";
 			echo "<h4 class='h6 fw-bold mb-0 text-secondary'><i class='bi bi-mortarboard-fill'></i>&nbsp; " . escapeHtml($concours) . "</h4>";
-			echo "<span class='text-secondary small'>" . $periode . "</span>";
+			echo "<span class='text-secondary small'>données " . escapeHtml($anneeMax) . "</span>";
 			echo "</div>";
 
-			// chiffres clés de la dernière année disponible
-			echo "<p class='text-center text-secondary small mb-2'>Chiffres clés " . escapeHtml($anneeMax) . "</p>";
 			echo "<div class='row g-2 g-md-3 mb-2'>";
 			afficherTuile("Places", formater($derniere['Place'], 0), "bi-door-open");
 			afficherTuile("Inscrits", formater($derniere['Inscrit'], 0), "bi-people-fill");

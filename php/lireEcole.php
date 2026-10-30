@@ -10,20 +10,25 @@ include "fonctionConcours.php";     // fonctions utilitaires
 
 header('Content-Type: application/json; charset=utf-8');
 
+// mode=canonique : renvoie les noms canoniques (EcoleConcours.Ecole, une entrée par
+// école) au lieu des libellés concours (Note.EcoleConcours). Utilisé par la page
+// "par école" ; la page "par filière" garde le mode par défaut (libellés concours).
+$canonique = (isset($_GET['mode']) && $_GET['mode'] === 'canonique');
+
 try {
     // connexion PDO
     $db = openDatabase();
 
-    // construction dynamique de la clause WHERE
+    // construction dynamique de la clause WHERE (alias n = table Note)
     $conditions = [];
     if (!empty($filiere) && $filiere != "toutes") {
-        $conditions[] = "Filiere = :filiere";
+        $conditions[] = "n.Filiere = :filiere";
     }
     if (!empty($concours) && $concours != "tous") {
-        $conditions[] = "Concours = :concours";
+        $conditions[] = "n.Concours = :concours";
     }
     if (!empty($an) && $an != "toutes") {
-        $conditions[] = "An = :an";
+        $conditions[] = "n.An = :an";
     }
 
     $where = '';
@@ -31,7 +36,19 @@ try {
         $where = " WHERE " . implode(" AND ", $conditions);
     }
 
-    $sql = "SELECT DISTINCT(EcoleConcours) AS Ecole FROM Note" . $where . " ORDER BY EcoleConcours ASC";
+    if ($canonique) {
+        // Jointure sur la clé complète de EcoleConcours pour retrouver le nom
+        // canonique de chaque école ayant publié un résultat (Note).
+        $sql = "SELECT DISTINCT ec.Ecole AS Ecole
+                FROM Note n
+                JOIN EcoleConcours ec
+                  ON ec.Filiere = n.Filiere AND ec.Concours = n.Concours AND ec.EcoleConcours = n.EcoleConcours"
+                . $where
+                . ($where === '' ? " WHERE" : " AND") . " ec.Ecole IS NOT NULL AND ec.Ecole <> ''"
+                . " ORDER BY ec.Ecole ASC";
+    } else {
+        $sql = "SELECT DISTINCT(n.EcoleConcours) AS Ecole FROM Note n" . $where . " ORDER BY n.EcoleConcours ASC";
+    }
     $stmt = $db->prepare($sql);
 
     // liaison sécurisée des paramètres

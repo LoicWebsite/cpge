@@ -115,7 +115,9 @@
 								catch(PDOException $erreur)	{
 									die('Erreur connexion base : ' . $erreur->getMessage());
 								}
-																$sql = "SELECT DISTINCT EcoleConcours AS Ecole FROM EcoleConcours ORDER BY EcoleConcours ASC";
+								// Noms canoniques (EcoleConcours.Ecole) : une seule entrée par école,
+								// quels que soient ses diplômes ou voies (apprentissage, campus...).
+								$sql = "SELECT DISTINCT Ecole FROM EcoleConcours WHERE Ecole IS NOT NULL AND Ecole <> '' ORDER BY Ecole ASC";
 								if ($debug) echo "SQL = " . $sql ."<br/>";
 								try {
 									$result = $db->prepare($sql);
@@ -308,8 +310,9 @@
 	</script>
 
 	<!-- rafraîchissement de la liste des écoles selon l'année de référence choisie -->
-	<!-- réutilise php/lireEcole.php (déjà utilisé par la page filière), filiere/concours
-		 laissés à leur valeur par défaut pour ne récupérer que le filtre par année. -->
+	<!-- réutilise php/lireEcole.php (déjà utilisé par la page filière) avec mode=canonique
+		 pour obtenir les noms canoniques ; filiere/concours laissés à leur valeur par
+		 défaut pour ne récupérer que le filtre par année. -->
 	<script>
 		function rafraichirListeEcoles(anChoisi) {
 			const httpRequest = new XMLHttpRequest();
@@ -342,7 +345,7 @@
 					console.error('Erreur parsing JSON', erreur, httpRequest.responseText);
 				}
 			};
-			httpRequest.open('GET', 'php/lireEcole.php?filiere=toutes&concours=tous&an=' + encodeURIComponent(anChoisi), true);
+			httpRequest.open('GET', 'php/lireEcole.php?filiere=toutes&concours=tous&mode=canonique&an=' + encodeURIComponent(anChoisi), true);
 			httpRequest.send();
 		}
 	</script>

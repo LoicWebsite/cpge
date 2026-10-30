@@ -214,8 +214,13 @@
 				$conditionsEcole = [];
 				$sql = "SELECT ec.Filiere, ec.Concours, ec.EcoleConcours AS Ecole FROM EcoleConcours ec";
 		if (($ecole <> "") and ($ecole <> "toutes")) {
-			$conditionsEcole[] = "ec.EcoleConcours LIKE :ecole_like";
-			$paramsEcole[':ecole_like'] = '%' . $ecole . '%';
+			// Le select envoie le nom canonique (EcoleConcours.Ecole) : match exact qui
+			// regroupe toutes les voies/diplômes de l'école, y compris ses anciens
+			// libellés (ex. SUPELEC -> CentraleSupélec). Repli sur le libellé concours
+			// exact pour les anciennes URLs (ex. "Arts et Métiers campus Rabat").
+			$conditionsEcole[] = "(ec.Ecole = :ecole OR ec.EcoleConcours = :ecole_libelle)";
+			$paramsEcole[':ecole'] = $ecole;
+			$paramsEcole[':ecole_libelle'] = $ecole;
 		} elseif ($recherche <> "") {
 			$conditionsEcole[] = "ec.EcoleConcours LIKE :recherche_like";
 			$paramsEcole[':recherche_like'] = '%' . $recherche . '%';

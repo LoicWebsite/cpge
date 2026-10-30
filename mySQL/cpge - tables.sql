@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : ven. 09 oct. 2026 à 13:53
+-- Généré le : ven. 30 oct. 2026 à 17:33
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -82,7 +82,8 @@ CREATE TABLE `Diplome` (
 CREATE TABLE `Ecole` (
   `IdEcole` int(5) NOT NULL,
   `Ecole` varchar(64) NOT NULL COMMENT 'referentiel des ecoles du site : union de EcoleConcours.Ecole, DAUR, Letudiant et Figaro',
-  `UrlEcole` varchar(256) DEFAULT NULL
+  `UrlEcole` varchar(256) DEFAULT NULL,
+  `Resume` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------

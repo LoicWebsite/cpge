@@ -42,14 +42,21 @@
 		die('Erreur connexion base : ' . $erreur->getMessage());
 	}
 
+		// Résout le nom canonique utilisé par Diplome, Specialite et EcoleSalaire.
+		$ecoleCanonique = $ecoleCanoniqueFiche ?? obtenirNomEcoleFiche($db, $ecoleFiltre);
 		// données légères nécessaires au premier affichage : liste des filières
 		// (barre d'onglets) et URL officielle (bandeau). Les classements/attractivité
 		// et le détail de chaque filière ne sont chargés qu'à l'ouverture de l'onglet.
-		$ecolesConcoursRecherchees = obtenirEcolesConcoursRecherchees($db, $ecoleFiltre, $origine);
+		// La recherche des admissions s'appuie sur le nom canonique : le select de la
+		// page statistiques par école envoie ce nom (ex. "AgroParisTech"), qui n'existe
+		// pas tel quel dans Note (libellé concours "AgroParisTech - Palaiseau"). On
+		// force donc l'élargissement canonique -> libellés concours, sans dépendre du
+		// referer (absent en accès direct, navigation privée ou referer masqué).
+		$ecolesConcoursRecherchees = obtenirEcolesConcoursRecherchees($db, $ecoleCanonique, 'ecole');
 		$filieresEcole = obtenirFilieresEcole($db, $ecolesConcoursRecherchees, $debug);
 		$urlEcole = obtenirUrlEcole($db, $ecoleFiltre);
-		// Résout le nom canonique utilisé par Diplome, Specialite et EcoleSalaire.
-		$ecoleCanonique = $ecoleCanoniqueFiche ?? obtenirNomEcoleFiche($db, $ecoleFiltre);
+		// Résumé éditorial affiché sous le titre (table Ecole, nom canonique).
+		$resumeEcole = obtenirResumeEcole($db, $ecoleCanonique);
 		$idDiplomeConsulte = null;
 		$contexteFiche = $ecoleFiltre !== $ecoleCanonique
 			? "Voie d'admission consultée : " . libelleFormationFiche($ecoleCanonique, $ecoleFiltre) : '';
@@ -113,7 +120,7 @@
 		// Spécialités est rendu immédiatement côté serveur : son contenu ne doit
 		// jamais porter data-onglet, sinon le gestionnaire AJAX le remplacerait.
 		// Salaire, Classements et les filières sont des fragments AJAX différés.
-		afficherEnteteEcole($ecoleCanonique, $urlEcole, $filieresEcole, $contexteFiche);
+		afficherEnteteEcole($ecoleCanonique, $urlEcole, $filieresEcole, $resumeEcole);
 
 		echo "<main class='container' style='margin-top:24px;'>";
 		if ($erreurDiplome !== '') echo "<p class='alert alert-warning'>" . escapeHtml($erreurDiplome) . "</p>";
@@ -139,8 +146,16 @@
 		echo "<div class='tab-content p-3 p-md-4 border border-top-0 bg-light' id='nav-ecoleContent'>";
 		if (!empty($filieresEcole)) {
 			echo "<div class='tab-pane fade" . ($ongletActif === 'admissions' ? ' show active' : '') . "' id='onglet-admissions' role='tabpanel' aria-labelledby='tab-onglet-admissions'>";
-			echo "<p class='text-center small text-secondary mb-2' id='titre-filieres-admissions'>Filière CPGE</p>";
-			echo "<div class='nav nav-pills filieres-admissions mb-3' id='filieres-admissions' role='tablist' aria-labelledby='titre-filieres-admissions'>";
+			// Rappel du périmètre : les admissions ci-dessous ne couvrent que la
+			// voie d'admission (ou le diplôme) consultée, pas toute l'école.
+			if ($contexteFiche !== '') {
+				echo "<p class='fiche-contexte text-center mb-3'>" . escapeHtml($contexteFiche) . "</p>";
+			}
+			// Le label « Filière » est en ligne avec les boutons (et non au-dessus)
+			// pour réduire l'empilement vertical de l'en-tête de l'onglet.
+			echo "<div class='d-flex flex-wrap align-items-center justify-content-center gap-2 mb-3'>";
+			echo "<span class='small text-secondary' id='titre-filieres-admissions'>Filière&nbsp;:</span>";
+			echo "<div class='nav nav-pills filieres-admissions' id='filieres-admissions' role='tablist' aria-labelledby='titre-filieres-admissions'>";
 			foreach ($filieresEcole as $cle) {
 				$id = 'admissions-' . $cle;
 				$selectionnee = $cle === $filiereSelectionnee;
@@ -150,7 +165,7 @@
 				   . " title='" . escapeHtml(libellesFilieres()[$cle] ?? $cle) . "'>"
 				   . escapeHtml(strtoupper($cle)) . "</button>";
 			}
-			echo "</div>";
+			echo "</div></div>";
 			if ($filiereDemandee !== '' && $filiereSelectionnee === '') {
 				echo "<p class='alert alert-info'>Aucun résultat disponible pour la filière demandée. Sélectionnez une autre filière.</p>";
 			}

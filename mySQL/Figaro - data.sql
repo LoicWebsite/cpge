@@ -2,10 +2,10 @@
 -- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost
--- Généré le : sam. 05 sep. 2026 à 16:18
--- Version du serveur : 5.7.39
--- Version de PHP : 8.2.0
+-- Hôte : localhost:8889
+-- Généré le : ven. 30 oct. 2026 à 17:11
+-- Version du serveur : 5.7.44
+-- Version de PHP : 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -47,7 +47,6 @@ INSERT INTO `Figaro` (`An`, `Rang`, `Ecole`, `Point`, `UrlFigaro`) VALUES
 (2023, 55, 'ENSAI Rennes', 13.4, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34706-ensai-filieres-admission-et-prix/'),
 (2023, 47, 'ENSAIA', 13.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34684-ensaia-masters-admission-et-classement/'),
 (2023, 47, 'ENSAIT Roubaix', 13.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34678-ensait-masters-proposes-concours-et-prix/'),
-(2023, 72, 'ENSAT Toulouse', 13, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34712-ensat-formations-et-concours/'),
 (2023, 32, 'ENSC Lille', 14, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34754-ensc-lille-classement-admission-et-frais-de-scolarite/'),
 (2023, 39, 'ENSC Montpellier', 13.8, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34756-enscm-classement-frais-de-scolarite-et-inscription/'),
 (2023, 80, 'ENSC Mulhouse', 12.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34588-ensc-mulhouse-admission-et-classement/'),
@@ -91,6 +90,7 @@ INSERT INTO `Figaro` (`An`, `Rang`, `Ecole`, `Point`, `UrlFigaro`) VALUES
 (2023, 55, 'IMT Mines Albi', 13.4, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34720-imt-mines-albi-formations-admission-et-frais/'),
 (2023, 36, 'IMT Mines Alès', 13.9, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34654-imt-mines-d-ales-formations-et-tarifs/'),
 (2023, 44, 'IMT Nord Europe', 13.6, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34482-imt-nord-europe/'),
+(2023, 72, 'INP AGROTOULOUSE', 13, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34712-ensat-formations-et-concours/'),
 (2023, 47, 'Institut Agro – Montpellier', 13.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34682-institut-agro-montpellier-diplomes-prix-et-debouches/'),
 (2023, 8, 'ISAE - SUPAERO', 15.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34634-isae-supaero-tout-sur-l-ecole-des-pilotes-de-ligne/'),
 (2023, 39, 'ISAE-ENSMA Poitiers', 13.8, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34698-isae-ensma-classement-concours-et-frais-de-scolarite/'),
@@ -134,7 +134,6 @@ INSERT INTO `Figaro` (`An`, `Rang`, `Ecole`, `Point`, `UrlFigaro`) VALUES
 (2025, 43, 'ENSAI Rennes', 13.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34706-ensai-filieres-admission-et-prix/'),
 (2025, 52, 'ENSAIA', 13.3, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34684-ensaia-masters-admission-et-classement/'),
 (2025, 75, 'ENSAIT Roubaix', 12.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34678-ensait-masters-proposes-concours-et-prix/'),
-(2025, 59, 'ENSAT Toulouse', 13.1, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34712-ensat-formations-et-concours/'),
 (2025, 59, 'ENSC Lille', 13.1, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34754-ensc-lille-classement-admission-et-frais-de-scolarite/'),
 (2025, 29, 'ENSC Montpellier', 14.1, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34756-enscm-classement-frais-de-scolarite-et-inscription/'),
 (2025, 59, 'ENSC Mulhouse', 13.1, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34588-ensc-mulhouse-admission-et-classement/'),
@@ -178,6 +177,7 @@ INSERT INTO `Figaro` (`An`, `Rang`, `Ecole`, `Point`, `UrlFigaro`) VALUES
 (2025, 43, 'IMT Mines Albi', 13.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34720-imt-mines-albi-formations-admission-et-frais/'),
 (2025, 34, 'IMT Mines Alès', 13.9, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34654-imt-mines-d-ales-formations-et-tarifs/'),
 (2025, 43, 'IMT Nord Europe', 13.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34482-imt-nord-europe/'),
+(2025, 59, 'INP AGROTOULOUSE', 13.1, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34712-ensat-formations-et-concours/'),
 (2025, 47, 'Institut Agro – Montpellier', 13.4, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34682-institut-agro-montpellier-diplomes-prix-et-debouches/'),
 (2025, 5, 'ISAE - SUPAERO', 16.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34634-isae-supaero-tout-sur-l-ecole-des-pilotes-de-ligne/'),
 (2025, 37, 'ISAE-ENSMA Poitiers', 13.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34698-isae-ensma-classement-concours-et-frais-de-scolarite/'),

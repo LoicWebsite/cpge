@@ -43,6 +43,23 @@ function libelleFormationFiche(string $ecole, string $formation): string {
 	return strpos($formation, $prefixe) === 0 ? substr($formation, strlen($prefixe)) : $formation;
 }
 
+// Résumé éditorial de l'école (colonne Ecole.Resume, alimentée par
+// data/Résumé école/importer_resumes_vers_sql.py). Chaîne vide si absent.
+function obtenirResumeEcole(PDO $db, string $ecole): string {
+	try {
+		$stmt = $db->prepare("SELECT Resume FROM Ecole WHERE Ecole = :ecole AND Resume IS NOT NULL AND Resume <> '' LIMIT 1");
+		$stmt->execute([':ecole' => $ecole]);
+		$resume = $stmt->fetchColumn();
+		$stmt->closeCursor();
+		return $resume !== false ? trim((string) $resume) : '';
+	}
+	catch (PDOException $erreur) {
+		// Le résumé est un plus éditorial : une erreur ne doit pas casser la fiche.
+		error_log('Erreur SELECT Resume : ' . $erreur->getMessage());
+		return '';
+	}
+}
+
 // L'identité et le contexte sont portés par le bandeau, pas répétés dans chaque onglet.
 function afficherTitreSection(string $ecole, string $section): void {
 	echo "<h2 class='h5 text-center mb-1'>";
@@ -112,11 +129,15 @@ function chargerSalaireReference(PDO $db, string $ecole): ?array {
 	return $reference ?: null;
 }
 
-// Affiche l'en-tête de la page : nom de l'école, site web et repères de classement.
-// Bandeau statique : ne dépend que de l'URL officielle (1 requête légère) et de la
-// liste des filières déjà connue. Les classements, l'attractivité et le salaire de
-// référence sont chargés en arrière-plan par AJAX et injectés dans #badges-entete.
-function afficherEnteteEcole(string $ecole, string $urlEcole, array $filieres, string $contexte = ''): void {
+// Affiche l'en-tête de la page : nom de l'école, résumé éditorial, site web et
+// repères de classement.
+// Bandeau statique : ne dépend que de l'URL officielle et du résumé (2 requêtes
+// légères) et de la liste des filières déjà connue. Les classements, l'attractivité
+// et le salaire de référence sont chargés en arrière-plan par AJAX et injectés
+// dans #badges-entete.
+// La voie d'admission ou le diplôme consulté n'est plus rappelé ici : cette
+// précision de périmètre est affichée dans l'onglet Admissions (detail.php).
+function afficherEnteteEcole(string $ecole, string $urlEcole, array $filieres, string $resume = ''): void {
 	$libelles = libellesFilieres();
 
 	echo "<header class='container'>";
@@ -124,8 +145,9 @@ function afficherEnteteEcole(string $ecole, string $urlEcole, array $filieres, s
 
 	echo "<h1 class='h3 mb-3 text-center'><i class='bi bi-bank2'></i>&nbsp;&nbsp;" . escapeHtml($ecole) . "</h1>";
 
-	if ($contexte !== '') {
-		echo "<p class='fiche-contexte text-center mb-3'>" . escapeHtml($contexte) . "</p>";
+	// Résumé éditorial sous le titre, avant le bouton du site officiel.
+	if ($resume !== '') {
+		echo "<p class='fiche-resume text-center text-secondary mb-3'>" . escapeHtml($resume) . "</p>";
 	}
 
 	if ($urlEcole !== '') {

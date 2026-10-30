@@ -2,10 +2,10 @@
 -- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost
--- Généré le : lun. 31 août 2026 à 14:40
--- Version du serveur : 5.7.39
--- Version de PHP : 8.2.0
+-- Hôte : localhost:8889
+-- Généré le : ven. 30 oct. 2026 à 17:11
+-- Version du serveur : 5.7.44
+-- Version de PHP : 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -61,7 +61,6 @@ INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`
 (2022, 88, 'B', 'ENSAI Rennes', 28, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-de-la-statistique-et-de-l-analyse-de-l-information-4787.html'),
 (2022, 105, 'B', 'ENSAIA', 26, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-d-agronomie-et-des-industries-alimentaires-de-nancy-5537.html'),
 (2022, 135, 'C', 'ENSAIT Roubaix', 22, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-arts-et-industries-textiles-5737.html'),
-(2022, 105, 'B', 'ENSAT Toulouse', 26, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-agronomique-de-toulouse-4452.html'),
 (2022, 59, 'B', 'ENSC Lille', 31, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-de-chimie-de-lille-5802.html'),
 (2022, 30, 'A', 'ENSC Montpellier', 38, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-de-chimie-de-montpellier-4685.html'),
 (2022, 88, 'B', 'ENSC Mulhouse', 28, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-de-chimie-de-mulhouse-6232.html'),
@@ -105,7 +104,6 @@ INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`
 (2022, 23, 'A', 'ESILV', 39, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-leonard-de-vinci-7776.html'),
 (2022, 59, 'B', 'ESIPE', 31, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-paris-est-marne-la-vallee-8466.html'),
 (2022, 105, 'B', 'ESIR Rennes', 26, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-de-rennes-78153.html'),
-(2022, 105, 'B', 'ESIREM Dijon', 26, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-en-materiaux-et-informatique-electronique-4101.html'),
 (2022, 151, 'C', 'ESIROI', 15, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-reunion-ocean-indien-72440.html'),
 (2022, 100, 'B', 'ESITC Caen', 27, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-des-travaux-de-la-construction-de-caen-3933.html'),
 (2022, 143, 'C', 'ESITech', 19, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-en-technologies-innovantes-81952.html'),
@@ -124,6 +122,7 @@ INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`
 (2022, 42, 'A', 'IMT Mines Albi', 34, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-mines-d-albi-carmaux-7409.html'),
 (2022, 23, 'A', 'IMT Mines Alès', 39, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-mines-d-ales-4353.html'),
 (2022, 30, 'A', 'IMT Nord Europe', 38, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-mines-telecom-lille-douai-5797.html'),
+(2022, 105, 'B', 'INP AGROTOULOUSE', 26, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-agronomique-de-toulouse-4452.html'),
 (2022, 88, 'B', 'INSA Centre Val de Loire', 28, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/institut-national-des-sciences-appliquees-centre-val-de-loire-blois.html'),
 (2022, 105, 'B', 'INSA Hauts de France', 26, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-d-ingenieurs-en-informatique-automatique-mecanique-ener-5863.html'),
 (2022, 9, 'A+', 'INSA Lyon', 46, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-national-des-sciences-appliquees-de-lyon-6360.html'),
@@ -156,6 +155,7 @@ INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`
 (2022, 114, 'B', 'Polytech Angers', 25, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-istia-ecole-d-ingenieurs-de-l-universite-d-angers-8929.html'),
 (2022, 122, 'B', 'Polytech Annecy-Chambéry', 24, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-polytechnique-universitaire-d-annecy-chambery-6579.html'),
 (2022, 100, 'B', 'Polytech Clermont-Ferrand', 27, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-polytechnique-de-l-universite-clermont-auvergne-collegium-technologies-scien-6019.html'),
+(2022, 105, 'B', 'Polytech Dijon', 26, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-en-materiaux-et-informatique-electronique-4101.html'),
 (2022, 47, 'B', 'Polytech Grenoble', 33, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-polytechnique-de-l-universite-grenoble-alpes-4965.html'),
 (2022, 49, 'B', 'Polytech Lille', 32, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-polytechnique-universitaire-de-lille-5859.html'),
 (2022, 88, 'B', 'Polytech Lyon', 28, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-polytechnique-universitaire-de-l-universite-lyon-1-6365.html'),
@@ -216,7 +216,6 @@ INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`
 (2023, 97, 'B', 'ENSAI Rennes', 48, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-de-la-statistique-et-de-l-analyse-de-l-information-4787.html'),
 (2023, 86, 'B', 'ENSAIA', 49, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-d-agronomie-et-des-industries-alimentaires-de-nancy-5537.html'),
 (2023, 127, 'C', 'ENSAIT Roubaix', 42, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-arts-et-industries-textiles-5737.html'),
-(2023, 118, 'B', 'ENSAT Toulouse', 44, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-agronomique-de-toulouse-4452.html'),
 (2023, 40, 'A+', 'ENSC Lille', 63, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-de-chimie-de-lille-5802.html'),
 (2023, 27, 'A+', 'ENSC Montpellier', 71, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-de-chimie-de-montpellier-4685.html'),
 (2023, 76, 'A', 'ENSC Mulhouse', 51, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-de-chimie-de-mulhouse-6232.html'),
@@ -258,7 +257,6 @@ INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`
 (2023, 22, 'A+', 'ESILV', 72, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-leonard-de-vinci-7776.html'),
 (2023, 86, 'B', 'ESIPE', 49, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-paris-est-marne-la-vallee-8466.html'),
 (2023, 113, 'B', 'ESIR Rennes', 45, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-de-rennes-78153.html'),
-(2023, 113, 'B', 'ESIREM Dijon', 45, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-en-materiaux-et-informatique-electronique-4101.html'),
 (2023, 147, 'C', 'ESIROI', 29, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-reunion-ocean-indien-72440.html'),
 (2023, 97, 'B', 'ESITC Caen', 48, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-des-travaux-de-la-construction-de-caen-3933.html'),
 (2023, 137, 'C', 'ESITech', 37, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-en-technologies-innovantes-81952.html'),
@@ -277,6 +275,7 @@ INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`
 (2023, 40, 'A+', 'IMT Mines Albi', 63, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-mines-d-albi-carmaux-7409.html'),
 (2023, 16, 'A+', 'IMT Mines Alès', 76, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-mines-d-ales-4353.html'),
 (2023, 29, 'A+', 'IMT Nord Europe', 68, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-mines-telecom-lille-douai-5797.html'),
+(2023, 118, 'B', 'INP AGROTOULOUSE', 44, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-agronomique-de-toulouse-4452.html'),
 (2023, 81, 'B', 'INSA Centre Val de Loire', 50, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/institut-national-des-sciences-appliquees-centre-val-de-loire-blois.html'),
 (2023, 66, 'A', 'INSA Hauts de France', 53, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-d-ingenieurs-en-informatique-automatique-mecanique-ener-5863.html'),
 (2023, 15, 'A+', 'INSA Lyon', 77, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-national-des-sciences-appliquees-de-lyon-6360.html'),
@@ -286,9 +285,9 @@ INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`
 (2023, 32, 'A+', 'INSA Toulouse', 66, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-national-des-sciences-appliquees-de-toulouse-4434.html'),
 (2023, 118, 'B', 'Institut Agro – Dijon', 44, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-national-superieur-des-sciences-agronomiques-de-l-alimentation-et-de-l-en-4105.html'),
 (2023, 66, 'A', 'Institut Agro – Montpellier', 53, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-montpellier-supagro-4710.html'),
-(2023, 103, 'B', 'Institut Agro – Rennes', 47, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-agrocampus-ouest-centre-de-rennes-4781.html');
+(2023, 103, 'B', 'Institut Agro – Rennes', 47, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-agrocampus-ouest-centre-de-rennes-4781.html'),
+(2023, 118, 'B', 'IPSA', 44, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-polytechnique-des-sciences-avancees-7888.html');
 INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`) VALUES
-(2023, 118, 'B', 'IPSA', 44, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-polytechnique-des-sciences-avancees-7888.html'),
 (2023, 21, 'A+', 'ISAE - SUPAERO', 73, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-de-l-aeronautique-et-de-l-espace-4438.html'),
 (2023, 66, 'A', 'ISAE-ENSMA Poitiers', 53, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-de-mecanique-et-d-aerotechnique-7544.html'),
 (2023, 71, 'A', 'ISAE-Supméca', 52, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-de-mecanique-de-paris-7867.html'),
@@ -310,6 +309,7 @@ INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`
 (2023, 124, 'C', 'Polytech Angers', 43, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-istia-ecole-d-ingenieurs-de-l-universite-d-angers-8929.html'),
 (2023, 129, 'C', 'Polytech Annecy-Chambéry', 41, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-polytechnique-universitaire-d-annecy-chambery-6579.html'),
 (2023, 113, 'B', 'Polytech Clermont-Ferrand', 45, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-polytechnique-de-l-universite-clermont-auvergne-collegium-technologies-scien-6019.html'),
+(2023, 113, 'B', 'Polytech Dijon', 45, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-d-ingenieurs-en-materiaux-et-informatique-electronique-4101.html'),
 (2023, 43, 'A', 'Polytech Grenoble', 62, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-polytechnique-de-l-universite-grenoble-alpes-4965.html'),
 (2023, 81, 'B', 'Polytech Lille', 50, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-polytechnique-universitaire-de-lille-5859.html'),
 (2023, 109, 'B', 'Polytech Lyon', 46, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-polytechnique-universitaire-de-l-universite-lyon-1-6365.html'),

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : mer. 21 oct. 2026 à 16:05
+-- Généré le : ven. 30 oct. 2026 à 17:09
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -106,7 +106,6 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`) VALUES
 (2022, 52, 'BBB', 'ESILV', 44),
 (2022, 66, 'BB', 'ESIPE', 42),
 (2022, 132, 'C', 'ESIR Rennes', 29),
-(2022, 142, 'C', 'ESIREM Dijon', 26),
 (2022, 132, 'C', 'ESIROI', 29),
 (2022, 140, 'C', 'ESITC Caen', 27),
 (2022, 115, 'CCC', 'ESITech', 32),
@@ -159,6 +158,7 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`) VALUES
 (2022, 76, 'B', 'Polytech Angers', 39),
 (2022, 110, 'CCC', 'Polytech Annecy-Chambéry', 33),
 (2022, 110, 'CCC', 'Polytech Clermont-Ferrand', 33),
+(2022, 142, 'C', 'Polytech Dijon', 26),
 (2022, 105, 'CCC', 'Polytech Grenoble', 34),
 (2022, 91, 'B', 'Polytech Lille', 36),
 (2022, 97, 'B', 'Polytech Lyon', 35),
@@ -266,7 +266,6 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`) VALUES
 (2023, 99, 'CCC', 'ESIEE Paris', 33),
 (2023, 81, 'B', 'ESIGELEC Rouen', 36),
 (2023, 146, 'C', 'ESIR Rennes', 26),
-(2023, 134, 'CC', 'ESIREM Dijon', 28),
 (2023, 157, 'C', 'ESIROI', 21),
 (2023, 134, 'CC', 'ESITC Caen', 28),
 (2023, 124, 'CC', 'ESITech', 29),
@@ -324,6 +323,7 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`) VALUES
 (2023, 124, 'CC', 'Polytech Angers', 29),
 (2023, 141, 'C', 'Polytech Annecy-Chambéry', 27),
 (2023, 124, 'CC', 'Polytech Clermont-Ferrand', 29),
+(2023, 134, 'CC', 'Polytech Dijon', 28),
 (2023, 116, 'CCC', 'Polytech Grenoble', 31),
 (2023, 119, 'CC', 'Polytech Lille', 30),
 (2023, 92, 'B', 'Polytech Lyon', 34),

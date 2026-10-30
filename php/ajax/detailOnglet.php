@@ -71,7 +71,12 @@ elseif ($onglet === 'salaire') {
 	echo "</section>";
 }
 else {
-	$ecolesConcoursRecherchees = obtenirEcolesConcoursRecherchees($db, $ecoleFiltre, $origine);
+	// Même logique que detail.php : la recherche des admissions s'appuie sur le nom
+	// canonique (le select de la page statistiques par école envoie ce nom), sans
+	// dépendre du referer. obtenirNomEcoleFiche laisse inchangé un libellé concours
+	// déjà exact, donc les deux cas (canonique ou libellé) sont couverts.
+	$ecoleCanonique = obtenirNomEcoleFiche($db, $ecoleFiltre);
+	$ecolesConcoursRecherchees = obtenirEcolesConcoursRecherchees($db, $ecoleCanonique, 'ecole');
 	$parConcours = chargerNotesFiliere($db, $ecolesConcoursRecherchees, $onglet, $debug);
 	if (empty($parConcours)) {
 		echo "<div class='alert alert-info'>Aucun résultat disponible pour cette filière.</div>";
