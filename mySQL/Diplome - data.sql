@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : mar. 20 oct. 2026 à 16:53
+-- Généré le : mer. 04 nov. 2026 à 17:46
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -395,7 +395,54 @@ INSERT INTO `Diplome` (`IdEcole`, `IdDiplome`, `Diplome`, `UrlFormation`) VALUES
 (109, 367, 'VetAgro Sup - Ingénieur agronome', 'https://www.vetagro-sup.fr/formations/ingenieur-agronome/deroulement-des-etudes/'),
 (109, 368, 'VetAgro Sup - Docteur vétérinaire (d’État)', 'https://www.vetagro-sup.fr/formations/veterinaire/deroulement-des-etudes/'),
 (35, 369, 'ONIRIS Nantes - Docteur vétérinaire (d’État)', 'https://www.oniris-nantes.fr/formations/les-formations-veterinaires/formation-initiale-veterinaire'),
-(188, 370, 'École nationale vétérinaire de Toulouse - Docteur vétérinaire (d’État)', 'https://envt.fr/decouvrir-toutes-les-formations/formation-initiale/annee-dapprofondissement/');
+(188, 370, 'École nationale vétérinaire de Toulouse - Docteur vétérinaire (d’État)', 'https://envt.fr/decouvrir-toutes-les-formations/formation-initiale/annee-dapprofondissement/'),
+(181, 371, 'ENIT - Ingénieur', 'https://www.enit.fr/fr/formations/diplome-d-ingenieur/je-construis-mon-projet-professionnel.html'),
+(158, 372, 'UniLaSalle - Ingénieur en Agro Alimentation et santé', 'https://www.unilasalle.fr/formations/ingenieur-agro-alimentation-sante'),
+(142, 373, 'UTT - Ingénieur', 'https://www.utt.fr/formations/diplome-d-ingenieur'),
+(89, 374, 'ESIPE - Ingénieur ESIEE Paris', 'https://www.esiee.fr/formations/ingenieur/le-cycle-ingenieur'),
+(166, 375, 'ISTY - Ingénieur Informatique', 'https://www.isty.uvsq.fr/cycle-ingenieur-informatique'),
+(164, 376, 'ISAT Nevers - Ingénieur(e) ISAT sous statut étudiant', 'https://isat.fr/ingenieur-sous-statut-etudiant/'),
+(158, 377, 'UniLaSalle - Ingénieur en Génie de l\'environnement', 'https://www.unilasalle.fr/formations/ingenieur-en-genie-de-l-environnement'),
+(166, 378, 'ISTY - Ingénieur Mécatronique', 'https://www.isty.uvsq.fr/cycle-ingenieur-mecatronique'),
+(148, 379, 'ECAM Rennes - Ingénieur généraliste', 'https://ecam-louisdebroglie.fr/formation/cursus-etudiantingenieur-generaliste/#programme'),
+(169, 380, 'Sup Galilée Villetaneuse - Télécommunications et réseaux', 'https://www.sup-galilee.univ-paris13.fr/index.php/formation/telecom/'),
+(159, 381, 'ENSIIE Évry - Ingénieur spécialité Informatique', 'https://www.ensiie.fr/formation/trouver-votre-formation/la-formation-initiale-sous-statut-etudiant-fise'),
+(133, 382, 'ESB Nantes - Ingénieur en sciences et technologies du bois et des matériaux biosourcés', 'https://www.esb-campus.fr/ingenieur-bois-materiaux-biosources/programme-enseignement-ingenieur-bois/'),
+(147, 383, 'ECAM Lyon - Ingénieur Efficacité énergétique et Management des installations', 'https://www.ecam.fr/formation/ingenieur-genie-industriel-et-mecanique/'),
+(166, 384, 'ISTY - Ingénieur Systèmes Electroniques Embarqués', 'https://www.isty.uvsq.fr/cycles-ingenieur'),
+(146, 385, 'CESI - Ingénieur informatique', 'https://www.cesi.fr/programmes/cursus-ingenieur-3-ans/#cycle'),
+(169, 386, 'Sup Galilée Villetaneuse - Mathématiques Appliquées', 'https://www.sup-galilee.univ-paris13.fr/index.php/formation/macs/'),
+(158, 387, 'UniLaSalle - Ingénieur en Géologie et Environnement', 'https://www.unilasalle.fr/formations/ingenieur-geosciences-environnement'),
+(169, 388, 'Sup Galilée Villetaneuse - INSTRUMENTATION', 'https://www.sup-galilee.univ-paris13.fr/index.php/formation/instrumentation/'),
+(126, 389, 'ESITC Caen - Ingénieur Construction', 'https://builders-ingenieurs.fr/ingenieur-construction-durable/programme-detudes/#cycle-ingenieur-7'),
+(190, 390, 'EIJV - Ingénieur Génie Energétique et Environnement', 'https://eijv.u-picardie.fr/ingenieurs/genie-energetique-amp-environnement/'),
+(147, 391, 'ECAM Engineering – Spécialité Génie Électrique et Mécanique', 'https://www.ecam.fr/formation/ingenieur-ecam-engineering/'),
+(190, 392, 'EIJV - Ingénieur Cybersécurité', 'https://eijv.u-picardie.fr/ingenieurs/cybersecurite/'),
+(192, 393, 'Diplôme de l’Ecole Supérieure de Fonderie et de Forge (ESFF) en convention avec les Arts et Métiers', 'https://www.esff.fr/diplome-dingenieur/'),
+(158, 394, 'UniLaSalle - Ingénieur en Systèmes numériques et Énergétique', 'https://www.unilasalle.fr/formations/ingenieur-en-systemes-numeriques-et-energetique'),
+(189, 395, 'EIA - Ingénieur en génie électrique', 'https://www.eia.univ-artois.fr/formation'),
+(190, 396, 'EIJV - Ingénieur Numérique, Santé et IA', 'https://eijv.u-picardie.fr/ingenieurs/technologies-de-linformation-pour-la-sante/'),
+(105, 397, 'Ingénieur en Biotechnologies', 'https://www.supbiotech.fr/programmes/cycle-ingenieur-formation-biotechnologies/'),
+(191, 398, 'Diplôme d\'ingénieur de l\'École Centrale Casablanca', 'https://centrale-casablanca.ma/wp-content/uploads/2026/06/Options-S9.pdf'),
+(86, 399, 'ENSTBB - Ingénieur en Technologies des Biomolécules', 'https://formation.bordeaux-inp.fr/fr/offre-de-formation-2025-2026/titre-d-ingenieur-DING/ingenieur-specialite-technologies-des-biomolecules-de-bordeaux-LUMF0002.html'),
+(149, 400, 'ECAM-EPMI Cergy-Pontoise - Ingénieur généraliste', 'https://www.ecam-epmi.fr/ingenieur-sous-statut-etudiant/acces-apres-bac2-cycle-ingenieur/'),
+(158, 401, 'UniLaSalle - Ingénieur en Agronomie et Agro-industries', 'https://www.unilasalle.fr/formations/ingenieur-en-agronomie-et-agro-industries'),
+(147, 402, 'ECAM Lyon - Ingénieur Génie Industriel et Mécanique', 'https://www.ecam.fr/formation-ingenieur-lyon/'),
+(166, 403, 'ISTY - Ingénieur Système Numérique pour l\'Industrie', 'https://www.isty.uvsq.fr/cycles-ingenieur'),
+(147, 404, 'ECAM Lyon - Ingénieur Systèmes Numériques Industriels', 'https://www.ecam.fr/formation-ingenieur-lyon/');
+INSERT INTO `Diplome` (`IdEcole`, `IdDiplome`, `Diplome`, `UrlFormation`) VALUES
+(169, 405, 'Sup Galilée Villetaneuse - ÉNERGÉTIQUE', 'https://www.sup-galilee.univ-paris13.fr/index.php/formation/energetique/'),
+(146, 406, 'CESI - Ingénieur généraliste', 'https://www.cesi.fr/programmes/cursus-ingenieur-3-ans/#cycle'),
+(147, 407, 'ECAM Lyon - Ingénieur généraliste ECAM Arts et Métiers', 'https://www.ecam.fr/formation/ingenieur-generaliste-arts-et-metiers/'),
+(173, 408, 'ENIB - Cycle ingénieur', 'https://www.enib.fr/devenir-ingenieur/ingenieur-cycle-ingenieur/'),
+(190, 409, 'EIJV - Logistique', 'https://eijv.u-picardie.fr/ingenieurs/logistique/'),
+(153, 410, 'ICAM - Ingénieur généraliste (CTI)', 'https://www.icam.fr/formations/enseignement-superieur/cycles-ingenieurs/modules-professionnalisants/'),
+(135, 411, 'ESIGELEC Rouen - Ingénieur généraliste', 'https://www.esigelec.fr/fr/16-majeures'),
+(176, 412, 'ESI Reims - Ingénieur Packaging', 'https://www.univ-reims.fr/esireims/'),
+(176, 413, 'ESI Reims - Ingénieur Énergétique', 'https://www.univ-reims.fr/esireims/'),
+(176, 414, 'ESI Reims - Ingénieur Génie Urbain et Environnement', 'https://www.univ-reims.fr/esireims/'),
+(141, 415, 'Paoli Tech - Ingénieur Énergétique', 'https://paolitech.universita.corsica/article.php?id_site=30&id_art=1576&lang=fr'),
+(141, 416, 'Paoli Tech - Ingénieur Agronomie', 'https://paolitech.universita.corsica/article.php?id_site=30&id_art=6404&lang=fr');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

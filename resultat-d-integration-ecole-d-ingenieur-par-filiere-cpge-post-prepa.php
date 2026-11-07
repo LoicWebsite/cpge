@@ -202,7 +202,8 @@
 			$params[':ecole'] = $ecole; // ON ENVOIE LA VALEUR BRUTE ICI
 		}
 
-	// exécution de la requête SQL (sans ORDER BY, le tri se fera en JavaScript)
+	// exécution de la requête SQL : l'ordre école > concours > année la plus récente
+	// d'abord sert de tri de départage (data-ordre) aux tris JavaScript par colonne
 	$sql = "SELECT  Filiere,
 					Concours,
 					EcoleConcours AS Ecole,
@@ -215,7 +216,7 @@
 					Dernier,
 					ROUND(Dernier / Inscrit, 1) AS SelectiviteDernier,
 					ROUND(RangMedian / Inscrit, 1) AS SelectiviteMediane
-			FROM Note" . $where;
+			FROM Note" . $where . " ORDER BY EcoleConcours ASC, Concours ASC, An DESC";
 		if ($debug) echo "SQL = " . $sql ."<br/>";
 		try {
 			$stmt = $db->prepare($sql);
@@ -306,6 +307,7 @@
 			// alimente en parallèle la liste de cartes mobiles (voir plus bas),
 			// construite à partir de la même lecture SQL que le tableau desktop.
 			$lignesCartes = [];
+			$ordreInitial = 0;
 
 			while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 				extract($row);
@@ -335,7 +337,7 @@
 				// affichage de la ligne
 				$jsEcole = encodeJs($Ecole);
 				$jsAn = encodeJs($An);
-				echo "<tr " . $style . " ondblclick='zoom(" . $jsEcole . "," . $jsAn . ")'>";
+				echo "<tr " . $style . " data-ordre='" . $ordreInitial++ . "' ondblclick='zoom(" . $jsEcole . "," . $jsAn . ")'>";
 				if (($filiere == "toute") or ($filiere == "")) {
 					echo "<td>". strtoupper($Filiere) ."</td>";
 				}
@@ -404,12 +406,16 @@
 			// JS partagés) : une carte par ligne de données, pas d'accordéon puisque
 			// chaque ligne est déjà une donnée atomique (une école, une année, un
 			// concours) qui n'a rien à replier/regrouper.
-			// Tri dédié : école (comme le tableau), puis année la plus récente
-			// d'abord (le tableau, lui, garde l'ordre SQL/tri JS existant).
+			// Même ordre de départ que le tableau : école, concours, puis année la plus
+			// récente d'abord (le tableau est ensuite retrié à la demande en JavaScript).
 			usort($lignesCartes, function ($a, $b) {
 				$comparaisonEcole = strcasecmp($a['ecole'], $b['ecole']);
 				if ($comparaisonEcole !== 0) {
 					return $comparaisonEcole;
+				}
+				$comparaisonConcours = strcasecmp($a['concours'], $b['concours']);
+				if ($comparaisonConcours !== 0) {
+					return $comparaisonConcours;
 				}
 				return strcmp((string) $b['an'], (string) $a['an']);
 			});
@@ -603,18 +609,20 @@
 			if (colonneIndex === -1) return; // Colonne non trouvée
 
 			lignes.sort((a, b) => {
+				const departage = a.dataset.ordre - b.dataset.ordre;
 				let valeurA = a.cells[colonneIndex].textContent.trim();
 				let valeurB = b.cells[colonneIndex].textContent.trim();
 
 				if (typeColonne === 'ecole' || typeColonne === 'concours') {
-					// Tri alphabétique
-					const comparaison = valeurA.localeCompare(valeurB, 'fr');
-					return direction === 'asc' ? comparaison : -comparaison;
+					// Tri alphabétique insensible à la casse (sensitivity 'accent') : les noms
+					// d'une même école écrits "Centrale Lyon" ou "CENTRALE LYON" sont groupés.
+					const comparaison = valeurA.localeCompare(valeurB, 'fr', { sensitivity: 'accent' });
+					return comparaison === 0 ? departage : (direction === 'asc' ? comparaison : -comparaison);
 				} else if (typeColonne === 'selectiviteMediane' || typeColonne === 'selectiviteDernier') {
 					// Tri numérique (extraire le nombre avant le %)
 					let numA = parseFloat(valeurA) || 0;
 					let numB = parseFloat(valeurB) || 0;
-					return direction === 'asc' ? (numA - numB) : (numB - numA);
+					return numA === numB ? departage : (direction === 'asc' ? (numA - numB) : (numB - numA));
 				}
 			});
 
@@ -627,7 +635,7 @@
 			lignes.forEach(ligne => {
 				const ecoleActuelle = ligne.cells[colonneIndex].textContent.trim();
 				Array.from(ligne.cells).forEach(cell => {
-					if (ecoleActuelle !== ecolePrec && ecolePrec !== null) {
+					if (ecolePrec !== null && ecoleActuelle.localeCompare(ecolePrec, 'fr', { sensitivity: 'accent' }) !== 0) {
 						cell.classList.add('nouvelEcole');
 					} else {
 						cell.classList.remove('nouvelEcole');

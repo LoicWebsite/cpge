@@ -111,6 +111,24 @@
 		#tableau-par-ecole .colonne-annee-ancienne { display: none; }
 		#tableau-par-ecole.anneesToutesAffichees .colonne-annee-ancienne { display: table-cell; }
 
+		/* Desktop : lignes (école/filière/concours) sans aucune donnée sur les années
+		   récentes, masquées par défaut avec les colonnes anciennes. Les classes
+		   *Defaut recréent le trait de séparation d'école et le trait de fermeture
+		   du tableau qui seraient perdus si la ligne qui les porte est masquée ;
+		   elles ne s'appliquent donc que tant que les lignes anciennes sont masquées. */
+		#tableau-par-ecole tr.ligne-ancienne { display: none; }
+		#tableau-par-ecole.anneesToutesAffichees tr.ligne-ancienne { display: table-row; }
+		#tableau-par-ecole:not(.anneesToutesAffichees) td.premiereLigneEcoleDefaut { border-top-style: solid; }
+		#tableau-par-ecole:not(.anneesToutesAffichees) td.derniereLigneDefaut { border-bottom-style: solid; }
+
+		/* Mobile : même bouton global que sur le tableau. Il révèle les cartes sans
+		   donnée récente ET les années anciennes de toutes les cartes ; le bouton
+		   "Voir plus d'années" propre à chaque carte devient alors inutile. */
+		#accordeon-par-ecole .accordion-item.carte-ancienne { display: none; }
+		#accordeon-par-ecole.toutesAnneesAffichees .accordion-item.carte-ancienne { display: block; }
+		#accordeon-par-ecole.toutesAnneesAffichees .ligne-annee-mobile.annee-ancienne { display: flex !important; }
+		#accordeon-par-ecole.toutesAnneesAffichees .bouton-voir-plus-annees { display: none; }
+
 		/* Mobile : lignes d'années anciennes dans chaque carte accordéon, masquées par défaut.
 		   !important nécessaire : ces lignes portent aussi la classe Bootstrap .d-flex,
 		   qui impose elle-même display:flex !important et écraserait un display:none simple. */
@@ -309,12 +327,58 @@
 					'concours' => $Concours,
 					'detailUrl' => $detailUrl,
 					'notes' => $notesAnnee,
+					'recente' => false,
 				];
+				// une ligne est "récente" si au moins une des années visibles par défaut
+				// affiche une valeur (mêmes critères que l'affichage des cellules)
+				foreach ($anneesRecentes as $anneeRecente) {
+					$noteRecente = $notesAnnee[$anneeRecente];
+					if ($noteRecente !== null && (
+						(($noteRecente['Dernier'] <> 0) and ($noteRecente['Dernier'] <> ""))
+						or (($noteRecente['RangMedian'] <> 0) and ($noteRecente['RangMedian'] <> ""))
+					)) {
+						$ligne['recente'] = true;
+						break;
+					}
+				}
 				$lignes[] = $ligne;
 
 				// clé de regroupement pour l'accordéon : une carte par combinaison réelle
 				$cleGroupe = $Ecole . '|' . $Filiere . '|' . $Concours;
 				$accordeon[$cleGroupe] = $ligne;
+			}
+
+			// Lignes sans donnée sur les années visibles par défaut (anciens concours,
+			// écoles disparues...) : masquées avec les colonnes anciennes, car une ligne
+			// vide ne permet aucune comparaison. Rien n'est masqué si aucune ligne n'a de
+			// donnée récente (sinon la page serait vide) ni pour une année unique.
+			$nbLignesRecentes = count(array_filter($lignes, fn($l) => $l['recente']));
+			$nbLignesAnciennes = count($lignes) - $nbLignesRecentes;
+			$masquerLignesAnciennes = !$anneeUnique && $nbLignesRecentes > 0 && $nbLignesAnciennes > 0;
+			foreach ($lignes as $i => $l) {
+				$lignes[$i]['masquee'] = $masquerLignesAnciennes && !$l['recente'];
+				$lignes[$i]['premiereEcoleDefaut'] = false;
+				$lignes[$i]['derniereDefaut'] = false;
+			}
+			if ($masquerLignesAnciennes) {
+				// repère, parmi les lignes visibles par défaut, la 1ère de chaque école
+				// (sauf la toute première du tableau) et la dernière du tableau
+				$ecolePrecedenteVisible = null;
+				$derniereVisible = null;
+				foreach ($lignes as $i => $l) {
+					if ($l['masquee']) {
+						continue;
+					}
+					if ($ecolePrecedenteVisible !== null && strcasecmp($l['ecole'], $ecolePrecedenteVisible) != 0) {
+						$lignes[$i]['premiereEcoleDefaut'] = true;
+					}
+					$ecolePrecedenteVisible = $l['ecole'];
+					$derniereVisible = $i;
+				}
+				$lignes[$derniereVisible]['derniereDefaut'] = true;
+			}
+			foreach ($accordeon as $cleGroupe => $l) {
+				$accordeon[$cleGroupe]['masquee'] = $masquerLignesAnciennes && !$l['recente'];
 			}
 
 			// Bascule manuelle "en liste" / "en tableau" / "auto", indépendante de la
@@ -340,7 +404,8 @@
 			$idTableau = '"#tableau-par-ecole","école;filière;concours;' . implode(';', $annees) . '"';
 			echo "<br>Cliquer sur le bouton pour télécharger le tableau au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='bi bi-download'></i> csv</button>";
 			if (!$anneeUnique) {
-				echo "\n\t\t\t\t&nbsp;&nbsp;<button type='button' class='btn btn-secondary btn-sm' id='toggleAnneesAnciennes' onclick='basculerAnneesAnciennes(this)'><i class='bi bi-arrows-expand'></i> Afficher toutes les années</button>";
+				$libelleAfficher = 'Afficher toutes les années' . ($masquerLignesAnciennes ? ' (+' . $nbLignesAnciennes . ' ancien' . ($nbLignesAnciennes > 1 ? 's' : '') . ' concours)' : '');
+				echo "\n\t\t\t\t&nbsp;&nbsp;<button type='button' class='btn btn-secondary btn-sm' id='toggleAnneesAnciennes' data-libelle-afficher=\"" . escapeHtml($libelleAfficher) . "\" onclick='basculerAnneesAnciennes(this)'><i class='bi bi-arrows-expand'></i> " . escapeHtml($libelleAfficher) . "</button>";
 			}
 			echo "</small></caption>";
 			echo "<thead class='text-center'>";
@@ -419,16 +484,18 @@
 				$jsEcole = encodeJs($Ecole);
 				$jsFiliere = encodeJs($Filiere);
 				$jsConcours = encodeJs($Concours);
-				echo "<tr ondblclick='zoom(" . $jsEcole . "," . $jsFiliere . "," . $jsConcours . ")'>";
-				echo "<td class='colonne-ecole-fixe" . ($class !== "" ? " nouvelEcole" : "") . "'><a href='" . escapeHtml($ligne['detailUrl']) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
-				echo "<td".$class." style='text-align:center'><strong>". escapeHtml(strtoupper($Filiere)) ."</strong></td>";
-				echo "<td".$class.">". escapeHtml($Concours) ."</td>";
+				echo "<tr" . ($ligne['masquee'] ? " class='ligne-ancienne'" : "") . " ondblclick='zoom(" . $jsEcole . "," . $jsFiliere . "," . $jsConcours . ")'>";
 
-				// classe de base pour cette ligne (trait de séparation entre écoles),
-				// extraite du format " class='nouvelEcole'" utilisé plus haut sur les 3
-				// premières colonnes, afin de la fusionner proprement avec la classe
-				// d'année ancienne sur un seul attribut class= par cellule.
-				$nomClasseLigne = trim(str_replace(['class=', "'", '"'], '', $class));
+				// classes communes à toutes les cellules de la ligne (trait de séparation
+				// entre écoles et variantes "par défaut"), fusionnées ensuite avec la
+				// classe d'année ancienne sur un seul attribut class= par cellule.
+				$nomClasseLigne = trim(str_replace(['class=', "'", '"'], '', $class)
+					. ($ligne['premiereEcoleDefaut'] ? ' premiereLigneEcoleDefaut' : '')
+					. ($ligne['derniereDefaut'] ? ' derniereLigneDefaut' : ''));
+				$attributClasseLigne = $nomClasseLigne !== '' ? " class='" . $nomClasseLigne . "'" : '';
+				echo "<td class='colonne-ecole-fixe" . ($nomClasseLigne !== '' ? ' ' . $nomClasseLigne : '') . "'><a href='" . escapeHtml($ligne['detailUrl']) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
+				echo "<td".$attributClasseLigne." style='text-align:center'><strong>". escapeHtml(strtoupper($Filiere)) ."</strong></td>";
+				echo "<td".$attributClasseLigne.">". escapeHtml($Concours) ."</td>";
 
 				foreach ($annees as $annee) {
 					$classeAnnee = in_array($annee, $anneesRecentes, true) ? '' : 'colonne-annee-ancienne';
@@ -470,6 +537,7 @@
 			echo "<div class='d-lg-none vue-cartes' id='accordeon-par-ecole'>";
 			if (!$anneeUnique) {
 				echo "<p class='text-muted small'>Touchez une ligne pour déplier le détail par année. Les 4 années les plus récentes sont affichées ; touchez « Voir plus d'années » pour l'historique complet.</p>";
+				echo "<p><button type='button' class='btn btn-secondary btn-sm' data-libelle-afficher=\"" . escapeHtml($libelleAfficher) . "\" onclick='basculerAnneesAnciennesMobileGlobal(this)'><i class='bi bi-arrows-expand'></i> " . escapeHtml($libelleAfficher) . "</button></p>";
 			} else {
 				echo "<p class='text-muted small'>Touchez une ligne pour déplier le détail.</p>";
 			}
@@ -478,7 +546,7 @@
 			foreach ($accordeon as $cleGroupe => $ligne) {
 				$indexCarte++;
 				$idPanneau = 'panneau-ecole-' . $indexCarte;
-				echo "<div class='accordion-item'>";
+				echo "<div class='accordion-item" . ($ligne['masquee'] ? " carte-ancienne" : "") . "'>";
 				echo "<h2 class='accordion-header'>";
 				echo "<button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#" . $idPanneau . "'>";
 				echo "<span class='fw-bold'>" . escapeHtml($ligne['ecole']) . "</span>&nbsp;&middot;&nbsp;" . escapeHtml(strtoupper($ligne['filiere'])) . "&nbsp;&middot;&nbsp;<span class='text-muted small'>" . escapeHtml($ligne['concours']) . "</span>";
@@ -589,7 +657,16 @@
 			var afficheToutesLesAnnees = tableau.classList.toggle('anneesToutesAffichees');
 			bouton.innerHTML = afficheToutesLesAnnees
 				? "<i class='bi bi-arrows-collapse'></i> Masquer les années anciennes"
-				: "<i class='bi bi-arrows-expand'></i> Afficher toutes les années";
+				: "<i class='bi bi-arrows-expand'></i> " + bouton.dataset.libelleAfficher;
+		}
+
+		// Mobile : bouton global (même libellé et même effet que sur le tableau).
+		function basculerAnneesAnciennesMobileGlobal(bouton) {
+			var liste = document.getElementById('accordeon-par-ecole');
+			var affichees = liste.classList.toggle('toutesAnneesAffichees');
+			bouton.innerHTML = affichees
+				? "<i class='bi bi-arrows-collapse'></i> Masquer les années anciennes"
+				: "<i class='bi bi-arrows-expand'></i> " + bouton.dataset.libelleAfficher;
 		}
 
 		// Mobile : bouton "Voir plus d'années" présent dans chaque carte accordéon,

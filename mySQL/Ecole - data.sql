@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : sam. 31 oct. 2026 à 14:20
+-- Généré le : mer. 04 nov. 2026 à 17:46
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -114,7 +114,7 @@ INSERT INTO `Ecole` (`IdEcole`, `Ecole`, `UrlEcole`, `Resume`) VALUES
 (86, 'ENSTBB', 'https://enstbb.bordeaux-inp.fr', 'École spécialisée en biotechnologies, bioproduction et ingénierie des biomolécules pour les secteurs de la santé.'),
 (87, 'EPISEN', 'https://episen.u-pec.fr', 'École proposant des formations en génie biomédical, informatique de santé et systèmes d’information.'),
 (88, 'ESIAB Brest', 'https://www.univ-brest.fr/esiab', 'École spécialisée en microbiologie, sécurité sanitaire, qualité et biotechnologies agroalimentaires.'),
-(89, 'ESIPE', 'https://esipe.u-pem.fr', 'École historique de formations spécialisées en informatique, génie civil, électronique et systèmes industriels.'),
+(89, 'ESIPE', 'https://www.esiee.fr', 'École historique de formations spécialisées en informatique, génie civil, électronique et systèmes industriels.'),
 (90, 'ESIR Rennes', 'https://esir.univ-rennes.fr', 'École pluridisciplinaire proposant des formations en informatique, matériaux et systèmes numériques pour la santé.'),
 (91, 'ESIROI', 'https://esiroi.univ-reunion.fr', 'École pluridisciplinaire proposant des formations en agroalimentaire, informatique et bâtiment-énergie.'),
 (92, 'ISIFC Besançon', 'https://isifc.univ-fcomte.fr', 'École d\'ingénieurs spécialisée en génie biomédical, technologies médicales et ingénierie pour la santé.'),
@@ -158,7 +158,7 @@ INSERT INTO `Ecole` (`IdEcole`, `Ecole`, `UrlEcole`, `Resume`) VALUES
 (130, 'EIGSI La Rochelle', 'https://www.eigsi.fr', 'École généraliste proposant des approfondissements en industrie, énergie, numérique et mécanique.'),
 (131, 'ELISA Aerospace', 'https://www.elisa-aerospace.fr', 'École spécialisée dans les systèmes aéronautiques et spatiaux, notamment les drones et systèmes autonomes.'),
 (132, 'ENSAIT Roubaix', 'https://www.ensait.fr', 'École spécialisée en ingénierie textile, matériaux fibreux, procédés de fabrication et applications industrielles.'),
-(133, 'ESB Nantes', 'https://www.ecoledubois.fr', 'École spécialisée dans le bois et les matériaux biosourcés, de la conception à la construction.'),
+(133, 'ESB Nantes', 'https://www.esb-campus.fr', 'École spécialisée dans le bois et les matériaux biosourcés, de la conception à la construction.'),
 (134, 'ESIEA Paris', 'https://www.esiea.fr', 'École spécialisée en informatique, intelligence artificielle, cybersécurité et systèmes numériques.'),
 (135, 'ESIGELEC Rouen', 'https://www.esigelec.fr', 'École d’ingénieurs à dominante électronique, numérique, systèmes embarqués et génie électrique.'),
 (136, 'ESILV', 'https://www.esilv.fr', 'École généraliste à forte composante numérique, associant industrie, mécanique, énergie et finance quantitative.'),
@@ -171,7 +171,7 @@ INSERT INTO `Ecole` (`IdEcole`, `Ecole`, `UrlEcole`, `Resume`) VALUES
 (143, 'ENSISA Mulhouse', 'https://www.ensisa.uha.fr', 'École pluridisciplinaire proposant des formations en automatique, informatique, mécanique, génie industriel et textile.'),
 (144, 'EEIGM', 'https://www.eeigm.univ-lorraine.fr', 'École spécialisée en génie des matériaux, avec une forte dimension internationale et multilingue.'),
 (145, 'Grenoble INP - Génie industriel', 'https://genie-industriel.grenoble-inp.fr', 'École spécialisée en conception de produits, chaîne logistique et performance industrielle.'),
-(146, 'CESI', 'https://paris.cesi.fr/', 'École proposant des formations d’ingénieur en industrie, informatique et bâtiment et travaux publics.'),
+(146, 'CESI', 'https://www.cesi.fr/', 'École proposant des formations d’ingénieur en industrie, informatique et bâtiment et travaux publics.'),
 (147, 'ECAM Lyon', 'https://www.ecam.fr', 'École proposant un cursus généraliste industriel et des diplômes spécialisés en mécanique, énergie et numérique.'),
 (148, 'ECAM Rennes', 'https://www.ecam-rennes.fr', 'École proposant un cursus généraliste et des diplômes spécialisés en génie industriel et systèmes numériques.'),
 (149, 'ECAM-EPMI Cergy-Pontoise', 'https://www.ecam-epmi.fr', 'École généraliste à dominante systèmes industriels, énergie, électronique et technologies numériques.'),
@@ -194,7 +194,7 @@ INSERT INTO `Ecole` (`IdEcole`, `Ecole`, `UrlEcole`, `Resume`) VALUES
 (166, 'ISTY', 'https://www.isty.uvsq.fr', 'École pluridisciplinaire proposant des formations en informatique, mécatronique, systèmes embarqués et production industrielle.'),
 (167, 'Polytech Lyon', 'https://polytech.univ-lyon1.fr', 'École pluridisciplinaire proposant notamment des formations en biomédical, informatique, matériaux, mécanique et robotique.'),
 (168, 'Polytech Paris-Saclay', 'https://www.polytech.universite-paris-saclay.fr', 'École pluridisciplinaire en systèmes embarqués, informatique et mathématiques appliquées, matériaux et photonique.'),
-(169, 'Sup Galilée Villetaneuse', 'https://galilee.univ-paris13.fr', 'École pluridisciplinaire proposant des formations en énergétique, informatique, instrumentation, mathématiques appliquées et télécommunications.'),
+(169, 'Sup Galilée Villetaneuse', 'https://www.sup-galilee.univ-paris13.fr', 'École pluridisciplinaire proposant des formations en énergétique, informatique, instrumentation, mathématiques appliquées et télécommunications.'),
 (170, 'EPITA', 'https://www.epita.fr', 'École d’ingénieurs spécialisée en informatique, développement logiciel, intelligence artificielle et cybersécurité.'),
 (171, 'IPSA', 'https://www.ipsa.fr', 'École spécialisée en ingénierie aéronautique et spatiale, des structures aux systèmes embarqués.'),
 (172, 'ESCOM', 'https://www.escom.fr', 'École spécialisée en chimie, formulation, matériaux et génie des procédés.'),

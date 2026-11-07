@@ -79,12 +79,11 @@
 			}
 		}
 
-		// Un diplôme seul ne suffit pas : l'onglet exige une spécialité collectée.
+		// L'onglet Spécialités s'affiche dès qu'un diplôme est recensé, même si
+		// ses spécialités ne sont pas encore collectées (message d'attente affiché).
 		$stmtSpecialites = $db->prepare("SELECT 1 FROM Ecole e
 			JOIN Diplome d ON d.IdEcole = e.IdEcole
-			JOIN Specialite s ON s.IdDiplome = d.IdDiplome
-			WHERE (e.Ecole = :canonique OR e.Ecole = :directe)
-			  AND s.Specialite IS NOT NULL AND s.Specialite <> '' LIMIT 1");
+			WHERE (e.Ecole = :canonique OR e.Ecole = :directe) LIMIT 1");
 		$stmtSpecialites->execute([':canonique' => $ecoleCanonique, ':directe' => $ecoleFiltre]);
 		$hasSpecialites = (bool) $stmtSpecialites->fetchColumn();
 

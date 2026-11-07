@@ -30,27 +30,43 @@ function urlPageNavigation(string $page, array $parametres = []): string {
 }
 
 /** N'accepte que les pages de liste/critères du site, y compris un retour imbriqué. */
-function validerUrlNavigation($url, int $profondeur = 0): ?string {
+function validerUrlNavigation($url, int $profondeur = 0, ?string &$motif = null): ?string {
+    // Le motif ne contient que des codes fixes et des noms nettoyés : il est destiné au journal.
+    $motif = null;
     // Les retours imbriqués sont bornés pour éviter une URL ou une récursion excessive.
-    if (!is_string($url) || strlen($url) > 12000 || $profondeur > 4) return null;
+    if (!is_string($url)) { $motif = 'valeur non textuelle'; return null; }
+    if (strlen($url) > 12000) { $motif = 'URL trop longue'; return null; }
+    if ($profondeur > 4) { $motif = 'imbrication excessive'; return null; }
     $parties = parse_url($url);
     $pages = pagesNavigationRetour();
+    if ($parties === false) { $motif = 'URL illisible'; return null; }
     $page = $parties['path'] ?? '';
-    if ($parties === false || !isset($pages[$page])
-        || array_diff(array_keys($parties), ['path', 'query', 'fragment'])) return null;
+    if (!isset($pages[$page])) { $motif = 'page inconnue : ' . extraitJournalNavigation($page, 120); return null; }
+    if (array_diff(array_keys($parties), ['path', 'query', 'fragment'])) { $motif = 'schema ou hote present'; return null; }
     parse_str($parties['query'] ?? '', $parametres);
     $permis = array_merge($pages[$page], ['retour', 'positionRetour', 'panneaux']);
-    if (array_diff(array_keys($parametres), $permis)
-        || count(array_filter($parametres, 'is_string')) !== count($parametres)) return null;
+    $inconnus = array_diff(array_map('strval', array_keys($parametres)), $permis);
+    if ($inconnus) {
+        $motif = 'parametre non autorise : ' . extraitJournalNavigation(implode(',', $inconnus), 120);
+        return null;
+    }
+    if (count(array_filter($parametres, 'is_string')) !== count($parametres)) { $motif = 'parametre non textuel (tableau)'; return null; }
     if (isset($parametres['retour'])) {
         // Exemple : recherche -> résultats par école -> fiche, puis deux retours successifs.
-        $imbrique = validerUrlNavigation($parametres['retour'], $profondeur + 1);
-        if ($imbrique === null) return null;
+        $imbrique = validerUrlNavigation($parametres['retour'], $profondeur + 1, $motifImbrique);
+        if ($imbrique === null) { $motif = 'retour imbrique (' . $motifImbrique . ')'; return null; }
         $parametres['retour'] = $imbrique;
     }
     $fragment = $parties['fragment'] ?? '';
-    if ($fragment !== '' && !preg_match('/^[a-zA-Z0-9_-]+$/D', $fragment)) return null;
+    if ($fragment !== '' && !preg_match('/^[a-zA-Z0-9_-]+$/D', $fragment)) { $motif = 'ancre invalide'; return null; }
     return urlPageNavigation($page, $parametres) . ($fragment !== '' ? '#' . $fragment : '');
+}
+
+/** Rend une valeur contrôlée par le visiteur sûre pour une ligne de journal : ASCII visible, tronquée. */
+function extraitJournalNavigation($valeur, int $max = 300): string {
+    if (!is_string($valeur)) return '[' . gettype($valeur) . ']';
+    $propre = preg_replace('/[^\x20-\x7E]/', '?', $valeur);
+    return strlen($propre) > $max ? substr($propre, 0, $max) . '...(' . strlen($valeur) . ' octets)' : $propre;
 }
 
 /** Résout le lien et ses libellés : retour explicite, référent local, puis critères disponibles. */
@@ -76,8 +92,15 @@ function destinationRetourNavigation(array $parametres, array $serveur = [], str
     $page = $origines[$origine] ?? 'statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php';
     $url = null;
     if (isset($parametres['retour'])) {
-        $url = validerUrlNavigation($parametres['retour']);
-        if ($url === null) error_log('Navigation : destination de retour invalide ; utilisation des critères disponibles.');
+        $url = validerUrlNavigation($parametres['retour'], 0, $motif);
+        if ($url === null) {
+            // Contexte utile pour distinguer un bug (liens du site) d'un robot ou d'un lien partagé altéré.
+            error_log('Navigation : destination de retour invalide (' . $motif . ') ; utilisation des critères disponibles. '
+                . 'page=' . extraitJournalNavigation($serveur['REQUEST_URI'] ?? '', 200)
+                . ' retour=' . extraitJournalNavigation($parametres['retour'], 400)
+                . ' referer=' . extraitJournalNavigation($serveur['HTTP_REFERER'] ?? '', 200)
+                . ' ua=' . extraitJournalNavigation($serveur['HTTP_USER_AGENT'] ?? '', 120));
+        }
     } elseif (!empty($serveur['HTTP_REFERER'])) {
         // Compatibilité avec les anciens liens sans retour : même hôte, port et répertoire,
         // puis validation de la page et des paramètres comme pour un retour explicite.

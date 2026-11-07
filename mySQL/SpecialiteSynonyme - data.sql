@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : mar. 20 oct. 2026 à 10:14
+-- Généré le : mer. 04 nov. 2026 à 17:47
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -41,6 +41,7 @@ INSERT INTO `SpecialiteSynonyme` (`IdDomaine`, `TermeRecherche`, `Poids`) VALUES
 (2, 'biologie moleculaire', 70),
 (2, 'biologique', 90),
 (2, 'bioscience', 80),
+(2, 'biotech', 90),
 (2, 'biotechnologies', 90),
 (2, 'genomique', 70),
 (2, 'vivant', 70),
@@ -214,6 +215,7 @@ INSERT INTO `SpecialiteSynonyme` (`IdDomaine`, `TermeRecherche`, `Poids`) VALUES
 (15, 'urbanisme', 80),
 (15, 'ville', 80),
 (16, 'acoustique', 80),
+(16, 'conception', 50),
 (16, 'conception mecanique', 80),
 (16, 'fabrication', 70),
 (16, 'fluid dynamics', 80),
@@ -251,6 +253,7 @@ INSERT INTO `SpecialiteSynonyme` (`IdDomaine`, `TermeRecherche`, `Poids`) VALUES
 (20, 'infrastructures reseaux', 80),
 (20, 'internet systems', 80),
 (20, 'objets communicants', 80),
+(20, 'radiocommunications', 90),
 (20, 'reseau', 90),
 (20, 'reseaux', 90),
 (20, 'telecom', 100),
@@ -263,17 +266,17 @@ INSERT INTO `SpecialiteSynonyme` (`IdDomaine`, `TermeRecherche`, `Poids`) VALUES
 (21, 'computational', 80),
 (21, 'computer science', 80),
 (21, 'computing', 80),
-(21, 'cybersecurite', 80),
-(21, 'data', 80),
-(21, 'developpement', 90),
+(21, 'cybersecurite', 50),
+(21, 'data', 50),
+(21, 'developpement', 40),
 (21, 'digitale', 80),
-(21, 'donnees', 70),
+(21, 'donnees', 50),
 (21, 'information technology', 80),
 (21, 'informatique', 100),
-(21, 'intelligence artificielle', 80),
+(21, 'intelligence artificielle', 50),
 (21, 'java', 80),
 (21, 'logiciel', 90),
-(21, 'machine learning', 80),
+(21, 'machine learning', 50),
 (21, 'mobile', 70),
 (21, 'multimedia', 80),
 (21, 'net', 80),
