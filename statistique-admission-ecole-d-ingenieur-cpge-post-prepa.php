@@ -45,11 +45,20 @@
 
 	<main class="container">
 
-		<div id="actualite" class="container ancre">
-			<br/>
-			<p class="text-center">
-			<mark style="color:#808080;"><strong>Actualité</strong> : vous pouvez désormais rechercher les écoles d'ingénieurs par spécialité ou domaine d'intérêt.
-			<br>Essayez par exemple informatique, robotique, énergie, matériaux, data ou cybersécurité.
+		<div id="actualite" class="container ancre mt-4 mb-5">
+			<div class="border rounded bg-light p-3 p-md-4 mx-auto" style="max-width:800px;">
+				<h2 class="h5 mb-3"><i class="bi bi-stars"></i>&nbsp;&nbsp;Nouveautés</h2>
+				<ul class="mb-0 ps-4" style="list-style-type:disc;">
+					<li class="mb-3">
+						<strong>Recherche par spécialité</strong><br/>
+						Trouvez les écoles d'ingénieurs <a href="statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php">par spécialité ou domaine d'intérêt</a>. Essayez par exemple informatique, robotique, énergie, matériaux, data ou cybersécurité.
+					</li>
+					<li>
+						<strong>Rang du dernier admis estimé</strong><br/>
+						Pour les écoles et les concours qui ne le publient pas, le rang du dernier admis est désormais <a href="estimation-rang-dernier-integre-ecole-d-ingenieur.php">estimé de manière prudentielle</a>.
+					</li>
+				</ul>
+			</div>
 		</div>
 
 		<section>
@@ -72,7 +81,7 @@
 						<br/>&bull;  Pour les concours Polytechnique et Mines-Telecom, le rang du dernier admis par école est connu pour toutes les filières.<br/>
 						<br/>&bull;  Pour les concours de la filière BCPST G2E, A ENV, A BIO et A PC BIO, le rang du dernier admis est connu pour toutes les années.<br/>
 						<br/>&bull;  Pour tous les autres concours, le rang du dernier admis est connu uniquement pour les années 2016 et 2017.'></i></p>
-				<p>Les informations sur les spécialités couvrent les écoles des concours Agro, CCINP, CentraleSupélec, Ecoles Militaires, Groupe INSA, Mines-Ponts, Mines-Télécom, Polytech, Puissance Alpha, Veto, X-ENS. Les écoles restantes seront couvertes progressivement</p>
+				<p>Les informations sur les spécialités couvrent toutes les écoles accessibles aux CPGE.</p>
 			</div>
 			<br/>
 		</section>
