@@ -34,6 +34,9 @@
 	// fonctions communes du site
 	include "php/fonctionConcours.php";
 
+	// estimation du rang du dernier quand le concours ne le publie pas (table NoteEstimation)
+	require_once "php/estimation.php";
+
 	// URL canonique: on garde uniquement les paramètres qui modifient le contenu de la page.
 	$canonicalBase = 'https://loic.website/CPGE/resultat-d-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php';
 	$canonicalParams = [];
@@ -182,41 +185,51 @@
 		}
 
 		// 1. Construction de la clause WHERE avec des marqueurs
-		$where = " WHERE An<>'' AND An<>0 ";
+		$where = " WHERE n.An<>'' AND n.An<>0 ";
 		$params = []; // Tableau pour stocker les valeurs
 
 		if (($filiere <> "") and ($filiere <> "toutes")) {
-			$where .= " AND Filiere = :filiere";
+			$where .= " AND n.Filiere = :filiere";
 			$params[':filiere'] = $filiere;
 		}
 		if (($concours <> "") and ($concours <> "tous")) {
-			$where .= " AND Concours = :concours";
+			$where .= " AND n.Concours = :concours";
 			$params[':concours'] = $concours;
 		}
 		if (($reference <> "") and ($reference <> "0") and ($reference <> "toutes")) {
-			$where .= " AND An = :an";
+			$where .= " AND n.An = :an";
 			$params[':an'] = $reference;
 		}
 		if (($ecole <> "") and ($ecole <> "toutes")) {
-			$where .= " AND EcoleConcours = :ecole";
+			$where .= " AND n.EcoleConcours = :ecole";
 			$params[':ecole'] = $ecole; // ON ENVOIE LA VALEUR BRUTE ICI
 		}
 
 	// exécution de la requête SQL : l'ordre école > concours > année la plus récente
-	// d'abord sert de tri de départage (data-ordre) aux tris JavaScript par colonne
-	$sql = "SELECT  Filiere,
-					Concours,
-					EcoleConcours AS Ecole,
-					An,
-					Place,
-					Inscrit,
-					Classe,
-					Integre,
-					RangMedian,
-					Dernier,
-					ROUND(Dernier / Inscrit, 1) AS SelectiviteDernier,
-					ROUND(RangMedian / Inscrit, 1) AS SelectiviteMediane
-			FROM Note" . $where . " ORDER BY EcoleConcours ASC, Concours ASC, An DESC";
+	// d'abord sert de tri de départage (data-ordre) aux tris JavaScript par colonne.
+	// Quand la table NoteEstimation existe, elle est jointe dans la même requête pour
+	// afficher une estimation du rang du dernier quand le concours ne le publie pas.
+	$colonnesEstimation = '';
+	$jointureEstimation = '';
+	if (estimationDisponible($db)) {
+		$colonnesEstimation = ", e.Statut AS EstimationStatut, e.Plancher AS EstimationPlancher,
+					e.Milieu AS EstimationMilieu, e.Plafond AS EstimationPlafond";
+		$jointureEstimation = " LEFT JOIN NoteEstimation e
+				ON e.Filiere = n.Filiere AND e.An = n.An AND e.Concours = n.Concours AND e.EcoleConcours = n.EcoleConcours";
+	}
+	$sql = "SELECT  n.Filiere,
+					n.Concours,
+					n.EcoleConcours AS Ecole,
+					n.An,
+					n.Place,
+					n.Inscrit,
+					n.Classe,
+					n.Integre,
+					n.RangMedian,
+					n.Dernier,
+					ROUND(n.Dernier / n.Inscrit, 1) AS SelectiviteDernier,
+					ROUND(n.RangMedian / n.Inscrit, 1) AS SelectiviteMediane" . $colonnesEstimation . "
+			FROM Note n" . $jointureEstimation . $where . " ORDER BY n.EcoleConcours ASC, n.Concours ASC, n.An DESC";
 		if ($debug) echo "SQL = " . $sql ."<br/>";
 		try {
 			$stmt = $db->prepare($sql);
@@ -275,6 +288,7 @@
 			echo "<table id='tableau-par-filiere'>";
 			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='bi bi-cursor-fill' aria-hidden='true'></i>&nbsp; sur une ligne pour voir le détail de cette école.";
 			$idTableau = '"#tableau-par-filiere","concours;école;année;places;inscrits;intégrés;rang médian;sélectivité médiane;rang dernier;sélectivité"';
+			echo "<br>En <span class='estimation-valeur'>gris italique</span> : rang du dernier estimé, car non publié par le concours. <a href='" . URL_METHODE_ESTIMATION . "'>Comment est-il estimé ?</a>";
 			echo "<br>Cliquer sur le bouton pour télécharger le tableau au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='bi bi-download'></i> csv</button></small></caption>";
 			echo "<thead class='text-center'>";
 			echo "<tr>";
@@ -296,7 +310,8 @@
 			echo "<th>&nbsp;Rang median&nbsp;<br/><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Depuis 2018 les statistiques SCEI affichent le rang médian et le rang moyen. Pour simplifier la lecture ici, seul le rang médian est affiché.'></i></th>";
 			echo "<th>&nbsp;<button id='selectivite' type='button' class='btn btn-secondary btn-sm' title='Trier par sélectivité médiane croissante' onclick='triSelectiviteMediane()'>&darr;</button>&nbsp;&nbsp;Sélectivité médiane&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Sélectivité médiane = Rang médian des admis / Nombre d&apos;inscrits'></i></th>";
 			echo "<th>&nbsp;Rang dernier&nbsp;<br/><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Le rang du dernier appelé a été supprimé des statistiques SCEI à partir de 2018.<br/>Il a été remplacé par le rang médian et le rang moyen.<br/>
-					<br/>&bull; Seuls certains concours continuent à publier le rang du dernier admis par école (voir la note d&apos;information &#x24D8; en page d&apos;accueil pour plus de détails).'></i></th>";
+					<br/>&bull; Seuls certains concours continuent à publier le rang du dernier admis par école (voir la note d&apos;information &#x24D8; en page d&apos;accueil pour plus de détails).<br/>
+					<br/>&bull; Quand il n&apos;est pas publié, il est estimé : la valeur est en <i>italique gris</i> et précédée de &ge; (minimum garanti). Passer la souris sur la valeur pour voir les autres repères. La sélectivité n&apos;est alors pas calculée.'></i></th>";
 			echo "<th>&nbsp;<button id='dernier' type='button' class='btn btn-secondary btn-sm' title='Trier par sélectivité croissante' onclick='triSelectiviteDernier()'>&darr;</button>&nbsp;&nbsp;Sélectivité&nbsp;<br/><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Sélectivité = Rang du dernier admis / Nombre d&apos;inscrits'></i></th>";
 			echo "</tr></thead>";
 
@@ -369,7 +384,17 @@
 				} else {
 					echo "<td".$class." style='text-align:right;'>&nbsp;</td>";
 				}
-				echo "<td".$class." style='text-align:right;'>" . (($Dernier <> 0 && $Dernier <> '') ? formater($Dernier, 0) : '') . "&nbsp;</td>";
+				// dernier non publié : estimation (minimum garanti) en gris italique, avec infobulle ;
+				// l'export CSV garde la cellule vide pour ne pas mélanger valeurs réelles et estimées
+				$estimationLigne = estimationDeLigne($row);
+				if ($Dernier <> 0 && $Dernier <> '') {
+					echo "<td".$class." style='text-align:right;'>" . formater($Dernier, 0) . "&nbsp;</td>";
+				} elseif ($estimationLigne !== null) {
+					echo "<td".$class." style='text-align:right;' data-csv=''><span class='estimation-valeur' data-bs-toggle='tooltip' data-bs-html='true' title='"
+					   . aideEstimation($estimationLigne) . "'>" . escapeHtml(valeurEstimation($estimationLigne)) . "</span>&nbsp;</td>";
+				} else {
+					echo "<td".$class." style='text-align:right;'>&nbsp;</td>";
+				}
 				if ($selectivite <> 0) {
 					echo "<td".$class." style='text-align:right;'>" . formater($selectivite, 1) . "%&nbsp;</td>";
 				} else {
@@ -389,6 +414,7 @@
 					'rangMedian' => $RangMedian,
 					'selectiviteMediane' => $selectiviteMediane,
 					'dernier' => $Dernier,
+					'estimation' => $estimationLigne,
 					'selectivite' => $selectivite,
 					'nouvelleEcole' => ($class !== ""),
 				];
@@ -474,6 +500,9 @@
 				if ($ligneCarte['dernier'] != 0) {
 					echo "<span>Rang dernier : <strong>" . escapeHtml(formater($ligneCarte['dernier'], 0)) . "</strong>"
 						. ($ligneCarte['selectivite'] != 0 ? " (" . escapeHtml(formater($ligneCarte['selectivite'], 1)) . "%)" : "") . "</span>";
+				} elseif ($ligneCarte['estimation'] !== null) {
+					// estimé, car non publié par le concours : gris italique, sans sélectivité
+					echo "<span>Rang dernier estimé : <span class='estimation-valeur'>" . escapeHtml(valeurEstimation($ligneCarte['estimation'])) . "</span></span>";
 				}
 				echo "</div>";
 				echo "</div>";

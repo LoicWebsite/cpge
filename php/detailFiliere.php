@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/detailEntete.php';
+require_once __DIR__ . '/estimation.php';
 
 // Libellés EcoleConcours à rechercher dans Note pour une école : par défaut, ou
 // depuis une ligne École/Filière, seul le libellé exact compte (ne pas agréger
@@ -26,12 +27,13 @@ function obtenirEcolesConcoursRecherchees(PDO $db, string $ecole, string $origin
 }
 
 // Condition WHERE + paramètres liés pour filtrer Note par une liste d'EcoleConcours.
-function filtreEcolesConcoursNote(array $ecolesConcours): string {
+// $alias qualifie la colonne quand la requête joint une autre table qui porte aussi EcoleConcours.
+function filtreEcolesConcoursNote(array $ecolesConcours, string $alias = ''): string {
 	$placeholders = [];
 	foreach (array_keys($ecolesConcours) as $index) {
 		$placeholders[] = ':ecoleConcours' . $index;
 	}
-	return "AND EcoleConcours IN (" . implode(', ', $placeholders) . ")";
+	return "AND " . $alias . "EcoleConcours IN (" . implode(', ', $placeholders) . ")";
 }
 
 function parametresFiltreEcolesConcoursNote(array $ecolesConcours): array {
@@ -80,14 +82,26 @@ function obtenirFilieresEcole(PDO $db, array $ecolesConcours, bool $debug = fals
 // EcoleConcours, puis par concours. Ce regroupement évite que les fiches
 // élargies affichent plusieurs voies d'une même école comme de fausses lignes
 // dupliquées, sans ajouter de requête SQL par variante.
+// Quand la table NoteEstimation existe, la même requête la joint sur la clé de Note
+// (colonnes Estimation*), sans requête supplémentaire.
 function chargerNotesFiliere(PDO $db, array $ecolesConcours, string $filiere, bool $debug = false): array {
 	$parFormation = [];
 	try {
-		$sql = "SELECT EcoleConcours, Filiere, Concours, An, Place, Inscrit, Classe, Integre, RangMedian, RangMoyen, Dernier
-				FROM Note
-				WHERE An <> '' AND An <> 0 AND Filiere = :filiere
-				" . filtreEcolesConcoursNote($ecolesConcours) . "
-				ORDER BY EcoleConcours ASC, Concours ASC, An DESC";
+		$colonnesEstimation = '';
+		$jointureEstimation = '';
+		if (estimationDisponible($db)) {
+			$colonnesEstimation = ", e.Statut AS EstimationStatut, e.Plancher AS EstimationPlancher,
+					e.Milieu AS EstimationMilieu, e.Plafond AS EstimationPlafond";
+			$jointureEstimation = "LEFT JOIN NoteEstimation e
+					ON e.Filiere = n.Filiere AND e.An = n.An AND e.Concours = n.Concours AND e.EcoleConcours = n.EcoleConcours";
+		}
+		$sql = "SELECT n.EcoleConcours, n.Filiere, n.Concours, n.An, n.Place, n.Inscrit, n.Classe, n.Integre,
+					n.RangMedian, n.RangMoyen, n.Dernier" . $colonnesEstimation . "
+				FROM Note n
+				" . $jointureEstimation . "
+				WHERE n.An <> '' AND n.An <> 0 AND n.Filiere = :filiere
+				" . filtreEcolesConcoursNote($ecolesConcours, 'n.') . "
+				ORDER BY n.EcoleConcours ASC, n.Concours ASC, n.An DESC";
 		if ($debug) {
 			echo "SQL = " . escapeHtml($sql) . "<br/>";
 		}
@@ -182,7 +196,7 @@ function afficherTitreFiliere(string $ecole, string $filiere, string $aide = '')
 }
 
 // Une tuile "chiffre clé".
-function afficherTuile(string $libelle, string $valeur, string $icone, string $aide = ''): void {
+function afficherTuile(string $libelle, string $valeur, string $icone, string $aide = '', string $classeValeur = 'text-primary'): void {
 	echo "<div class='col-6 col-md-4 col-xl'>";
 	echo "<div class='p-3 border bg-white rounded h-100 text-center'>";
 	echo "<div class='text-secondary small'><i class='bi " . $icone . "'></i>&nbsp; " . $libelle;
@@ -190,7 +204,7 @@ function afficherTuile(string $libelle, string $valeur, string $icone, string $a
 		echo "&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='" . $aide . "'></i>";
 	}
 	echo "</div>";
-	echo "<div class='h4 mb-0 mt-1 text-primary'>" . ($valeur === '' ? "&mdash;" : $valeur) . "</div>";
+	echo "<div class='h4 mb-0 mt-1 " . $classeValeur . "'>" . ($valeur === '' ? "&mdash;" : $valeur) . "</div>";
 	echo "</div>";
 	echo "</div>";
 }
@@ -230,6 +244,13 @@ function afficherTableauHistorique(string $titre, array $lignes, array $colonnes
 			$texte = formater($valeur, $definition[1]);
 			if ($texte !== '') {
 				$texte .= $definition[2];
+			}
+			// dernier non publié : l'estimation (minimum garanti), en gris italique, remplace le tiret
+			$estimation = ($cle === 'Dernier' && $texte === '') ? estimationDeLigne($ligne) : null;
+			if ($estimation !== null) {
+				echo "<td style='text-align:center'><span class='estimation-valeur' data-bs-toggle='tooltip' data-bs-html='true' title='"
+				   . aideEstimation($estimation) . "'>" . escapeHtml(valeurEstimation($estimation)) . "</span></td>";
+				continue;
 			}
 			echo "<td style='text-align:center'>" . ($texte === '' ? "&mdash;" : escapeHtml($texte)) . "</td>";
 		}
@@ -341,27 +362,27 @@ function afficherFiliere(string $filiere, array $parFormations, string $ecole = 
 			afficherTuile("Places", formater($derniere['Place'], 0), "bi-door-open");
 			afficherTuile("Inscrits", formater($derniere['Inscrit'], 0), "bi-people-fill");
 			afficherTuile("Intégrés", formater($derniere['Integre'], 0), "bi-check-circle-fill");
-			// le rang médian prend le relais quand le rang du dernier admis n'est pas publié
-			if ($derniere['Dernier'] <> 0 && $derniere['Dernier'] <> '') {
+			// Rang médian toujours affiché (publié par le SCEI). Quand le dernier admis est publié :
+			// rang médian, dernier admis, sélectivité (dernier / inscrits). Sinon : rang médian,
+			// sélectivité médiane, puis le dernier admis estimé, du plus sûr au plus incertain.
+			$estimationDerniere = estimationDeLigne($derniere);
+			$dernierPublie = ($derniere['Dernier'] <> 0 && $derniere['Dernier'] <> '');
+			afficherTuile(
+				"Rang médian",
+				($derniere['RangMedian'] <> 0 && $derniere['RangMedian'] <> '') ? formater($derniere['RangMedian'], 0) : '',
+				"bi-sort-numeric-down",
+				"Rang médian des candidats admis."
+			);
+			if ($dernierPublie) {
 				afficherTuile(
 					"Dernier admis",
 					formater($derniere['Dernier'], 0),
-					"bi-sort-numeric-down",
+					"bi-flag-fill",
 					"Rang du dernier candidat admis dans l&apos;école."
 				);
-			} else {
-				afficherTuile(
-					"Rang médian",
-					($derniere['RangMedian'] <> 0 && $derniere['RangMedian'] <> '') ? formater($derniere['RangMedian'], 0) : '',
-					"bi-sort-numeric-down",
-					"Rang médian des candidats admis, le rang du dernier admis n&apos;étant pas publié."
-				);
-			}
-			// la sélectivité médiane prend le relais quand le rang du dernier admis n'est pas publié
-			if ($selectivites['selectivite'] !== '') {
 				afficherTuile(
 					"Sélectivité",
-					formater($selectivites['selectivite'], 1) . "%",
+					$selectivites['selectivite'] === '' ? '' : formater($selectivites['selectivite'], 1) . "%",
 					"bi-funnel-fill",
 					"La sélectivité est le rapport rang du dernier admis divisé par le nombre d&apos;inscrits."
 				);
@@ -372,8 +393,28 @@ function afficherFiliere(string $filiere, array $parFormations, string $ecole = 
 					"bi-funnel-fill",
 					"La sélectivité médiane est le rapport rang médian divisé par le nombre d&apos;inscrits."
 				);
+				if ($estimationDerniere !== null) {
+					afficherTuile(
+						"Dernier admis (estimé)",
+						escapeHtml(valeurEstimation($estimationDerniere)),
+						"bi-flag-fill",
+						aideEstimation($estimationDerniere),
+						"text-secondary fst-italic"
+					);
+				} else {
+					afficherTuile(
+						"Dernier admis",
+						'',
+						"bi-flag-fill",
+						"Rang du dernier candidat admis : non publié par ce concours."
+					);
+				}
 			}
 			echo "</div>";
+
+			if ($estimationDerniere !== null) {
+				afficherThermometreDernier($estimationDerniere);
+			}
 
 			afficherTableauHistorique(
 				"<i class='bi bi-people'></i>&nbsp; Effectifs par année",
@@ -392,9 +433,9 @@ function afficherFiliere(string $filiere, array $parFormations, string $ecole = 
 				[
 					"Rang médian"      => ['RangMedian', 0, '', "Rang médian des candidats admis."],
 					"Rang moyen"       => ['RangMoyen', 0, '', "Rang moyen des candidats admis."],
-					"Dernier admis"    => ['Dernier', 0, '', "Rang du dernier candidat admis."],
+					"Dernier admis"    => ['Dernier', 0, '', "Rang du dernier candidat admis.<br/>Quand le concours ne le publie pas, il est estimé : la valeur est alors affichée en <i>italique gris</i> (minimum garanti, précédé de &ge;)."],
 					"Sélectivité méd." => ['SelectiviteMediane', 1, '%', "La sélectivité médiane est le rapport rang médian divisé par le nombre d&apos;inscrits."],
-					"Sélectivité"      => ['Selectivite', 1, '%', "La sélectivité est le rapport rang du dernier admis divisé par le nombre d&apos;inscrits."],
+					"Sélectivité"      => ['Selectivite', 1, '%', "La sélectivité est le rapport rang du dernier admis divisé par le nombre d&apos;inscrits.<br/>Quand le rang du dernier admis est estimé (car non publié), la sélectivité n&apos;est pas calculée."],
 				]
 			);
 		}

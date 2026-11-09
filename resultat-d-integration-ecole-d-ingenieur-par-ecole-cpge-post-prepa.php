@@ -45,6 +45,9 @@
 	// fonctions communes du site
 	include "php/fonctionConcours.php";
 
+	// estimation du rang du dernier quand le concours ne le publie pas (table NoteEstimation)
+	require_once "php/estimation.php";
+
 	// Année de référence transmise par le radio "Année de référence" du formulaire
 	// critères (page statistique-integration-...-par-ecole) : filtre les lignes ET
 	// réduit à une seule colonne, sans changer le comportement par défaut ("toutes").
@@ -263,7 +266,17 @@
 			$stmtEcole->execute($paramsEcole);
 			$result = $stmtEcole;
 
-			$sqlNote = 'SELECT Inscrit, Integre, RangMedian, Dernier FROM Note WHERE EcoleConcours = :ecole AND Filiere = :filiere AND Concours = :concours AND An = :an';
+			// la table NoteEstimation, si elle existe, est jointe sur la clé de Note : l'estimation du
+			// rang du dernier remplace alors le rang médian quand le dernier n'est pas publié
+			$colonnesEstimation = '';
+			$jointureEstimation = '';
+			if (estimationDisponible($db)) {
+				$colonnesEstimation = ', e.Statut AS EstimationStatut, e.Plancher AS EstimationPlancher, e.Milieu AS EstimationMilieu, e.Plafond AS EstimationPlafond';
+				$jointureEstimation = ' LEFT JOIN NoteEstimation e ON e.Filiere = n.Filiere AND e.An = n.An AND e.Concours = n.Concours AND e.EcoleConcours = n.EcoleConcours';
+			}
+			$sqlNote = 'SELECT n.Inscrit, n.Integre, n.RangMedian, n.Dernier' . $colonnesEstimation
+				. ' FROM Note n' . $jointureEstimation
+				. ' WHERE n.EcoleConcours = :ecole AND n.Filiere = :filiere AND n.Concours = :concours AND n.An = :an';
 			$stmtNote = $db->prepare($sqlNote);
 			$annees = $anneeUnique ? [$anneeEcole] : ['2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016'];
 
@@ -400,7 +413,9 @@
 			echo "<div class='table-responsive'>";
 			echo "<table class='table-hover' style='width:100%;' id='tableau-par-ecole'>";
 			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='bi bi-cursor-fill' aria-hidden='true'></i>&nbsp; sur une ligne pour voir le détail de cette école.<br/>
-				<span style='color:darkslategray;'>En <strong>noir</strong> le rang médian</span>, <span style='color:#0000FF'>en <strong>bleu</strong> le rang du dernier</span>.";
+				<span style='color:darkslategray; white-space:nowrap;'>50 : <strong>649</strong> / 2540</span> en <strong>noir</strong> : rang médian &nbsp;&middot;&nbsp;
+				<span style='color:#0000FF; white-space:nowrap;'>50 : <strong>649</strong> / 2540</span> en <strong>bleu</strong> : rang du dernier &nbsp;&middot;&nbsp;
+				<span style='color:#0000FF; white-space:nowrap;'>50 : <span class='estimation-dernier'>&ge;&nbsp;649</span> / 2540</span> en <strong>bleu italique</strong> : rang du dernier estimé (non publié) <a href='" . URL_METHODE_ESTIMATION . "'>Comment est-il estimé ?</a>";
 			$idTableau = '"#tableau-par-ecole","école;filière;concours;' . implode(';', $annees) . '"';
 			echo "<br>Cliquer sur le bouton pour télécharger le tableau au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='bi bi-download'></i> csv</button>";
 			if (!$anneeUnique) {
@@ -430,9 +445,10 @@
 			echo "<th style='position:static; border-left-style:none;'></th>";
 			// Année unique demandée : une seule colonne, donc une seule cellule
 			// d'explication (colspan=1) au lieu du découpage récent/ancien.
-			echo "<th style='position:static;' colspan=" . ($anneeUnique ? 1 : 8) . ">Intégrés : Rang médian / Inscrits&nbsp;&nbsp;<span style='font-weight:normal'>(en noir)</span><br/>Intégrés : Rang dernier / Inscrits&nbsp;&nbsp;<span style='font-weight:normal'>(en bleu)</span><br/>
+			echo "<th style='position:static;' colspan=" . ($anneeUnique ? 1 : 8) . ">Intégrés : Rang médian / Inscrits&nbsp;&nbsp;<span style='font-weight:normal'>(en noir)</span><br/>Intégrés : Rang dernier / Inscrits&nbsp;&nbsp;<span style='font-weight:normal'>(en bleu. <i>italique</i> &ge; si estimé)</span><br/>
 								<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Lorsque le rang du dernier admis est connu c&apos;est celui-ci qui est affiché (en bleu).<br/>
-								<br/>&bull; Sinon c&apos;est le rang médian qui est affiché (en noir).<br/>
+								<br/>&bull; Sinon il est estimé quand c&apos;est possible : valeur en bleu <i>italique</i> précédée de &ge; (minimum garanti ; passer la souris sur la valeur pour voir les autres repères).<br/>
+								<br/>&bull; À défaut d&apos;estimation possible (par exemple les écoles recrutant des fonctionnaires) c&apos;est le rang médian qui est affiché (en noir).<br/>
 								<br/>&bull; Le rang du dernier appelé a été supprimé des statistiques SCEI à partir de 2018. Il a été remplacé par le rang médian et le rang moyen.<br/>
 								<br/>&bull; Seuls certains concours continuent à publier le rang du dernier admis par école (voir la note d&apos;information &#x24D8; en page d&apos;accueil pour plus de détails).'></i></th>";
 			if (!$anneeUnique) {
@@ -513,6 +529,10 @@
 
 					if (($Dernier <> 0) and ($Dernier <> "")) {
 						echo "<td".$attributClasse." style='text-align:center; color:#0000FF'><span style='font-size:120%'>".escapeHtml($Integre)." : <strong>".escapeHtml($Dernier)."</strong></span> / ".escapeHtml($Inscrit)."</td>";
+					} elseif (($estimationNote = estimationDeLigne($rowNote)) !== null) {
+						// dernier non publié : estimation (minimum garanti), bleu italique précédé de ≥, avec infobulle
+						echo "<td".$attributClasse." style='text-align:center; color:#0000FF' data-bs-toggle='tooltip' data-bs-html='true' title='"
+							. aideEstimation($estimationNote) . "'><span style='font-size:120%'>".escapeHtml($Integre)." : <span class='estimation-dernier'>" . escapeHtml(valeurEstimationBrute($estimationNote)) . "</span></span> / ".escapeHtml($Inscrit)."</td>";
 					} elseif (($RangMedian <> 0) and ($RangMedian <> "")) {
 						echo "<td".$attributClasse." style='text-align:center'><span style='font-size:120%'>".escapeHtml($Integre)." : <strong>".escapeHtml($RangMedian)."</strong></span> / ".escapeHtml($Inscrit)."</td>";
 					} else {
@@ -537,6 +557,7 @@
 			echo "<div class='d-lg-none vue-cartes' id='accordeon-par-ecole'>";
 			if (!$anneeUnique) {
 				echo "<p class='text-muted small'>Touchez une ligne pour déplier le détail par année. Les 4 années les plus récentes sont affichées ; touchez « Voir plus d'années » pour l'historique complet.</p>";
+				echo "<p class='text-muted small'>Valeurs : intégrés : rang / inscrits. En noir le rang médian, en bleu le rang du dernier, en <span style='color:#0000FF'><span class='estimation-dernier'>bleu italique &ge;</span></span> le rang du dernier estimé car non publié. <a href='" . URL_METHODE_ESTIMATION . "'>Comment est-il estimé ?</a></p>";
 				echo "<p><button type='button' class='btn btn-secondary btn-sm' data-libelle-afficher=\"" . escapeHtml($libelleAfficher) . "\" onclick='basculerAnneesAnciennesMobileGlobal(this)'><i class='bi bi-arrows-expand'></i> " . escapeHtml($libelleAfficher) . "</button></p>";
 			} else {
 				echo "<p class='text-muted small'>Touchez une ligne pour déplier le détail.</p>";
@@ -569,6 +590,8 @@
 						$Dernier = $rowNote['Dernier'];
 						if (($Dernier <> 0) and ($Dernier <> "")) {
 							echo "<span style='color:#0000FF'>" . escapeHtml($Integre) . " : <strong>" . escapeHtml($Dernier) . "</strong> / " . escapeHtml($Inscrit) . "</span>";
+						} elseif (($estimationNote = estimationDeLigne($rowNote)) !== null) {
+							echo "<span style='color:#0000FF'>" . escapeHtml($Integre) . " : <span class='estimation-dernier'>" . escapeHtml(valeurEstimationBrute($estimationNote)) . "</span> / " . escapeHtml($Inscrit) . "</span>";
 						} elseif (($RangMedian <> 0) and ($RangMedian <> "")) {
 							echo "<span>" . escapeHtml($Integre) . " : <strong>" . escapeHtml($RangMedian) . "</strong> / " . escapeHtml($Inscrit) . "</span>";
 						} else {

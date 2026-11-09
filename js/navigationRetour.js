@@ -59,7 +59,8 @@
         var cible = url.pathname.split('/').pop();
         if (cible !== 'detail-resultat-admission-par-ecole.php'
             && cible !== 'detail-resultat-admission-ecole-d-ingenieur-cpge-post-prepa.php'
-            && cible !== 'resultat-d-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php') return destination;
+            && cible !== 'resultat-d-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php'
+            && cible !== 'estimation-rang-dernier-integre-ecole-d-ingenieur.php') return destination;
         // L'URL courante garde son éventuel retour : on préserve ainsi plusieurs niveaux.
         url.searchParams.set('retour', urlCourante());
         return url.href;

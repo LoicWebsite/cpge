@@ -17,6 +17,8 @@ function pagesNavigationRetour(): array {
         'classement-ecole-d-ingenieur.php' => [],
         'statistique-attractivite-ecoles.php' => ['tri', 'direction'],
         'salaire-ingenieur-cpge-post-prepa.php' => ['promotion', 'horizon', 'etablissement', 'col', 'filtre', 'tri', 'direction'],
+        // Fiche école : destination de retour de la page de méthode de l'estimation (onglet filière en ancre).
+        'detail-resultat-admission-par-ecole.php' => ['ecole', 'origine', 'diplome', 'filiere', 'concours', 'reference', 'specialite', 'strict'],
     ];
 }
 
@@ -62,6 +64,15 @@ function validerUrlNavigation($url, int $profondeur = 0, ?string &$motif = null)
     return urlPageNavigation($page, $parametres) . ($fragment !== '' ? '#' . $fragment : '');
 }
 
+/**
+ * Libellé d'un bouton de retour vers une destination déjà validée par validerUrlNavigation().
+ * Le nom de l'école n'est pas repris (il peut être long) ; la valeur retournée n'est pas échappée.
+ */
+function libelleRetourNavigation(string $urlValidee): string {
+    $page = parse_url($urlValidee, PHP_URL_PATH);
+    return $page === 'detail-resultat-admission-par-ecole.php' ? 'Retour à la fiche école' : 'Retour aux résultats';
+}
+
 /** Rend une valeur contrôlée par le visiteur sûre pour une ligne de journal : ASCII visible, tronquée. */
 function extraitJournalNavigation($valeur, int $max = 300): string {
     if (!is_string($valeur)) return '[' . gettype($valeur) . ']';
@@ -93,7 +104,10 @@ function destinationRetourNavigation(array $parametres, array $serveur = [], str
     $url = null;
     if (isset($parametres['retour'])) {
         $url = validerUrlNavigation($parametres['retour'], 0, $motif);
-        if ($url === null) {
+        // Le site ne génère jamais de retour purement numérique : c'est un scanner qui injecte des valeurs
+        // aléatoires dans les paramètres. Le repli est identique, mais on évite de polluer le journal.
+        $bruitScanner = is_string($parametres['retour']) && ctype_digit($parametres['retour']);
+        if ($url === null && !$bruitScanner) {
             // Contexte utile pour distinguer un bug (liens du site) d'un robot ou d'un lien partagé altéré.
             error_log('Navigation : destination de retour invalide (' . $motif . ') ; utilisation des critères disponibles. '
                 . 'page=' . extraitJournalNavigation($serveur['REQUEST_URI'] ?? '', 200)

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : ven. 30 oct. 2026 à 17:33
+-- Généré le : lun. 09 nov. 2026 à 15:58
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -170,6 +170,23 @@ CREATE TABLE `Note` (
   `RangMoyen` int(5) DEFAULT NULL,
   `Place` int(5) DEFAULT NULL,
   `Dernier` int(5) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `NoteEstimation`
+--
+
+CREATE TABLE `NoteEstimation` (
+  `Filiere` varchar(16) NOT NULL,
+  `An` int(4) NOT NULL,
+  `Concours` varchar(256) NOT NULL,
+  `EcoleConcours` varchar(256) NOT NULL,
+  `Statut` varchar(10) NOT NULL COMMENT 'exact | plancher | estime',
+  `Plancher` int(5) NOT NULL,
+  `Milieu` int(5) DEFAULT NULL,
+  `Plafond` int(5) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- --------------------------------------------------------
@@ -398,6 +415,12 @@ ALTER TABLE `Letudiant`
 ALTER TABLE `Note`
   ADD PRIMARY KEY (`Filiere`,`An`,`Concours`,`EcoleConcours`),
   ADD KEY `idx_ecoleconcours` (`EcoleConcours`);
+
+--
+-- Index pour la table `NoteEstimation`
+--
+ALTER TABLE `NoteEstimation`
+  ADD PRIMARY KEY (`Filiere`,`An`,`Concours`,`EcoleConcours`);
 
 --
 -- Index pour la table `Salaire`

@@ -10,8 +10,31 @@ Le parametre `retour` contient une URL relative vers une page de liste ou de
 criteres connue. Seuls les parametres autorises pour cette page et une ancre
 simple sont acceptes. Les destinations externes ou invalides sont refusees et
 journalisees ; les criteres disponibles fournissent alors un retour local.
+La ligne de journal precise le motif du refus (parametre non autorise, page
+inconnue, imbrication...), puis `page`, `retour`, `referer` et `ua`, tronques et
+limites a l'ASCII visible. Un `retour` refuse sans `referer` interne evoque un
+robot ou un lien partage altere ; un parametre comme `utm_source` indique un
+defaut du site.
 Les anciens liens peuvent recuperer les criteres du referent de meme origine.
 Un retour imbrique conserve la chaine recherche -> liste -> fiche.
+
+## Page de méthode de l'estimation
+
+La fiche école (`detail-resultat-admission-par-ecole.php`) est aussi une destination
+de retour valide, avec ses seuls paramètres (`ecole`, `origine`, `diplome`, `filiere`,
+`concours`, `reference`, `specialite`, `strict`), une ancre `#onglet-xx` et un retour imbriqué.
+Le lien « Comment cette estimation est-elle calculée ? » de l'onglet Admissions
+(`a[data-methode-estimation]`, fragment AJAX) reçoit au clic, via `php/detail.php`, un
+`retour` égal à la fiche courante, onglet filière compris. La page
+`estimation-rang-dernier-integre-ecole-d-ingenieur.php` valide ce `retour` et affiche
+« Retour à la fiche école » (`libelleRetourNavigation()`, sans le nom de l'école) en bas de page ; le lien « Ecole » du fil d'Ariane (accueil / Ecole / Rang du dernier admis) mène à la même destination.
+Sans retour valide (entrée directe, lien partagé, URL externe refusée et journalisée),
+le bouton ramène à l'accueil et le lien « Ecole » du fil d'Ariane à la liste des écoles.
+
+Les pages de liste (par filière, par école) renvoient vers cette même page de méthode
+avec le lien « Comment est-il estimé ? » : `navigationRetour.js` lui ajoute le `retour`
+(liste courante avec tri et position) comme pour une fiche. Le fil d'Ariane de la page
+affiche alors « Filière » au lieu de « Ecole » quand on vient d'une liste par filière.
 
 ## Conservation du contexte
 

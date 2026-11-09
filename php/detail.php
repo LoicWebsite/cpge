@@ -210,6 +210,18 @@
 		var ecoleCanonique = <?php echo json_encode($ecoleCanonique, JSON_UNESCAPED_UNICODE); ?>;
 		var barreFilieres = document.getElementById('filieres-admissions');
 
+		// Le lien « Comment cette estimation est-elle calculée ? » (fragment chargé en AJAX) transmet
+		// la fiche courante, onglet filière compris : la page de méthode propose alors un retour exact.
+		['click', 'auxclick'].forEach(function (evenement) {
+			document.addEventListener(evenement, function (event) {
+				var lien = event.target.closest('a[data-methode-estimation]');
+				if (!lien) { return; }
+				var url = new URL(lien.href, window.location.href);
+				url.searchParams.set('retour', window.location.pathname.split('/').pop() + window.location.search + window.location.hash);
+				lien.href = url.href;
+			}, true);
+		});
+
 		// Les contenus d'onglets sont injectés en AJAX après le chargement initial de
 		// la page. Bootstrap ne détecte pas automatiquement les nouveaux attributs
 		// data-bs-toggle="tooltip" : on initialise donc les tooltips dans le fragment

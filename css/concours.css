@@ -108,6 +108,97 @@ th {
 	overflow-wrap: anywhere;
 }
 
+/* Estimation du rang du dernier admis quand le concours ne le publie pas :
+   valeurs estimées en gris italique, jamais confondues avec les valeurs réelles (bleu). */
+.estimation-valeur {
+	color: #6c757d;
+	font-style: italic;
+	cursor: help;
+}
+
+.thermo-dernier {
+	max-width: 720px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.thermo-titre {
+	text-align: center;
+	font-weight: 600;
+	color: #495057;
+	font-size: .95rem;
+	margin-bottom: .5rem;
+}
+
+.thermo-barre {
+	display: flex;
+	height: 22px;
+	border: 1px solid #adb5bd;
+	border-radius: 11px;
+	overflow: hidden;
+	background: #e9ecef;
+}
+
+.thermo-zone {
+	display: block;
+	height: 100%;
+}
+
+/* La couleur ne porte jamais seule le sens : la légende dit la même chose en texte. */
+.thermo-assure {
+	background: #2e7d32;
+}
+
+.thermo-probable {
+	background: #9ccc65;
+}
+
+.thermo-incertain {
+	background: repeating-linear-gradient(135deg, #ffb74d 0, #ffb74d 6px, #ffe0b2 6px, #ffe0b2 12px);
+}
+
+.thermo-inconnu {
+	background: #dee2e6;
+}
+
+.thermo-echelle {
+	display: flex;
+	justify-content: space-between;
+	font-size: .75rem;
+	color: #6c757d;
+	margin-top: .2rem;
+}
+
+.thermo-legende {
+	font-size: .9rem;
+	margin-top: .6rem;
+}
+
+.thermo-legende li {
+	display: flex;
+	align-items: baseline;
+	gap: .5rem;
+	margin-bottom: .25rem;
+}
+
+.thermo-pastille {
+	flex: 0 0 auto;
+	display: inline-block;
+	width: .9rem;
+	height: .9rem;
+	border: 1px solid rgba(0, 0, 0, .25);
+	border-radius: 3px;
+	position: relative;
+	top: .15rem;
+}
+
+.thermo-methode {
+	font-size: .85rem;
+	color: #6c757d;
+}
+
+
+
 .salaire-ecole-detail details.salaire-donnees,
 .salaire-ecole-detail details.salaire-donnees summary,
 .salaire-ecole-detail details.salaire-donnees p {
@@ -207,4 +298,43 @@ th {
 	.liste-specialites {
 		column-count: 1;
 	}
+}
+
+/* Repères du bandeau de la fiche école (classements, attractivité, salaire) :
+   libellé en gris, valeur en gras foncé, pastilles un peu plus grandes que les badges Bootstrap. */
+.pastille-repere {
+	display: inline-flex;
+	align-items: baseline;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: .1rem .4rem;
+	margin: 0 .3rem .4rem 0;
+	padding: .35rem .85rem;
+	border: 1px solid #ced4da;
+	border-radius: 50rem;
+	background: #fff;
+	color: #6c757d;
+	font-size: .95rem;
+	line-height: 1.3;
+}
+
+.pastille-repere .bi {
+	color: #6c757d;
+}
+
+.pastille-valeur {
+	color: #212529;
+	font-weight: 700;
+}
+
+.pastille-complement {
+	font-size: .85em;
+}
+
+/* Matrice « par école » : le rang du dernier estimé garde la couleur de la cellule (bleu, comme le
+   dernier publié), mais en italique et sans gras. Le signe ≥ précède la valeur. */
+.estimation-dernier {
+	font-style: italic;
+	font-weight: normal;
+	cursor: help;
 }

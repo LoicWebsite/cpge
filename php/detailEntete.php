@@ -152,7 +152,8 @@ function afficherEnteteEcole(string $ecole, string $urlEcole, array $filieres, s
 
 	if ($urlEcole !== '') {
 		echo "<p class='text-center mb-3'>";
-		echo "<a class='btn btn-outline-primary btn-sm' href='" . escapeHtml($urlEcole) . "' target='_blank' rel='noopener'>";
+		// même rendu que « Détail de la formation sur le site de l'école » (php/detailSpecialite.php) : simple lien
+		echo "<a class='small' href='" . escapeHtml($urlEcole) . "' target='_blank' rel='noopener'>";
 		echo "<i class='bi bi-box-arrow-up-right'></i>&nbsp; Site officiel de l'école</a>";
 		echo "</p>";
 	}
@@ -175,10 +176,25 @@ function afficherEnteteEcole(string $ecole, string $urlEcole, array $filieres, s
 	echo "</header>";
 }
 
-// Fragment des badges de classement/attractivité, calculé une fois les données
+// Une pastille de repère du bandeau : icône, libellé en gris suivi de deux-points, valeur en gras foncé.
+// $complement (facultatif) suit la valeur en gris léger, par exemple « (promotion 2022) ».
+// Libellés et valeurs sont échappés ici.
+function afficherPastilleRepere(string $icone, string $libelle, string $valeur, string $complement = '', string $aide = ''): void {
+	echo "<span class='pastille-repere'" . ($aide !== '' ? " title='" . escapeHtml($aide) . "'" : '') . ">"
+	   . "<i class='bi " . $icone . "' aria-hidden='true'></i>"
+	   . "<span class='pastille-libelle'>" . escapeHtml($libelle) . "&nbsp;:</span>"
+	   . "<strong class='pastille-valeur'>" . escapeHtml($valeur) . "</strong>";
+	if ($complement !== '') {
+		echo "<span class='pastille-complement'>" . escapeHtml($complement) . "</span>";
+	}
+	echo "</span>";
+}
+
+// Fragment des repères de classement/attractivité/salaire, calculé une fois les données
 // disponibles (chargement direct ou via AJAX) et injecté dans #badges-entete.
 function afficherBadgesEntete(array $classements, array $attractivite = [], ?array $salaireReference = null): void {
 	// repères rapides : le classement DAUR et le classement Le Figaro les plus récents disponibles
+	$icones = ['DAUR' => 'bi-trophy', 'Figaro' => 'bi-newspaper'];
 	$badges = [];
 	$famillesRetenues = ['DAUR' => false, 'Figaro' => false];
 	foreach (configurationClassements() as $source) {
@@ -191,26 +207,19 @@ function afficherBadgesEntete(array $classements, array $attractivite = [], ?arr
 		}
 		$valeur = ($ligne['groupe'] !== '') ? $ligne['groupe'] . ' ' : '';
 		$valeur .= ($ligne['rang'] !== '') ? $ligne['rang'] . '/' . $source['total'] : '';
-		$badges[] = ['libelle' => $source['libelle'], 'valeur' => trim($valeur)];
+		$badges[] = ['icone' => $icones[$source['table']], 'libelle' => $source['libelle'], 'valeur' => trim($valeur)];
 		$famillesRetenues[$source['table']] = true;
 	}
-	if (!empty($badges)) {
-		foreach ($badges as $badge) {
-			echo "<span class='badge rounded-pill bg-white border text-secondary fw-normal me-1 mb-1'>"
-			   . escapeHtml($badge['libelle']) . " <span class='fw-semibold'>" . escapeHtml($badge['valeur']) . "</span></span>";
-		}
-		if (!empty($attractivite) && $attractivite['rang'] !== '') {
-			echo "<span class='badge rounded-pill bg-white border text-secondary fw-normal me-1 mb-1'>Attractivité <span class='fw-semibold'>"
-			   . escapeHtml($attractivite['rang'] . '/' . $attractivite['total']) . "</span></span>";
-		}
+	foreach ($badges as $badge) {
+		afficherPastilleRepere($badge['icone'], $badge['libelle'], $badge['valeur']);
 	}
-	elseif (!empty($attractivite) && $attractivite['rang'] !== '') {
-		echo "<span class='badge rounded-pill bg-white border text-secondary fw-normal me-1 mb-1'>Attractivité <span class='fw-semibold'>"
-		   . escapeHtml($attractivite['rang'] . '/' . $attractivite['total']) . "</span></span>";
+	if (!empty($attractivite) && $attractivite['rang'] !== '') {
+		afficherPastilleRepere('bi-graph-up-arrow', 'Attractivité', $attractivite['rang'] . '/' . $attractivite['total']);
 	}
 	if ($salaireReference !== null) {
-		echo "<span class='badge rounded-pill bg-white border text-secondary fw-normal me-1 mb-1' title='Salaire mensuel net médian en équivalent temps plein'>";
-		echo "Salaire médian à 12 mois <span class='fw-semibold'>" . escapeHtml(formater($salaireReference['mediane'], 0))
-		   . " € (promotion " . escapeHtml($salaireReference['promotion']) . ")</span></span>";
+		afficherPastilleRepere(
+			'bi-cash-stack', 'Salaire médian à 12 mois', formater($salaireReference['mediane'], 0) . ' €',
+			'(promotion ' . $salaireReference['promotion'] . ')', 'Salaire mensuel net médian en équivalent temps plein'
+		);
 	}
 }

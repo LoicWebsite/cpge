@@ -1,0 +1,306 @@
+{
+ "genere": "2026-11-08",
+ "annee_min": 2018,
+ "annee_max": 2025,
+ "lignes_calibrage": 2681,
+ "quantile": 0.25,
+ "effectif_min_filiere": 40,
+ "bandes": [
+  "1",
+  "2-9",
+  "10-29",
+  "30+"
+ ],
+ "coefficients": [
+  {
+   "filiere": "toutes",
+   "bande": "1",
+   "lignes": 789,
+   "source": "toutes",
+   "c25": 0.0
+  },
+  {
+   "filiere": "toutes",
+   "bande": "2-9",
+   "lignes": 845,
+   "source": "toutes",
+   "c25": 0.052
+  },
+  {
+   "filiere": "toutes",
+   "bande": "10-29",
+   "lignes": 444,
+   "source": "toutes",
+   "c25": 0.102
+  },
+  {
+   "filiere": "toutes",
+   "bande": "30+",
+   "lignes": 603,
+   "source": "toutes",
+   "c25": 0.143
+  },
+  {
+   "filiere": "bcpst",
+   "bande": "1",
+   "lignes": 40,
+   "source": "filière",
+   "c25": 0.0
+  },
+  {
+   "filiere": "bcpst",
+   "bande": "2-9",
+   "lignes": 119,
+   "source": "filière",
+   "c25": 0.059
+  },
+  {
+   "filiere": "bcpst",
+   "bande": "10-29",
+   "lignes": 61,
+   "source": "filière",
+   "c25": 0.193
+  },
+  {
+   "filiere": "bcpst",
+   "bande": "30+",
+   "lignes": 122,
+   "source": "filière",
+   "c25": 0.127
+  },
+  {
+   "filiere": "mp",
+   "bande": "1",
+   "lignes": 78,
+   "source": "filière",
+   "c25": 0.0
+  },
+  {
+   "filiere": "mp",
+   "bande": "2-9",
+   "lignes": 103,
+   "source": "filière",
+   "c25": 0.047
+  },
+  {
+   "filiere": "mp",
+   "bande": "10-29",
+   "lignes": 84,
+   "source": "filière",
+   "c25": 0.08
+  },
+  {
+   "filiere": "mp",
+   "bande": "30+",
+   "lignes": 190,
+   "source": "filière",
+   "c25": 0.139
+  },
+  {
+   "filiere": "mpi",
+   "bande": "1",
+   "lignes": 71,
+   "source": "filière",
+   "c25": 0.0
+  },
+  {
+   "filiere": "mpi",
+   "bande": "2-9",
+   "lignes": 69,
+   "source": "filière",
+   "c25": 0.058
+  },
+  {
+   "filiere": "mpi",
+   "bande": "10-29",
+   "lignes": 40,
+   "source": "filière",
+   "c25": 0.112
+  },
+  {
+   "filiere": "mpi",
+   "bande": "30+",
+   "lignes": 7,
+   "source": "toutes",
+   "c25": 0.143
+  },
+  {
+   "filiere": "pc",
+   "bande": "1",
+   "lignes": 103,
+   "source": "filière",
+   "c25": 0.0
+  },
+  {
+   "filiere": "pc",
+   "bande": "2-9",
+   "lignes": 130,
+   "source": "filière",
+   "c25": 0.052
+  },
+  {
+   "filiere": "pc",
+   "bande": "10-29",
+   "lignes": 115,
+   "source": "filière",
+   "c25": 0.096
+  },
+  {
+   "filiere": "pc",
+   "bande": "30+",
+   "lignes": 132,
+   "source": "filière",
+   "c25": 0.142
+  },
+  {
+   "filiere": "psi",
+   "bande": "1",
+   "lignes": 83,
+   "source": "filière",
+   "c25": 0.0
+  },
+  {
+   "filiere": "psi",
+   "bande": "2-9",
+   "lignes": 110,
+   "source": "filière",
+   "c25": 0.043
+  },
+  {
+   "filiere": "psi",
+   "bande": "10-29",
+   "lignes": 91,
+   "source": "filière",
+   "c25": 0.1
+  },
+  {
+   "filiere": "psi",
+   "bande": "30+",
+   "lignes": 136,
+   "source": "filière",
+   "c25": 0.163
+  },
+  {
+   "filiere": "pt",
+   "bande": "1",
+   "lignes": 161,
+   "source": "filière",
+   "c25": 0.0
+  },
+  {
+   "filiere": "pt",
+   "bande": "2-9",
+   "lignes": 121,
+   "source": "filière",
+   "c25": 0.047
+  },
+  {
+   "filiere": "pt",
+   "bande": "10-29",
+   "lignes": 44,
+   "source": "filière",
+   "c25": 0.172
+  },
+  {
+   "filiere": "pt",
+   "bande": "30+",
+   "lignes": 10,
+   "source": "toutes",
+   "c25": 0.143
+  },
+  {
+   "filiere": "tb",
+   "bande": "1",
+   "lignes": 54,
+   "source": "filière",
+   "c25": 0.0
+  },
+  {
+   "filiere": "tb",
+   "bande": "2-9",
+   "lignes": 1,
+   "source": "toutes",
+   "c25": 0.052
+  },
+  {
+   "filiere": "tpc",
+   "bande": "1",
+   "lignes": 33,
+   "source": "toutes",
+   "c25": 0.0
+  },
+  {
+   "filiere": "tpc",
+   "bande": "2-9",
+   "lignes": 8,
+   "source": "toutes",
+   "c25": 0.052
+  },
+  {
+   "filiere": "tsi",
+   "bande": "1",
+   "lignes": 166,
+   "source": "filière",
+   "c25": 0.0
+  },
+  {
+   "filiere": "tsi",
+   "bande": "2-9",
+   "lignes": 184,
+   "source": "filière",
+   "c25": 0.069
+  },
+  {
+   "filiere": "tsi",
+   "bande": "10-29",
+   "lignes": 9,
+   "source": "toutes",
+   "c25": 0.102
+  },
+  {
+   "filiere": "tsi",
+   "bande": "30+",
+   "lignes": 6,
+   "source": "toutes",
+   "c25": 0.143
+  }
+ ],
+ "validation": [
+  {
+   "bande": "2-9",
+   "lignes": 845,
+   "couverture": 0.774,
+   "milieu_egal_minimum": 0.142
+  },
+  {
+   "bande": "10-29",
+   "lignes": 444,
+   "couverture": 0.761,
+   "milieu_egal_minimum": 0.128
+  },
+  {
+   "bande": "30+",
+   "lignes": 603,
+   "couverture": 0.763,
+   "milieu_egal_minimum": 0.217
+  }
+ ],
+ "exclusions": {
+  "interfiliere": 840,
+  "statut_particulier": 148,
+  "anomalies": 10
+ },
+ "concours_interfilieres": [
+  "Banque épreuves CCINP Inter-Filière",
+  "CESI",
+  "Concours Ingeni’Up",
+  "Concours POLYTECH Inter-Filière",
+  "E3A - Inter-Filière",
+  "Groupe INSA",
+  "Puissance Alpha"
+ ],
+ "maximum": {
+  "lignes_k_fiable": 2690,
+  "depassements": 0
+ }
+}
