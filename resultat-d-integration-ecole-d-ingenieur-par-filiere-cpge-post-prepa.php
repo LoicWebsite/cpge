@@ -247,14 +247,14 @@
 				if (($reference <> "toutes") and ($reference <> 0) and ($reference <> '')) {
 					echo " en " . $reference;
 				} else {
-					echo " de 2016 à 2025";
+					echo " de 2016 à 2026";
 				}
 			} else {
 				echo "<br/>";
 				if (($reference <> "toutes") and ($reference <> 0) and ($reference <> '')) {
 					echo " en " . $reference;
 				} else {
-					echo " de 2016 à 2025";
+					echo " de 2016 à 2026";
 				}
 			}
 			echo "</h1><br/>";

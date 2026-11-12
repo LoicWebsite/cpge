@@ -72,6 +72,12 @@
 	position: static;
 }
 
+/* le style global des td met des pointillés ; le bas du tableau est une ligne pleine */
+.table-methode tbody tr:last-child td,
+.table-methode tbody tr:last-child th {
+	border-bottom: 1px solid #666666;
+}
+
 .table-coefficients td.repli {
 	color: #868e96;
 	font-style: italic;

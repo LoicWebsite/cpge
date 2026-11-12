@@ -85,7 +85,7 @@
 							<input type="radio" id="anEcoleToutes" name="anneeEcole" class="form-check-input" value="toutes" <?= ($anneeEcole === 'toutes') ? 'checked' : '' ?> onchange="rafraichirListeEcoles(this.value)">
 							<label class="form-check-label" for="anEcoleToutes">toutes</label>
 						</div>
-						<?php foreach (range(2025, 2016) as $anneeRadio): ?>
+						<?php foreach (range(2026, 2016) as $anneeRadio): ?>
 						<div class="form-check form-check-inline">
 							<input type="radio" id="anEcole<?= $anneeRadio ?>" name="anneeEcole" class="form-check-input" value="<?= $anneeRadio ?>" <?= ($anneeEcole === (string) $anneeRadio) ? 'checked' : '' ?> onchange="rafraichirListeEcoles(this.value)">
 							<label class="form-check-label" for="anEcole<?= $anneeRadio ?>"><?= $anneeRadio ?></label>

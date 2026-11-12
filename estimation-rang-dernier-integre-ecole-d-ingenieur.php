@@ -143,8 +143,11 @@ $libelles = libellesFilieres();
 			<?php if ($exemple !== null): ?>
 				<?php $estimationExemple = estimationDeLigne(array_merge($exemple, ['Dernier' => 0])); ?>
 				<?php if ($estimationExemple !== null): ?>
-					<p class="small text-secondary text-center mb-0">Exemple réel : Centrale Méditerranée, MP, concours <?php echo escapeHtml($exemple['An']); ?> (<?php echo escapeHtml(formater($exemple['Integre'], 0)); ?> admis, rang médian <?php echo escapeHtml(formater($exemple['RangMedian'], 0)); ?>).</p>
-					<?php afficherThermometreDernier($estimationExemple, false); ?>
+					<div class="exemple-estimation" role="group" aria-label="Exemple">
+						<span class="exemple-etiquette">Exemple</span>
+						<p class="exemple-legende">Centrale Méditerranée, MP, concours <?php echo escapeHtml($exemple['An']); ?> · <?php echo escapeHtml(formater($exemple['Integre'], 0)); ?> admis, rang médian <?php echo escapeHtml(formater($exemple['RangMedian'], 0)); ?></p>
+						<?php afficherThermometreDernier($estimationExemple, false); ?>
+					</div>
 				<?php endif; ?>
 			<?php endif; ?>
 		</section>
@@ -281,5 +284,13 @@ $libelles = libellesFilieres();
 		</div>
 	</main>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" defer></script>
+	<script>
+		// Bootstrap est chargé en defer : on attend DOMContentLoaded pour activer les tooltips HTML.
+		document.addEventListener('DOMContentLoaded', function () {
+			document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (element) {
+				new bootstrap.Tooltip(element);
+			});
+		});
+	</script>
 </body>
 </html>

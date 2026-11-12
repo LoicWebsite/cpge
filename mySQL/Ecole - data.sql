@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : mer. 04 nov. 2026 à 17:46
+-- Généré le : jeu. 12 nov. 2026 à 17:20
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -88,7 +88,7 @@ INSERT INTO `Ecole` (`IdEcole`, `Ecole`, `UrlEcole`, `Resume`) VALUES
 (60, 'MINES Paris', 'https://www.minesparis.psl.eu', 'École généraliste associant sciences fondamentales, ingénierie, industrie et sciences économiques et sociales.'),
 (61, 'EIVP Paris', 'https://www.eivp-paris.fr', 'École spécialisée en génie urbain, aménagement, construction, mobilités et environnement des villes.'),
 (62, 'ECOLE Météorologie', 'https://meteofrance.fr/enm', 'École spécialisée en météorologie, sciences de l’atmosphère, prévision et climat.'),
-(63, 'ENSG-Géomatique', 'https://www.ensg.eu', 'École spécialisée en géomatique, géodésie, cartographie et traitement des données géographiques.'),
+(63, 'Géodata Paris', 'https://geodata-paris.fr/fr', 'École spécialisée en géomatique, géodésie, cartographie et traitement des données géographiques.'),
 (64, 'ENSSAT Lannion', 'https://www.enssat.fr', 'École proposant des cursus spécialisés en informatique, photonique et électronique.'),
 (65, 'ENSTA Bretagne', 'https://www.ensta-bretagne.fr/fr', 'École généraliste en ingénierie, avec des orientations historiques maritime, mécanique, énergie et défense.'),
 (66, 'ENTPE Lyon', 'https://www.entpe.fr', 'École d’ingénieurs spécialisée en aménagement, bâtiment, génie civil, environnement et transports.'),
@@ -181,7 +181,7 @@ INSERT INTO `Ecole` (`IdEcole`, `Ecole`, `UrlEcole`, `Resume`) VALUES
 (153, 'ICAM', 'https://www.icam.fr', 'École généraliste à dominante industrielle, associant mécanique, énergétique, génie électrique et production.'),
 (154, 'JUNIA ISEN', 'https://www.isen-lille.fr', 'École spécialisée dans le numérique, l\'informatique, l\'électronique, la cybersécurité et les systèmes embarqués.'),
 (155, 'ISEN Méditerranée', 'https://www.isen-mediterranee.fr', 'École spécialisée en électronique et numérique, notamment logiciels, cybersécurité, systèmes embarqués et santé connectée.'),
-(156, 'ISEN Yncrea Ouest', 'https://isen-brest.fr', 'École spécialisée dans les technologies numériques, notamment informatique, cybersécurité, électronique et systèmes embarqués.'),
+(156, 'ISEN Ouest', 'https://isen-ouest.fr', 'École spécialisée dans les technologies numériques, notamment informatique, cybersécurité, électronique et systèmes embarqués.'),
 (157, 'ISEP Paris', 'https://www.isep.fr', 'École d\'ingénieurs spécialisée en numérique, informatique, réseaux, électronique et systèmes connectés.'),
 (158, 'UniLaSalle', 'https://www.unilasalle.fr', 'École pluridisciplinaire proposant notamment des formations en agronomie, agroalimentaire, géologie, environnement et énergétique.'),
 (159, 'ENSIIE Évry', 'https://www.ensiie.fr', 'École spécialisée en informatique et mathématiques appliquées, notamment intelligence artificielle, optimisation et science des données.'),
@@ -213,7 +213,9 @@ INSERT INTO `Ecole` (`IdEcole`, `Ecole`, `UrlEcole`, `Resume`) VALUES
 (190, 'EIJV', 'https://eijv.u-picardie.fr', 'École pluridisciplinaire proposant des formations en cybersécurité, logistique, énergétique et numérique appliqué à la santé.'),
 (191, 'Centrale Casablanca', 'https://centrale-casablanca.ma', 'École généraliste couvrant les sciences de l’ingénieur, les systèmes complexes et les technologies industrielles.'),
 (192, 'ESFF', 'https://www.esff.fr', 'École spécialisée en fonderie, forge et métallurgie, de la conception aux procédés industriels.'),
-(193, 'INSA Euro-Méditerranée', NULL, 'Ecole fermée');
+(193, 'INSA Euro-Méditerranée', NULL, 'Ecole fermée'),
+(194, 'Centrale Lyon - ENISE', 'https://enise.ec-lyon.fr', 'Ecole spécialisée en génie mécanique, génie civil et génie sensoriel.'),
+(195, 'MIRA', 'https://mira-ingenieurs.com', 'Ecole spécialisée en robotique et informatique.');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

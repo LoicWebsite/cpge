@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : jeu. 05 nov. 2026 à 16:47
+-- Généré le : jeu. 12 nov. 2026 à 17:21
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -1609,7 +1609,14 @@ INSERT INTO `Specialite` (`IdDiplome`, `IdSpecialite`, `Groupe`, `Specialite`, `
 (413, 1592, NULL, 'Énergétique', 'FISE', NULL),
 (414, 1593, NULL, 'Génie Urbain et Environnement', 'FISE', NULL),
 (415, 1594, NULL, 'Smart Grids', 'FISE', '3A'),
-(415, 1595, NULL, 'Smart Buildings', 'FISE', '3A');
+(415, 1595, NULL, 'Smart Buildings', 'FISE', '3A'),
+(417, 1596, NULL, 'Human Centered Robotics (HCR)', 'FISE', NULL),
+(417, 1597, NULL, 'Artificial Intelligence for Mobile Robots (AIMR)', 'FISE', NULL),
+(420, 1598, NULL, 'Bâtiments', 'FISE', NULL),
+(420, 1599, NULL, 'Ouvrages et travaux publics', 'FISE', NULL),
+(420, 1600, NULL, 'Eco-construction, bois, environnement', 'FISE', NULL),
+(419, 1601, 'Apprentissage', 'Conception des systèmes innovants', 'FISE', NULL),
+(419, 1602, 'Apprentissage', 'Fabrication innovante et pilotage industriel', 'FISE', NULL);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

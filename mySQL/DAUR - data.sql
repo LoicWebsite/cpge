@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : ven. 30 oct. 2026 à 17:09
+-- Généré le : jeu. 12 nov. 2026 à 17:19
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -69,7 +69,6 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`) VALUES
 (2022, 39, 'BBB', 'ENSEGID', 47),
 (2022, 73, 'BB', 'ENSEM', 40),
 (2022, 31, 'A', 'ENSG Nancy', 52),
-(2022, 67, 'BB', 'ENSG-Géomatique', 41),
 (2022, 91, 'B', 'ENSGSI - Lorraine', 36),
 (2022, 76, 'BB', 'ENSGTI Pau', 39),
 (2022, 105, 'CCC', 'ENSI Poitiers', 34),
@@ -115,6 +114,7 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`) VALUES
 (2022, 52, 'BBB', 'ESTACA', 44),
 (2022, 132, 'CC', 'ESTIA Bidart', 29),
 (2022, 73, 'BB', 'ESTP Paris', 40),
+(2022, 67, 'BB', 'Géodata Paris', 41),
 (2022, 36, 'A', 'Grenoble INP - ENSE3', 50),
 (2022, 16, 'AA', 'Grenoble INP - Ensimag', 62),
 (2022, 76, 'BB', 'Grenoble INP - Esisar', 39),
@@ -142,7 +142,7 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`) VALUES
 (2022, 126, 'CC', 'ISAT Nevers', 30),
 (2022, 145, 'C', 'ISEL Le Havre', 25),
 (2022, 151, 'C', 'ISEN Méditerranée', 22),
-(2022, 138, 'C', 'ISEN Yncrea Ouest', 28),
+(2022, 138, 'C', 'ISEN Ouest', 28),
 (2022, 91, 'B', 'ISEP Paris', 36),
 (2022, 142, 'C', 'ISIFC Besançon', 26),
 (2022, 76, 'BB', 'ISIMA Clermont-Ferrand', 39),
@@ -229,7 +229,6 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`) VALUES
 (2023, 63, 'BB', 'ENSEGID', 40),
 (2023, 63, 'BB', 'ENSEM', 40),
 (2023, 18, 'AA', 'ENSG Nancy', 62),
-(2023, 119, 'CC', 'ENSG-Géomatique', 30),
 (2023, 99, 'CCC', 'ENSGSI - Lorraine', 33),
 (2023, 69, 'BB', 'ENSGTI Pau', 38),
 (2023, 92, 'B', 'ENSI Poitiers', 34),
@@ -276,6 +275,7 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`) VALUES
 (2023, 160, 'C', 'ESTIA Bidart', 20),
 (2023, 58, 'BBB', 'ESTP Paris', 41),
 (2023, 34, 'A', 'EURECOM', 50),
+(2023, 119, 'CC', 'Géodata Paris', 30),
 (2023, 38, 'A', 'Grenoble INP - ENSE3', 48),
 (2023, 24, 'AA', 'Grenoble INP - Ensimag', 57),
 (2023, 107, 'CCC', 'Grenoble INP - Esisar', 32),
@@ -305,7 +305,7 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`) VALUES
 (2023, 134, 'CC', 'ISAT Nevers', 28),
 (2023, 141, 'C', 'ISEL Le Havre', 27),
 (2023, 163, 'C', 'ISEN Méditerranée', 18),
-(2023, 163, 'C', 'ISEN Yncrea Ouest', 18),
+(2023, 163, 'C', 'ISEN Ouest', 18),
 (2023, 124, 'CC', 'ISEP Paris', 29),
 (2023, 81, 'B', 'ISIFC Besançon', 36),
 (2023, 116, 'CC', 'ISIMA Clermont-Ferrand', 31),
@@ -428,7 +428,6 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`) VALUES
 (2025, 68, 'BB', 'ENSEGID', 39),
 (2025, 97, 'BB', 'ENSEM', 35),
 (2025, 24, 'A', 'ENSG Nancy', 48),
-(2025, 53, 'BBB', 'ENSG-Géomatique', 42),
 (2025, 97, 'BB', 'ENSGSI - Lorraine', 35),
 (2025, 89, 'BB', 'ENSGTI Pau', 36),
 (2025, 83, 'BB', 'ENSI Poitiers', 37),
@@ -476,6 +475,7 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`) VALUES
 (2025, 131, 'B', 'ESTIA Bidart', 30),
 (2025, 43, 'BBB', 'ESTP Paris', 43),
 (2025, 35, 'A', 'EURECOM', 45),
+(2025, 53, 'BBB', 'Géodata Paris', 42),
 (2025, 35, 'A', 'Grenoble INP - ENSE3', 45),
 (2025, 19, 'AA', 'Grenoble INP - Ensimag', 51),
 (2025, 75, 'BB', 'Grenoble INP - Esisar', 38),
@@ -505,7 +505,7 @@ INSERT INTO `DAUR` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`) VALUES
 (2025, 101, 'B', 'ISAT Nevers', 34),
 (2025, 180, 'CC', 'ISEL Le Havre', 21),
 (2025, 156, 'CCC', 'ISEN Méditerranée', 27),
-(2025, 170, 'CC', 'ISEN Yncrea Ouest', 24),
+(2025, 170, 'CC', 'ISEN Ouest', 24),
 (2025, 131, 'B', 'ISEP Paris', 30),
 (2025, 131, 'B', 'ISIFC Besançon', 30),
 (2025, 53, 'BBB', 'ISIMA Clermont-Ferrand', 42),

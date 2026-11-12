@@ -302,8 +302,8 @@
 			<div id="listeEcoles"></div>
 			<div class='border-top mt-4 pt-3'>
 				<ul class='text-muted small mb-0'>
-					<li>Les spécialités recensées sont celles de toutes les écoles accessibles aux CPGE.</li>
-					<li>Les spécialités correspondent aux spécialisations choisies par les étudiants. Elles se distinguent des enseignements fondamentaux et des orientations professionnelles (recherche, conseil, entrepreneuriat, etc.) qui peuvent compléter le parcours.</li>
+					<li>Les spécialités recensées sont celles de toutes les écoles accessibles aux CPGE. Les spécialités ont été rencensées en 2026 (sources : les sites Web des écoles).</li>
+					<li>Les spécialités correspondent aux spécialisations choisies par les étudiants en général en 3A ou en 2A. Elles se distinguent des enseignements fondamentaux et des orientations professionnelles (recherche, conseil, entrepreneuriat, etc.) qui peuvent compléter le parcours.</li>
 				</ul>
 			</div>
 			<div class="d-flex flex-wrap justify-content-center gap-2 mt-4">

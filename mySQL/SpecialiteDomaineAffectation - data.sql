@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : jeu. 05 nov. 2026 à 16:46
+-- Généré le : jeu. 12 nov. 2026 à 17:22
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -2447,7 +2447,19 @@ INSERT INTO `SpecialiteDomaineAffectation` (`IdSpecialite`, `IdDomaine`, `Decisi
 (1594, 9, 'inclure', 'manuel', '2026-11-04 08:39:12'),
 (1594, 10, 'inclure', 'manuel', '2026-11-04 08:39:12'),
 (1595, 9, 'inclure', 'manuel', '2026-11-04 08:39:12'),
-(1595, 15, 'inclure', 'manuel', '2026-11-04 08:39:12');
+(1595, 15, 'inclure', 'manuel', '2026-11-04 08:39:12'),
+(1596, 17, 'inclure', 'manuel', '2026-11-12 15:42:13'),
+(1597, 17, 'inclure', 'manuel', '2026-11-12 15:42:13'),
+(1597, 21, 'inclure', 'manuel', '2026-11-12 15:42:13'),
+(1597, 22, 'inclure', 'manuel', '2026-11-12 15:42:13'),
+(1598, 15, 'inclure', 'manuel', '2026-11-12 15:42:13'),
+(1599, 15, 'inclure', 'manuel', '2026-11-12 15:42:13'),
+(1600, 4, 'inclure', 'manuel', '2026-11-12 15:42:13'),
+(1600, 15, 'inclure', 'manuel', '2026-11-12 15:42:13'),
+(1601, 16, 'inclure', 'manuel', '2026-11-12 15:42:13'),
+(1601, 26, 'inclure', 'manuel', '2026-11-12 15:42:13'),
+(1602, 16, 'inclure', 'manuel', '2026-11-12 15:42:13'),
+(1602, 26, 'inclure', 'manuel', '2026-11-12 15:42:13');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

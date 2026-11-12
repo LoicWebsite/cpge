@@ -4,7 +4,7 @@
 	$debug = (isset($_GET['debug']) && $_GET['debug'] === "true");
 
 	// --- LISTES BLANCHES ---
-	$allowed_years = ["2025","2024","2023","2022","2021","2020","2019","2018","2017","2016","toutes"];
+	$allowed_years = ["2026","2025","2024","2023","2022","2021","2020","2019","2018","2017","2016","toutes"];
 	$allowed_filieres = ["mp","pc","psi","tpc","pt","bcpst","tsi","tb","mpi"];
 
 	// --- PARAMÈTRES WHITELIST / SECURISES ---
@@ -25,11 +25,11 @@
 		$reference = "toutes";
 	}
 
-	$an = isset($_GET['an']) ? trim($_GET['an']) : "2025";
+	$an = isset($_GET['an']) ? trim($_GET['an']) : "2026";
 	$an = preg_replace("/[^0-9a-zA-Z]/", "", $an);
 	$an = substr($an, 0, 6);
 	if (!in_array($an, $allowed_years)) {
-		$an = "2025";
+		$an = "2026";
 	}
 
 	// Paramètres “libres” : on autorise tout, 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : ven. 30 oct. 2026 à 17:10
+-- Généré le : jeu. 12 nov. 2026 à 17:20
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -105,7 +105,7 @@ INSERT INTO `EcoleSalaire` (`uo_lib`, `denomination_principale`, `Ecole`, `Origi
 ('EPF - École d\'ingénieurs', 'EC POLYTECHNIQUE FEMININE CACH', 'EPF', NULL),
 ('ESIEE Paris', '', 'ESIEE Paris', 'auto'),
 ('ESIEE-IT', '', NULL, NULL),
-('Géodata Paris', '', 'ENSG-Géomatique', NULL),
+('Géodata Paris', '', 'Géodata Paris', NULL),
 ('Groupe ENSAE-ENSAI', 'ECOLE NATIONALE DE STATISTIQUE', 'ENSAE Paris', NULL),
 ('Groupe ENSAE-ENSAI', 'EN STAT ANALYSE INFO BRUZ', 'ENSAI Rennes', NULL),
 ('Groupe Institut catholique d\'arts et métiers', 'ECAM STRASBOURG - EUROPE', NULL, NULL),
@@ -141,7 +141,7 @@ INSERT INTO `EcoleSalaire` (`uo_lib`, `denomination_principale`, `Ecole`, `Origi
 ('Institut supérieur d\'agriculture Rhône-Alpes', '', NULL, NULL),
 ('Institut supérieur d\'électronique de Paris', '', 'ISEP Paris', 'auto'),
 ('Institut supérieur de l\'aéronautique et de l\'espace', '', 'ISAE - SUPAERO', NULL),
-('Institut supérieur de l\'électronique et du numérique de Brest', '', 'ISEN Yncrea Ouest', NULL),
+('Institut supérieur de l\'électronique et du numérique de Brest', '', 'ISEN Ouest', NULL),
 ('Institut textile et chimique', '', 'ITECH', NULL),
 ('ISAE-Supméca', '', 'ISAE-Supméca', 'auto'),
 ('ISEN Yncréa Méditerranée', '', 'ISEN Méditerranée', NULL),

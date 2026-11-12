@@ -114,7 +114,13 @@ function afficherThermometreDernier(array $estimation, bool $avecLien = true): v
 		}
 		echo "<span class='thermo-zone thermo-incertain' style='width:" . pourcentageLargeur($plafond - $fin, $plafond) . "%'></span>";
 		echo "</div>";
-		echo "<div class='thermo-echelle'><span>rang 1</span><span>rang " . escapeHtml(formater($plafond, 0)) . "</span></div>";
+		// Échelle : trait + nombre au début, au minimum garanti (frontière de la zone assurée) et au maximum.
+		// Les valeurs sont aussi dans la légende et l'alternative textuelle.
+		echo "<div class='thermo-echelle' aria-hidden='true' style='--pos:" . pourcentageLargeur($plancher, $plafond) . "%'>"
+		   . "<i class='thermo-repere' style='left:0'></i><span class='thermo-debut'>1</span>"
+		   . "<i class='thermo-repere' style='left:var(--pos);margin-left:-1px'></i><span class='thermo-minimum'>" . escapeHtml(formater($plancher, 0)) . "</span>"
+		   . "<i class='thermo-repere' style='right:0'></i><span class='thermo-fin'>" . escapeHtml(formater($plafond, 0)) . "</span>"
+		   . "</div>";
 	}
 
 	echo "<ul class='thermo-legende list-unstyled mb-2'>";

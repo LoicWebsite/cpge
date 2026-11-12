@@ -4,7 +4,7 @@
 	/**
 	 * ============================================================================
 	 * Page : Résultats d'intégration par école (tableau EcoleConcours x Filière
-	 *        x Concours x Année, 2016-2025)
+	 *        x Concours x Année, 2016-2026)
 	 * ============================================================================
 	 *
 	 * PROBLÈME ERGONOMIQUE RÉSOLU PAR CETTE VERSION :
@@ -278,7 +278,7 @@
 				. ' FROM Note n' . $jointureEstimation
 				. ' WHERE n.EcoleConcours = :ecole AND n.Filiere = :filiere AND n.Concours = :concours AND n.An = :an';
 			$stmtNote = $db->prepare($sqlNote);
-			$annees = $anneeUnique ? [$anneeEcole] : ['2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016'];
+			$annees = $anneeUnique ? [$anneeEcole] : ['2026', '2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018', '2017', '2016'];
 
 			// Nombre d'années affichées par défaut : plus l'historique grandit (une
 			// nouvelle colonne par an), plus le tableau devient large et le défilement
@@ -426,7 +426,8 @@
 			echo "<thead class='text-center'>";
 
 			// Ligne d'en-tête d'explication du code couleur (rang médian / rang dernier).
-			// La cellule colspan=8 (2025-2018, mélange d'années récentes et anciennes)
+			// La cellule qui couvre toutes les années sauf 2017 et 2016 (colspan = nombre
+			// d'années - 2, mélange d'années récentes et anciennes)
 			// reste TOUJOURS visible : la masquer en mode "4 années récentes" ferait
 			// disparaître un texte qui reste pertinent pour les colonnes encore affichées,
 			// et cassait auparavant l'encadrement du tableau. En revanche la cellule
@@ -445,7 +446,7 @@
 			echo "<th style='position:static; border-left-style:none;'></th>";
 			// Année unique demandée : une seule colonne, donc une seule cellule
 			// d'explication (colspan=1) au lieu du découpage récent/ancien.
-			echo "<th style='position:static;' colspan=" . ($anneeUnique ? 1 : 8) . ">Intégrés : Rang médian / Inscrits&nbsp;&nbsp;<span style='font-weight:normal'>(en noir)</span><br/>Intégrés : Rang dernier / Inscrits&nbsp;&nbsp;<span style='font-weight:normal'>(en bleu. <i>italique</i> &ge; si estimé)</span><br/>
+			echo "<th style='position:static;' colspan=" . ($anneeUnique ? 1 : count($annees) - 2) . ">Intégrés : Rang médian / Inscrits&nbsp;&nbsp;<span style='font-weight:normal'>(en noir)</span><br/>Intégrés : Rang dernier / Inscrits&nbsp;&nbsp;<span style='font-weight:normal'>(en bleu. <i>italique</i> &ge; si estimé)</span><br/>
 								<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Lorsque le rang du dernier admis est connu c&apos;est celui-ci qui est affiché (en bleu).<br/>
 								<br/>&bull; Sinon il est estimé quand c&apos;est possible : valeur en bleu <i>italique</i> précédée de &ge; (minimum garanti ; passer la souris sur la valeur pour voir les autres repères).<br/>
 								<br/>&bull; À défaut d&apos;estimation possible (par exemple les écoles recrutant des fonctionnaires) c&apos;est le rang médian qui est affiché (en noir).<br/>
@@ -455,7 +456,7 @@
 				// Cette cellule ne couvre que 2017 et 2016 : ces deux années sont TOUJOURS
 				// dans le groupe "années anciennes" (voir $anneesRecentes), elle peut donc
 				// porter sans risque la classe qui la masque en mode "4 années récentes"
-				// (contrairement à la cellule colspan=8 ci-dessus, qui mélange années
+				// (contrairement à la cellule ci-dessus, qui mélange années
 				// récentes et anciennes et doit rester visible en permanence).
 				echo "<th style='position:static;' colspan=2 class='colonne-annee-ancienne'>Intégrés : Rang dernier / Inscrits<br/><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='En 2017 et 2016 le rang du dernier appelé est sytématiquement renseigné dans SCEI. C&apos;est lui qui est affiché.'></i></th>";
 			}

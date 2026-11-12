@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : ven. 30 oct. 2026 à 17:11
+-- Généré le : jeu. 12 nov. 2026 à 17:21
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -70,7 +70,6 @@ INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`
 (2022, 139, 'C', 'ENSEGID', 21, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-en-environnement-georessources-et-ingenierie-du-develo-79530.html'),
 (2022, 49, 'B', 'ENSEM', 32, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-d-electricite-et-de-mecanique-5516.html'),
 (2022, 49, 'B', 'ENSG Nancy', 32, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-de-geologie-5517.html'),
-(2022, 130, 'C', 'ENSG-Géomatique', 23, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-des-sciences-geographiques-7249.html'),
 (2022, 105, 'B', 'ENSGSI - Lorraine', 26, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-en-genie-des-systemes-et-de-l-innovation-5515.html'),
 (2022, 122, 'B', 'ENSGTI Pau', 24, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-en-genie-des-technologies-industrielles-6065.html'),
 (2022, 49, 'B', 'ENSIACET', 32, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-ingenieurs-en-arts-chimiques-et-technologiques-4490.html'),
@@ -112,6 +111,7 @@ INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`
 (2022, 42, 'A', 'ESTACA', 34, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-des-techniques-aeronautiques-et-de-construction-automobile-7778.html'),
 (2022, 42, 'A', 'ESTIA Bidart', 34, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-des-technologies-industrielles-avancees-6064.html'),
 (2022, 39, 'A', 'ESTP Paris', 35, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-speciale-des-travaux-publics-du-batiment-et-de-l-industrie-6881.html'),
+(2022, 130, 'C', 'Géodata Paris', 23, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-des-sciences-geographiques-7249.html'),
 (2022, 22, 'A', 'Grenoble INP - ENSE3', 40, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-de-l-energie-l-eau-et-l-environnement-4953.html'),
 (2022, 14, 'A+', 'Grenoble INP - Ensimag', 44, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-d-informatique-et-de-mathematiques-appliquees-4947.html'),
 (2022, 49, 'B', 'Grenoble INP - Esisar', 32, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-en-systemes-avances-et-reseaux-4220.html'),
@@ -140,7 +140,7 @@ INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`
 (2022, 130, 'C', 'ISAT Nevers', 23, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-de-l-automobile-et-des-transports-5654.html'),
 (2022, 147, 'C', 'ISEL Le Havre', 17, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-d-etudes-logistiques-7132.html'),
 (2022, 135, 'C', 'ISEN Méditerranée', 22, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-de-l-electronique-et-du-numerique-de-toulon-7447.html'),
-(2022, 78, 'B', 'ISEN Yncrea Ouest', 29, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-de-l-electronique-et-du-numerique-de-brest-4303.html'),
+(2022, 78, 'B', 'ISEN Ouest', 29, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-de-l-electronique-et-du-numerique-de-brest-4303.html'),
 (2022, 39, 'A', 'ISEP Paris', 35, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-d-electronique-de-paris-ecole-d-ingenieurs-du-numerique-6948.html'),
 (2022, 130, 'C', 'ISIFC Besançon', 23, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-d-ingenieurs-de-franche-comte-4197.html'),
 (2022, 71, 'B', 'ISIMA Clermont-Ferrand', 30, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-d-informatique-d-auvergne-6020.html'),
@@ -224,7 +224,6 @@ INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`
 (2023, 37, 'A+', 'ENSEEIHT', 64, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-d-electrotechnique-d-electronique-d-informatique-d-hydr-4492.html'),
 (2023, 63, 'A', 'ENSEM', 54, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-d-electricite-et-de-mecanique-5516.html'),
 (2023, 58, 'A', 'ENSG Nancy', 56, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-de-geologie-5517.html'),
-(2023, 113, 'B', 'ENSG-Géomatique', 45, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-des-sciences-geographiques-7249.html'),
 (2023, 76, 'A', 'ENSGSI - Lorraine', 51, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-en-genie-des-systemes-et-de-l-innovation-5515.html'),
 (2023, 97, 'B', 'ENSGTI Pau', 48, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-en-genie-des-technologies-industrielles-6065.html'),
 (2023, 48, 'A', 'ENSIACET', 60, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-des-ingenieurs-en-arts-chimiques-et-technologiques-4490.html'),
@@ -265,6 +264,7 @@ INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`
 (2023, 71, 'A', 'ESTACA', 52, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-des-techniques-aeronautiques-et-de-construction-automobile-7778.html'),
 (2023, 58, 'A', 'ESTIA Bidart', 56, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-superieure-des-technologies-industrielles-avancees-6064.html'),
 (2023, 71, 'A', 'ESTP Paris', 52, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-speciale-des-travaux-publics-du-batiment-et-de-l-industrie-6881.html'),
+(2023, 113, 'B', 'Géodata Paris', 45, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-des-sciences-geographiques-7249.html'),
 (2023, 22, 'A+', 'Grenoble INP - ENSE3', 72, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-de-l-energie-l-eau-et-l-environnement-4953.html'),
 (2023, 13, 'A+', 'Grenoble INP - Ensimag', 79, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-d-informatique-et-de-mathematiques-appliquees-4947.html'),
 (2023, 109, 'B', 'Grenoble INP - Esisar', 46, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-ecole-nationale-superieure-en-systemes-avances-et-reseaux-4220.html'),
@@ -294,7 +294,7 @@ INSERT INTO `Letudiant` (`An`, `Rang`, `Groupe`, `Ecole`, `Point`, `UrlEtudiant`
 (2023, 133, 'C', 'ISAT Nevers', 39, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-de-l-automobile-et-des-transports-5654.html'),
 (2023, 137, 'C', 'ISEL Le Havre', 37, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-d-etudes-logistiques-7132.html'),
 (2023, 147, 'C', 'ISEN Méditerranée', 29, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-de-l-electronique-et-du-numerique-de-toulon-7447.html'),
-(2023, 71, 'A', 'ISEN Yncrea Ouest', 52, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-de-l-electronique-et-du-numerique-de-brest-4303.html'),
+(2023, 71, 'A', 'ISEN Ouest', 52, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-de-l-electronique-et-du-numerique-de-brest-4303.html'),
 (2023, 55, 'A', 'ISEP Paris', 58, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-d-electronique-de-paris-ecole-d-ingenieurs-du-numerique-6948.html'),
 (2023, 133, 'C', 'ISIFC Besançon', 39, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-superieur-d-ingenieurs-de-franche-comte-4197.html'),
 (2023, 81, 'B', 'ISIMA Clermont-Ferrand', 50, 'https://www.letudiant.fr/etudes/annuaire-enseignement-superieur/etablissement/etablissement-institut-d-informatique-d-auvergne-6020.html'),

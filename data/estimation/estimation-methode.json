@@ -1,8 +1,8 @@
 {
- "genere": "2026-11-08",
+ "genere": "2026-11-11",
  "annee_min": 2018,
- "annee_max": 2025,
- "lignes_calibrage": 2681,
+ "annee_max": 2026,
+ "lignes_calibrage": 2869,
  "quantile": 0.25,
  "effectif_min_filiere": 40,
  "bandes": [
@@ -15,30 +15,30 @@
   {
    "filiere": "toutes",
    "bande": "1",
-   "lignes": 789,
+   "lignes": 798,
    "source": "toutes",
    "c25": 0.0
   },
   {
    "filiere": "toutes",
    "bande": "2-9",
-   "lignes": 845,
+   "lignes": 900,
    "source": "toutes",
    "c25": 0.052
   },
   {
    "filiere": "toutes",
    "bande": "10-29",
-   "lignes": 444,
+   "lignes": 496,
    "source": "toutes",
-   "c25": 0.102
+   "c25": 0.1
   },
   {
    "filiere": "toutes",
    "bande": "30+",
-   "lignes": 603,
+   "lignes": 675,
    "source": "toutes",
-   "c25": 0.143
+   "c25": 0.144
   },
   {
    "filiere": "bcpst",
@@ -50,23 +50,23 @@
   {
    "filiere": "bcpst",
    "bande": "2-9",
-   "lignes": 119,
+   "lignes": 128,
    "source": "filière",
-   "c25": 0.059
+   "c25": 0.068
   },
   {
    "filiere": "bcpst",
    "bande": "10-29",
-   "lignes": 61,
+   "lignes": 65,
    "source": "filière",
    "c25": 0.193
   },
   {
    "filiere": "bcpst",
    "bande": "30+",
-   "lignes": 122,
+   "lignes": 136,
    "source": "filière",
-   "c25": 0.127
+   "c25": 0.131
   },
   {
    "filiere": "mp",
@@ -78,107 +78,107 @@
   {
    "filiere": "mp",
    "bande": "2-9",
-   "lignes": 103,
+   "lignes": 102,
    "source": "filière",
-   "c25": 0.047
+   "c25": 0.044
   },
   {
    "filiere": "mp",
    "bande": "10-29",
-   "lignes": 84,
+   "lignes": 95,
    "source": "filière",
-   "c25": 0.08
+   "c25": 0.077
   },
   {
    "filiere": "mp",
    "bande": "30+",
-   "lignes": 190,
+   "lignes": 212,
    "source": "filière",
-   "c25": 0.139
+   "c25": 0.138
   },
   {
    "filiere": "mpi",
    "bande": "1",
-   "lignes": 71,
+   "lignes": 74,
    "source": "filière",
    "c25": 0.0
   },
   {
    "filiere": "mpi",
    "bande": "2-9",
-   "lignes": 69,
+   "lignes": 83,
    "source": "filière",
-   "c25": 0.058
+   "c25": 0.049
   },
   {
    "filiere": "mpi",
    "bande": "10-29",
-   "lignes": 40,
+   "lignes": 51,
    "source": "filière",
-   "c25": 0.112
+   "c25": 0.092
   },
   {
    "filiere": "mpi",
    "bande": "30+",
-   "lignes": 7,
+   "lignes": 11,
    "source": "toutes",
-   "c25": 0.143
+   "c25": 0.144
   },
   {
    "filiere": "pc",
    "bande": "1",
-   "lignes": 103,
+   "lignes": 104,
    "source": "filière",
    "c25": 0.0
   },
   {
    "filiere": "pc",
    "bande": "2-9",
-   "lignes": 130,
+   "lignes": 138,
    "source": "filière",
    "c25": 0.052
   },
   {
    "filiere": "pc",
    "bande": "10-29",
-   "lignes": 115,
+   "lignes": 126,
    "source": "filière",
-   "c25": 0.096
+   "c25": 0.091
   },
   {
    "filiere": "pc",
    "bande": "30+",
-   "lignes": 132,
+   "lignes": 146,
    "source": "filière",
-   "c25": 0.142
+   "c25": 0.145
   },
   {
    "filiere": "psi",
    "bande": "1",
-   "lignes": 83,
+   "lignes": 84,
    "source": "filière",
    "c25": 0.0
   },
   {
    "filiere": "psi",
    "bande": "2-9",
-   "lignes": 110,
+   "lignes": 114,
    "source": "filière",
-   "c25": 0.043
+   "c25": 0.04
   },
   {
    "filiere": "psi",
    "bande": "10-29",
-   "lignes": 91,
+   "lignes": 102,
    "source": "filière",
-   "c25": 0.1
+   "c25": 0.102
   },
   {
    "filiere": "psi",
    "bande": "30+",
-   "lignes": 136,
+   "lignes": 153,
    "source": "filière",
-   "c25": 0.163
+   "c25": 0.16
   },
   {
    "filiere": "pt",
@@ -190,23 +190,23 @@
   {
    "filiere": "pt",
    "bande": "2-9",
-   "lignes": 121,
+   "lignes": 131,
    "source": "filière",
    "c25": 0.047
   },
   {
    "filiere": "pt",
    "bande": "10-29",
-   "lignes": 44,
+   "lignes": 48,
    "source": "filière",
-   "c25": 0.172
+   "c25": 0.17
   },
   {
    "filiere": "pt",
    "bande": "30+",
    "lignes": 10,
    "source": "toutes",
-   "c25": 0.143
+   "c25": 0.144
   },
   {
    "filiere": "tb",
@@ -239,56 +239,56 @@
   {
    "filiere": "tsi",
    "bande": "1",
-   "lignes": 166,
+   "lignes": 170,
    "source": "filière",
    "c25": 0.0
   },
   {
    "filiere": "tsi",
    "bande": "2-9",
-   "lignes": 184,
+   "lignes": 195,
    "source": "filière",
-   "c25": 0.069
+   "c25": 0.062
   },
   {
    "filiere": "tsi",
    "bande": "10-29",
    "lignes": 9,
    "source": "toutes",
-   "c25": 0.102
+   "c25": 0.1
   },
   {
    "filiere": "tsi",
    "bande": "30+",
-   "lignes": 6,
+   "lignes": 7,
    "source": "toutes",
-   "c25": 0.143
+   "c25": 0.144
   }
  ],
  "validation": [
   {
    "bande": "2-9",
-   "lignes": 845,
-   "couverture": 0.774,
-   "milieu_egal_minimum": 0.142
+   "lignes": 900,
+   "couverture": 0.772,
+   "milieu_egal_minimum": 0.146
   },
   {
    "bande": "10-29",
-   "lignes": 444,
-   "couverture": 0.761,
-   "milieu_egal_minimum": 0.128
+   "lignes": 496,
+   "couverture": 0.744,
+   "milieu_egal_minimum": 0.121
   },
   {
    "bande": "30+",
-   "lignes": 603,
-   "couverture": 0.763,
-   "milieu_egal_minimum": 0.217
+   "lignes": 675,
+   "couverture": 0.756,
+   "milieu_egal_minimum": 0.219
   }
  ],
  "exclusions": {
   "interfiliere": 840,
-  "statut_particulier": 148,
-  "anomalies": 10
+  "statut_particulier": 190,
+  "anomalies": 11
  },
  "concours_interfilieres": [
   "Banque épreuves CCINP Inter-Filière",
@@ -300,7 +300,7 @@
   "Puissance Alpha"
  ],
  "maximum": {
-  "lignes_k_fiable": 2690,
+  "lignes_k_fiable": 2879,
   "depassements": 0
  }
 }

@@ -116,6 +116,38 @@ th {
 	cursor: help;
 }
 
+/* Exemple de la page méthode : cadre discret qui le distingue d'une vraie fiche école. */
+.exemple-estimation {
+	position: relative;
+	max-width: 720px;
+	margin: 1.75rem auto 0;
+	padding: 1.1rem 1rem .25rem;
+	border: 1px dashed #adb5bd;
+	border-radius: .5rem;
+	background: #f8f9fa;
+}
+
+.exemple-etiquette {
+	position: absolute;
+	top: -.7rem;
+	left: 1rem;
+	padding: .05rem .65rem;
+	border-radius: 1rem;
+	background: #6c757d;
+	color: #fff;
+	font-size: .7rem;
+	font-weight: 600;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+}
+
+.exemple-legende {
+	margin: 0;
+	text-align: center;
+	font-size: .8rem;
+	color: #6c757d;
+}
+
 .thermo-dernier {
 	max-width: 720px;
 	margin-left: auto;
@@ -161,12 +193,41 @@ th {
 	background: #dee2e6;
 }
 
+/* Échelle sous la barre : début, minimum garanti et maximum ont le même style (trait + nombre).
+   Le nombre du minimum reste dans le cadre et à l'écart des deux autres ; seul son trait garde la position exacte. */
 .thermo-echelle {
-	display: flex;
-	justify-content: space-between;
+	position: relative;
+	height: 1.6rem;
+	margin-top: 0rem;
 	font-size: .75rem;
-	color: #6c757d;
-	margin-top: .2rem;
+	font-weight: 600;
+	color: #495057;
+	white-space: nowrap;
+}
+
+.thermo-repere {
+	position: absolute;
+	top: 0;
+	height: .4rem;
+	border-left: 2px solid #495057;
+}
+
+.thermo-echelle span {
+	position: absolute;
+	top: .45rem;
+}
+
+.thermo-debut {
+	left: 0;
+}
+
+.thermo-fin {
+	right: 0;
+}
+
+.thermo-minimum {
+	left: min(max(var(--pos), 1.6rem), calc(100% - 3.2rem));
+	transform: translateX(-50%);
 }
 
 .thermo-legende {

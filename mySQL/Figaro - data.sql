@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : ven. 30 oct. 2026 à 17:11
+-- Généré le : jeu. 12 nov. 2026 à 17:20
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -56,7 +56,6 @@ INSERT INTO `Figaro` (`An`, `Rang`, `Ecole`, `Point`, `UrlFigaro`) VALUES
 (2023, 67, 'ENSEGID', 13.1, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34742-ensegid-diplomes-inscription-et-debouches/'),
 (2023, 42, 'Ensem', 13.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34686-ensem-inscription-debouches-et-prix/'),
 (2023, 32, 'ENSG Nancy', 14, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34688-ensg-nancy-diplomes-et-salaire-a-la-sortie/'),
-(2023, 72, 'ENSG-Géomatique', 13, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34728-ensg-geomatique-presentation-et-salaire-a-la-sortie/'),
 (2023, 72, 'ENSGTI Pau', 13, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34500-cpi-pau-ensgti/'),
 (2023, 67, 'ENSI Poitiers', 13.1, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34700-ensip-inscription-diplome-et-frais-de-scolarite/'),
 (2023, 47, 'ENSIACET', 13.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34714-ensiacet-specialites-admission-et-frais/'),
@@ -81,6 +80,7 @@ INSERT INTO `Figaro` (`An`, `Rang`, `Ecole`, `Point`, `UrlFigaro`) VALUES
 (2023, 10, 'ESPCI Paris', 15.3, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34612-espci-paris-psl-admission-prepa-et-classement/'),
 (2023, 60, 'ESTIA Bidart', 13.3, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/28804-cpbx-estia/'),
 (2023, 23, 'ESTP Paris', 14.5, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34648-estp-prepa-admission-et-prix/'),
+(2023, 72, 'Géodata Paris', 13, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34728-ensg-geomatique-presentation-et-salaire-a-la-sortie/'),
 (2023, 29, 'Grenoble INP - Ense3', 14.1, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34672-ense3-admission-et-tarif/'),
 (2023, 18, 'Grenoble INP - Ensimag', 14.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34638-ensimage-grenoble-inp-niveau-et-classement/'),
 (2023, 27, 'Grenoble INP - Génie industriel', 14.2, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34674-genie-industriel-grenoble-inp-admission-et-masters-proposes/'),
@@ -142,7 +142,6 @@ INSERT INTO `Figaro` (`An`, `Rang`, `Ecole`, `Point`, `UrlFigaro`) VALUES
 (2025, 18, 'ENSEEIHT', 14.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34652-enseeiht-toulouse-inp-programmes-concours/'),
 (2025, 68, 'ENSEGID', 12.8, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34742-ensegid-diplomes-inscription-et-debouches/'),
 (2025, 47, 'ENSEM', 13.4, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34686-ensem-inscription-debouches-et-prix/'),
-(2025, 53, 'ENSG-Géomatique', 13.2, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34728-ensg-geomatique-presentation-et-salaire-a-la-sortie/'),
 (2025, 35, 'ENSGSI - Lorraine', 13.8, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34688-ensg-nancy-diplomes-et-salaire-a-la-sortie/'),
 (2025, 53, 'ENSGTI Pau', 13.2, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34500-cpi-pau-ensgti/'),
 (2025, 68, 'ENSI Poitiers', 12.8, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34700-ensip-inscription-diplome-et-frais-de-scolarite/'),
@@ -168,6 +167,7 @@ INSERT INTO `Figaro` (`An`, `Rang`, `Ecole`, `Point`, `UrlFigaro`) VALUES
 (2025, 9, 'ESPCI Paris', 15.8, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34612-espci-paris-psl-admission-prepa-et-classement/'),
 (2025, 68, 'ESTIA Bidart', 12.8, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/28804-cpbx-estia/'),
 (2025, 31, 'ESTP Paris', 14, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34648-estp-prepa-admission-et-prix/'),
+(2025, 53, 'Géodata Paris', 13.2, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34728-ensg-geomatique-presentation-et-salaire-a-la-sortie/'),
 (2025, 37, 'Grenoble INP - ENSE3', 13.7, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34672-ense3-admission-et-tarif/'),
 (2025, 15, 'Grenoble INP - Ensimag', 14.8, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34638-ensimage-grenoble-inp-niveau-et-classement/'),
 (2025, 59, 'Grenoble INP - Génie industriel', 13.1, 'https://etudiant.lefigaro.fr/annuaire/ecole-d-ingenieur/34674-genie-industriel-grenoble-inp-admission-et-masters-proposes/'),

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : mer. 04 nov. 2026 à 17:46
+-- Généré le : jeu. 12 nov. 2026 à 17:20
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -121,7 +121,7 @@ INSERT INTO `Diplome` (`IdEcole`, `IdDiplome`, `Diplome`, `UrlFormation`) VALUES
 (44, 93, 'MINES Saint-Étienne', 'https://www.mines-stetienne.fr/programmes/ingenieur-civil-des-mines-icm/icm-details-du-programme'),
 (61, 94, 'EIVP Paris', 'https://www.eivp-paris.fr/sites/default/files/2025-10/programme_ivp_2025-2026_2.pdf'),
 (62, 95, 'ECOLE Météorologie', 'https://meteofrance.fr/enm/nos-formations/contenu-formation-ingenieur'),
-(63, 96, 'ENSG-Géomatique', 'https://geodata-paris.fr/fr/formation-initiale/cycle-ingenieur'),
+(63, 96, 'Ingénieur géomaticien', 'https://geodata-paris.fr/fr/formation-initiale/cycle-ingenieur'),
 (64, 97, 'ENSSAT Lannion - Photonique', 'https://www.enssat.fr/fr_FR/formations/formation-ingenieur-photonique'),
 (65, 98, 'ENSTA Bretagne', 'https://www.ensta.fr/formations/ingenieurs/ingenieur-generaliste/un-large-choix-dexpertise-en-3e-annee'),
 (66, 99, 'ENTPE Lyon', 'https://www.entpe.fr/majeures-et-mineures'),
@@ -343,7 +343,7 @@ INSERT INTO `Diplome` (`IdEcole`, `IdDiplome`, `Diplome`, `UrlFormation`) VALUES
 (134, 315, 'ESIEA Paris', 'https://www.esiea.fr/programme-ingenieur/cycle-ingenieur'),
 (139, 316, 'ESTIA Bidart', 'https://www.estia.fr/formations/ingenieur-generaliste-international'),
 (155, 317, 'ISEN Méditerranée', 'https://isen-mediterranee.fr/formation/cycle-ingenieur'),
-(156, 318, 'ISEN Yncrea Ouest', 'https://isen-ouest.fr/formations'),
+(156, 318, 'Diplôme d\'ingénieur ISEN Ouest', 'https://isen-ouest.fr/formations'),
 (157, 319, 'ISEP Paris', 'https://www.isep.fr/formation/cycle-ingenieur'),
 (152, 320, 'JUNIA HEI', 'https://www.junia.com/formations/cycle-ingenieur-hei-generaliste'),
 (154, 321, 'JUNIA ISEN', 'https://www.junia.com/formations/cycle-ingenieur-isen-numerique'),
@@ -428,9 +428,9 @@ INSERT INTO `Diplome` (`IdEcole`, `IdDiplome`, `Diplome`, `UrlFormation`) VALUES
 (149, 400, 'ECAM-EPMI Cergy-Pontoise - Ingénieur généraliste', 'https://www.ecam-epmi.fr/ingenieur-sous-statut-etudiant/acces-apres-bac2-cycle-ingenieur/'),
 (158, 401, 'UniLaSalle - Ingénieur en Agronomie et Agro-industries', 'https://www.unilasalle.fr/formations/ingenieur-en-agronomie-et-agro-industries'),
 (147, 402, 'ECAM Lyon - Ingénieur Génie Industriel et Mécanique', 'https://www.ecam.fr/formation-ingenieur-lyon/'),
-(166, 403, 'ISTY - Ingénieur Système Numérique pour l\'Industrie', 'https://www.isty.uvsq.fr/cycles-ingenieur'),
-(147, 404, 'ECAM Lyon - Ingénieur Systèmes Numériques Industriels', 'https://www.ecam.fr/formation-ingenieur-lyon/');
+(166, 403, 'ISTY - Ingénieur Système Numérique pour l\'Industrie', 'https://www.isty.uvsq.fr/cycles-ingenieur');
 INSERT INTO `Diplome` (`IdEcole`, `IdDiplome`, `Diplome`, `UrlFormation`) VALUES
+(147, 404, 'ECAM Lyon - Ingénieur Systèmes Numériques Industriels', 'https://www.ecam.fr/formation-ingenieur-lyon/'),
 (169, 405, 'Sup Galilée Villetaneuse - ÉNERGÉTIQUE', 'https://www.sup-galilee.univ-paris13.fr/index.php/formation/energetique/'),
 (146, 406, 'CESI - Ingénieur généraliste', 'https://www.cesi.fr/programmes/cursus-ingenieur-3-ans/#cycle'),
 (147, 407, 'ECAM Lyon - Ingénieur généraliste ECAM Arts et Métiers', 'https://www.ecam.fr/formation/ingenieur-generaliste-arts-et-metiers/'),
@@ -442,7 +442,11 @@ INSERT INTO `Diplome` (`IdEcole`, `IdDiplome`, `Diplome`, `UrlFormation`) VALUES
 (176, 413, 'ESI Reims - Ingénieur Énergétique', 'https://www.univ-reims.fr/esireims/'),
 (176, 414, 'ESI Reims - Ingénieur Génie Urbain et Environnement', 'https://www.univ-reims.fr/esireims/'),
 (141, 415, 'Paoli Tech - Ingénieur Énergétique', 'https://paolitech.universita.corsica/article.php?id_site=30&id_art=1576&lang=fr'),
-(141, 416, 'Paoli Tech - Ingénieur Agronomie', 'https://paolitech.universita.corsica/article.php?id_site=30&id_art=6404&lang=fr');
+(141, 416, 'Paoli Tech - Ingénieur Agronomie', 'https://paolitech.universita.corsica/article.php?id_site=30&id_art=6404&lang=fr'),
+(195, 417, 'MIRA - L\'ingénieur mira', 'https://mira-ingenieurs.com/'),
+(194, 418, 'Centrale Lyon - ENISE - Ingénieur Génie Sensoriel', 'https://enise.ec-lyon.fr/formation/ingenieur-genie-sensoriel-389'),
+(194, 419, 'Centrale Lyon - ENISE - Ingénieur Génie Mécanique', 'https://enise.ec-lyon.fr/formation/ingenieur-genie-mecanique-192'),
+(194, 420, 'Centrale Lyon - ENISE - Ingénieur Génie Civil', 'https://enise.ec-lyon.fr/formation/ingenieur-genie-civil-381');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

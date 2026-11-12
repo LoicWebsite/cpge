@@ -50,6 +50,10 @@
 				<h2 class="h5 mb-3"><i class="bi bi-stars"></i>&nbsp;&nbsp;Nouveautés</h2>
 				<ul class="mb-0 ps-4" style="list-style-type:disc;">
 					<li class="mb-3">
+						<strong>Résultats des concours 2026</strong><br/>
+						Les <a href="statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php">statistiques d'admission de la session 2026</a> sont disponibles pour toutes les filières (BCPST, MP, MPI, PC, PSI, PT, TB, TPC et TSI). Vous pouvez les comparer aux années précédentes, depuis 2016.
+					</li>
+					<li class="mb-3">
 						<strong>Recherche par spécialité</strong><br/>
 						Trouvez les écoles d'ingénieurs <a href="statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php">par spécialité ou domaine d'intérêt</a>. Essayez par exemple informatique, robotique, énergie, matériaux, data ou cybersécurité.
 					</li>
@@ -75,13 +79,13 @@
 			<div>
 				<p>Ce site est <strong>un outil d'exploration des écoles d'ingénieurs accessibles après une CPGE</strong>. Il rassemble, dans une interface unique, les statistiques d'admission issues du SCEI, les principaux classements disponibles et les spécialités proposées par les écoles.</p>
 				<p>Vous pouvez l'utiliser de plusieurs façons : rechercher une école par filière et concours, consulter les résultats d'admission d'une école donnée, comparer les classements, ou encore trouver des écoles à partir d'un domaine qui vous intéresse comme l'informatique, l'énergie, la robotique, les matériaux ou la santé.</p>
-				<p>Les données d'admission couvrent les années 2016 à 2025. Les rangs des derniers admis sont enrichis à partir des rapports des concours, notamment Polytechnique, CentraleSupélec, Mines-Télécom et Mines-Ponts.
+				<p>Les données d'admission couvrent les années 2016 à 2026. Les rangs des derniers admis sont enrichis à partir des rapports des concours, notamment Polytechnique, CentraleSupélec, Mines-Télécom et Mines-Ponts.
 						<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='&bull; Pour le concours CentraleSupelec, le rang du dernier admis par école est connu uniquement pour les années de 2019 à 2022 pour les filières MP, PC, PSI et TSI. A partir de 2023 le concours ne publie plus le rang du dernier admis dans son rapport du jury.<br/>
 						<br/>&bull;  Pour le concours Mines-Ponts, le rang du dernier admis par école est connu pour les filières MP, PC et PSI depuis 2022, et MPI depuis 2023.<br/>
 						<br/>&bull;  Pour les concours Polytechnique et Mines-Telecom, le rang du dernier admis par école est connu pour toutes les filières.<br/>
 						<br/>&bull;  Pour les concours de la filière BCPST G2E, A ENV, A BIO et A PC BIO, le rang du dernier admis est connu pour toutes les années.<br/>
 						<br/>&bull;  Pour tous les autres concours, le rang du dernier admis est connu uniquement pour les années 2016 et 2017.'></i></p>
-				<p>Les informations sur les spécialités couvrent toutes les écoles accessibles aux CPGE.</p>
+				<p>Les informations sur les spécialités couvrent toutes les écoles accessibles aux CPGE. Les spécialités ont été rencensées en 2026 (sources : les sites Web des écoles).</p>
 			</div>
 			<br/>
 		</section>
@@ -102,7 +106,7 @@
 					<div class="p-3 border bg-light">
 						<h2 class="h4 pb-2"><i class="bi bi-mortarboard-fill"></i>&nbsp;&nbsp;Par école</h2>
 						<p>Vous pouvez aussi visualiser les statistiques pour une école donnée, quelque soit le concours et la filière (MP, PC, PT...).
-						  Toutes les années de 2016 à 2025 seront alors affichées pour cette école.</p>
+						  Toutes les années de 2016 à 2026 seront alors affichées pour cette école.</p>
 						<p><i class="bi bi-mortarboard-fill"></i>&nbsp;&nbsp;<a href="statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php">Voir les statistiques d'admissions <strong>pour une école</strong><br/><br/>
 							<img src="image/statistiques-ecole-CPGE.png" class="img-fluid img-thumbnail" alt="tableau statistiques des résultats d'admissions d'une école d'ingénieur pour toutes ses filières d'admissions'">
 						</a></p>

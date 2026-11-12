@@ -97,6 +97,10 @@
 							<label class="form-check-label" for="all">toutes</label>
 						</div>
 						<div class="form-check form-check-inline">
+							<input type="radio" id="an2026" name="reference" class="form-check-input" value="2026" onchange="listerConcours(this.value,'','')">
+							<label class="form-check-label" for="an2026">2026</label>
+						</div>
+						<div class="form-check form-check-inline">
 							<input type="radio" id="an2025" name="reference" class="form-check-input" value="2025" onchange="listerConcours(this.value,'','')">
 							<label class="form-check-label" for="an2025">2025</label>
 						</div>
