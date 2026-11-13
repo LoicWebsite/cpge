@@ -22,7 +22,7 @@ Un retour imbrique conserve la chaine recherche -> liste -> fiche.
 
 La fiche école (`detail-resultat-admission-par-ecole.php`) est aussi une destination
 de retour valide, avec ses seuls paramètres (`ecole`, `origine`, `diplome`, `filiere`,
-`concours`, `reference`, `specialite`, `strict`), une ancre `#onglet-xx` et un retour imbriqué.
+`concours`, `reference`, `an`, `specialite`, `strict`), une ancre `#onglet-xx` et un retour imbriqué.
 Le lien « Comment cette estimation est-elle calculée ? » de l'onglet Admissions
 (`a[data-methode-estimation]`, fragment AJAX) reçoit au clic, via `php/detail.php`, un
 `retour` égal à la fiche courante, onglet filière compris. La page

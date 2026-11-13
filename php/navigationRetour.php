@@ -18,7 +18,7 @@ function pagesNavigationRetour(): array {
         'statistique-attractivite-ecoles.php' => ['tri', 'direction'],
         'salaire-ingenieur-cpge-post-prepa.php' => ['promotion', 'horizon', 'etablissement', 'col', 'filtre', 'tri', 'direction'],
         // Fiche école : destination de retour de la page de méthode de l'estimation (onglet filière en ancre).
-        'detail-resultat-admission-par-ecole.php' => ['ecole', 'origine', 'diplome', 'filiere', 'concours', 'reference', 'specialite', 'strict'],
+        'detail-resultat-admission-par-ecole.php' => ['ecole', 'origine', 'diplome', 'filiere', 'concours', 'reference', 'an', 'specialite', 'strict'],
     ];
 }
 
