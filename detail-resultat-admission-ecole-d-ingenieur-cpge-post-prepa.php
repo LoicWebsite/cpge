@@ -84,8 +84,15 @@
 			<div class="col-sm">
 			  <ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="statistique-admission-ecole-d-ingenieur-cpge-post-prepa.php"><i class="bi bi-house-door-fill"></i></a></li>
-				<li class="breadcrumb-item"><a data-retour-navigation href="<?php echo escapeHtml($urlCriteres); ?>">Filière</a></li>
-				<li class="breadcrumb-item" id="filStatistiques"><a data-retour-navigation href="<?php echo escapeHtml($navigationRetour['url']); ?>"><?php echo escapeHtml($navigationRetour['rubrique']); ?></a></li>
+				<?php if ($navigationRetour['criteresFiliere'] !== null): ?>
+				<li class="breadcrumb-item"><a data-retour-navigation href="<?php echo escapeHtml($navigationRetour['criteresFiliere']); ?>">Filière</a></li>
+				<li class="breadcrumb-item"><a data-retour-navigation href="<?php echo escapeHtml($navigationRetour['url']); ?>"><?php echo escapeHtml($navigationRetour['libelleResultatsFiliere']); ?></a></li>
+				<?php elseif ($navigationRetour['criteresEcole'] !== null): ?>
+				<li class="breadcrumb-item"><a data-retour-navigation href="<?php echo escapeHtml($navigationRetour['criteresEcole']); ?>">École</a></li>
+				<li class="breadcrumb-item"><a data-retour-navigation href="<?php echo escapeHtml($navigationRetour['url']); ?>">Statistiques</a></li>
+				<?php else: ?>
+				<li class="breadcrumb-item"><a data-retour-navigation href="<?php echo escapeHtml($navigationRetour['url']); ?>"><?php echo escapeHtml($navigationRetour['filAriane']); ?></a></li>
+				<?php endif; ?>
 				<li class="breadcrumb-item active" aria-current="page"><?php echo escapeHtml(($ecoleAffichee !== '' && $ecoleAffichee !== 'toutes') ? $ecoleAffichee : 'Détail'); ?></li>
 			  </ol>
 			</div>

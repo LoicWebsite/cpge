@@ -57,6 +57,7 @@
 		$urlEcole = obtenirUrlEcole($db, $ecoleFiltre);
 		// Résumé éditorial affiché sous le titre (table Ecole, nom canonique).
 		$resumeEcole = obtenirResumeEcole($db, $ecoleCanonique);
+		$donneesCTI = chargerDonneesCTI($db, $ecoleCanonique);
 		$idDiplomeConsulte = null;
 		$contexteFiche = $ecoleFiltre !== $ecoleCanonique
 			? "Voie d'admission consultée : " . libelleFormationFiche($ecoleCanonique, $ecoleFiltre) : '';
@@ -119,7 +120,7 @@
 		// Spécialités est rendu immédiatement côté serveur : son contenu ne doit
 		// jamais porter data-onglet, sinon le gestionnaire AJAX le remplacerait.
 		// Salaire, Classements et les filières sont des fragments AJAX différés.
-		afficherEnteteEcole($ecoleCanonique, $urlEcole, $filieresEcole, $resumeEcole);
+		afficherEnteteEcole($ecoleCanonique, $urlEcole, $filieresEcole, $resumeEcole, $donneesCTI);
 
 		echo "<main class='container' style='margin-top:24px;'>";
 		if ($erreurDiplome !== '') echo "<p class='alert alert-warning'>" . escapeHtml($erreurDiplome) . "</p>";
@@ -244,7 +245,7 @@
 			});
 		}
 
-		// bandeau classements/attractivité : chargé indépendamment des onglets
+		// Repères CTI, salaire et classements : chargés indépendamment des onglets.
 		var badges = document.getElementById('badges-entete');
 		if (badges) {
 			chargerFragment('entete')
@@ -253,8 +254,8 @@
 					initialiserTooltips(badges);
 				})
 				.catch(function (erreur) {
-					console.error('Classements :', erreur);
-					badges.textContent = 'Repères de classement temporairement indisponibles.';
+					console.error('Repères école :', erreur);
+					badges.textContent = 'Repères de l’école temporairement indisponibles.';
 				});
 		}
 

@@ -33,6 +33,15 @@ function configurationClassements(): array {
 			'tooltip'  => "La notation de l&apos;école en 2023 est définie par le site DAUR Rankings selon la note finale obtenue par l&apos;école dans son classement.<br>AAA : 100 à 70<br>AA : 69 à 56<br>A : 55 à 49 points<br>BBB : 48 à 44<br>BB : 43 à 39<br>B : 39 à 35<br>CCC : 34 à 32<br>CC : 31 à 29<br>C : 29 à 0<br>Le Rang est le résultat du classement par note finale décroissante (de 1 à 176)<br>La note finale est attribuée à partir de 5 critères détaillés sur le site de DAUR Rankings.",
 		],
 		[
+			'cle'      => 'figaro2027',
+			'table'    => 'Figaro',
+			'an'       => '2027',
+			'libelle'  => 'Le Figaro 2027',
+			'total'    => 86,
+			'groupe'   => false,
+			'tooltip'  => "Le Rang est le résultat du classement par note finale décroissante (de 1 à 86). Lorsque plusieurs écoles ont la même note, elles partagent le même rang.<br>Les écoles sont notées en 2027 de 0 à 20. Selon la méthode publiée par Le Figaro, c&apos;est la moyenne pondérée de trois notes évaluant leur excellence académique (coefficient 2), leur ouverture à l&apos;international (coefficient 1) et l&apos;employabilité et la réussite professionnelle des diplômés (coefficient 3).",
+		],
+		[
 			'cle'      => 'figaro2026',
 			'table'    => 'Figaro',
 			'an'       => '2026',
@@ -49,15 +58,6 @@ function configurationClassements(): array {
 			'total'    => 87,
 			'groupe'   => false,
 			'tooltip'  => "Le Rang est le résultat du classement par note finale décroissante (de 1 à 87).<br>Les écoles sont notées en 2025 de 0 à 20. C&apos;est la moyenne pondérée de trois notes évaluant leur excellence académique (coefficient 2), leur ouverture à l&apos;international (coefficient 1) et l&apos;emploi, ou réussite professionnelle des diplômés (coefficient 3).",
-		],
-		[
-			'cle'      => 'figaro2024',
-			'table'    => 'Figaro',
-			'an'       => '2023',
-			'libelle'  => 'Le Figaro 2024',
-			'total'    => 87,
-			'groupe'   => false,
-			'tooltip'  => "Le Rang est le résultat du classement par note finale décroissante (de 1 à 87).<br>Les écoles sont notées en 2024 de 0 à 20. Cette note résulte de l&apos;évaluation de 14 critères.",
 		],
 		[
 			'cle'      => 'etudiant2023',

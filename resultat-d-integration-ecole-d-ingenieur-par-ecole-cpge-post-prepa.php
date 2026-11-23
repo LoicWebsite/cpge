@@ -81,6 +81,11 @@
 	$navigationRetour = destinationRetourNavigation(array_replace($_GET, [
 		'origine' => $origine, 'ecole' => $ecole, 'recherche' => $recherche, 'anneeEcole' => $anneeEcole,
 	]), $_SERVER);
+	// Après fiche -> liste, le référent est la fiche, pas le formulaire de critères.
+	// Une fiche reste un retour valide pour la méthode d'estimation, mais pas ici.
+	if (parse_url($navigationRetour['url'], PHP_URL_PATH) === 'detail-resultat-admission-par-ecole.php') {
+		$navigationRetour = destinationRetourNavigation(['retour' => $urlCriteres]);
+	}
 ?>
 
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : lun. 09 nov. 2026 à 15:58
+-- Généré le : dim. 22 nov. 2026 à 16:49
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -70,8 +70,29 @@ CREATE TABLE `Diplome` (
   `IdEcole` int(5) NOT NULL COMMENT 'clé étrangère de Ecole',
   `IdDiplome` int(5) NOT NULL,
   `Diplome` varchar(250) NOT NULL,
-  `UrlFormation` varchar(512) DEFAULT NULL
+  `UrlFormation` varchar(512) DEFAULT NULL,
+  `CodeDiplomeCTI` varchar(10) CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `DiplomeIndicateurCTI`
+--
+
+CREATE TABLE `DiplomeIndicateurCTI` (
+  `IdCti` int(10) UNSIGNED NOT NULL,
+  `CodeDiplomeCTI` varchar(10) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `Campagne` smallint(5) UNSIGNED NOT NULL,
+  `Voie` varchar(8) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `Indicateur` varchar(16) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `Valeur` decimal(12,2) UNSIGNED NOT NULL,
+  `Promotion` char(9) DEFAULT NULL,
+  `NbReponses` int(10) UNSIGNED DEFAULT NULL,
+  `URLPDF` varchar(512) NOT NULL,
+  `SHA256` char(64) NOT NULL,
+  `PagePDF` smallint(5) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -83,7 +104,12 @@ CREATE TABLE `Ecole` (
   `IdEcole` int(5) NOT NULL,
   `Ecole` varchar(64) NOT NULL COMMENT 'referentiel des ecoles du site : union de EcoleConcours.Ecole, DAUR, Letudiant et Figaro',
   `UrlEcole` varchar(256) DEFAULT NULL,
-  `Resume` varchar(255) DEFAULT NULL
+  `Resume` varchar(255) DEFAULT NULL,
+  `IdCti` int(10) UNSIGNED DEFAULT NULL COMMENT 'Identifiant de l etablissement CTI, correspondance validee',
+  `NomCTI` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  `Promo` int(4) UNSIGNED DEFAULT NULL COMMENT 'Entrants en cycle ingenieur, tous diplomes et voies de l ecole',
+  `CPGE` float DEFAULT NULL COMMENT 'Pourcentage des entrants issus de CPGE, ATS incluses, de 0 a 100',
+  `Statut` varchar(255) DEFAULT NULL COMMENT 'Public ou Prive, selon la classification CTI I.15'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -368,6 +394,12 @@ ALTER TABLE `DAUR`
 --
 ALTER TABLE `Diplome`
   ADD PRIMARY KEY (`IdDiplome`);
+
+--
+-- Index pour la table `DiplomeIndicateurCTI`
+--
+ALTER TABLE `DiplomeIndicateurCTI`
+  ADD PRIMARY KEY (`IdCti`,`CodeDiplomeCTI`,`Campagne`,`Voie`,`Indicateur`);
 
 --
 -- Index pour la table `Ecole`

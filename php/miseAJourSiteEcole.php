@@ -20,9 +20,9 @@
 
 		include "fonctionConcours.php";
 
-		// conexion à la base concours (user = concours)
+		// connexion à la base concours
 		try {
-			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "cpge", "cpge");
+			$db = new PDO("mysql:host=localhost;dbname=cpge;charset=utf8", "USER", "PASSWORD");
 		}
 		catch(PDOException $erreur)	{
 			die('Erreur connexion base : ' . $erreur->getMessage());

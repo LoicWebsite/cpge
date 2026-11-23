@@ -8,7 +8,7 @@
  *
  * Paramètres GET :
  *   ecole, origine, debug — mêmes conventions que detail.php (voir controleParametre.php)
- *   onglet                — 'entete' (bandeau classements/attractivité), 'classements',
+ *   onglet                — 'entete' (CTI, salaire et classements), 'classements',
  *                           'salaire', ou un code de filière (mp, pc, psi, ...)
  *
  * Retourne un fragment HTML brut (pas de JSON), injecté via innerHTML côté client.
@@ -47,7 +47,8 @@ if ($onglet === 'entete') {
 	$attractivite = chargerAttractivite($db, $ecoleFiltre);
 	$ecoleCanonique = obtenirNomEcoleFiche($db, $ecoleFiltre);
 	$salaireReference = chargerSalaireReference($db, $ecoleCanonique);
-	afficherBadgesEntete($classements, $attractivite, $salaireReference);
+	$donneesCTI = chargerDonneesCTI($db, $ecoleCanonique);
+	afficherBadgesEntete($classements, $attractivite, $salaireReference, $donneesCTI);
 }
 elseif ($onglet === 'classements') {
 	$classements = chargerClassements($db, $ecoleFiltre, $debug);

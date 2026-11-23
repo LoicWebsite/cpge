@@ -82,7 +82,7 @@
 							</ul>
 					</li>
 					<br>
-					<li><strong>Le classement du magazine <a href='https://etudiant.lefigaro.fr/etudes/ecoles-ingenieurs/classement-post-prepa/' target=_blank tittle='vers le site Le Figaro étudiant'>Le Figaro étudiant</a></strong> a évalué 86 écoles post prépa en 2026, et 87 en 2025 et 2024.
+					<li><strong>Le classement du magazine <a href='https://etudiant.lefigaro.fr/etudes/ecoles-ingenieurs/classement-post-prepa/' target=_blank tittle='vers le site Le Figaro étudiant'>Le Figaro étudiant</a></strong> a évalué 86 écoles post prépa en 2027 et en 2026, et 87 en 2025.
 						Selon la <a href='https://etudiant.lefigaro.fr/article/quelle-est-la-methodologie-du-classement-des-ecoles-d-ingenieurs-du-figaro_28c9ed16-5909-11ec-b124-d34bce489ab2/' target='_blank' rel='noopener'>méthode publiée par Le Figaro</a>, la note générale sur 20 est la moyenne pondérée de trois notes : excellence académique (coefficient 2), ouverture à l’international (coefficient 1) et employabilité et réussite professionnelle (coefficient 3).
 						Les indicateurs sont normalisés avant agrégation et reposent principalement sur les données certifiées de la CTI. La sélectivité n’est qu’un indicateur académique : elle mesure le rang moyen des intégrés rapporté au nombre de candidats (SCEI). Sont aussi évalués la recherche, la mobilité internationale, l’insertion, les salaires et le réseau des anciens élèves.
 						<br>Ce palmarès concerne les écoles recrutant principalement après une prépa. Les classements complémentaires du Figaro (post bac, informatique, agronomie) ne sont pas repris ici.
@@ -110,9 +110,9 @@
 				<button class="nav-link active" id="tab-daur-2025" data-bs-toggle="tab" data-bs-target="#daur-2025" type="button" role="tab" aria-controls="daur 2025" aria-selected="true">DAUR<br>2025</button>
 				<button class="nav-link" id="tab-daur-2024" data-bs-toggle="tab" data-bs-target="#daur-2024" type="button" role="tab" aria-controls="daur 2024" aria-selected="false">DAUR<br>2024</button>
 				<button class="nav-link" id="tab-daur-2023" data-bs-toggle="tab" data-bs-target="#daur-2023" type="button" role="tab" aria-controls="daur 2023" aria-selected="false">DAUR<br>2023</button>
+				<button class="nav-link" id="tab-figaro-2027" data-bs-toggle="tab" data-bs-target="#figaro-2027" type="button" role="tab" aria-controls="figaro-2027" aria-selected="false">Le Figaro<br>2027</button>
 				<button class="nav-link" id="tab-figaro-2026" data-bs-toggle="tab" data-bs-target="#figaro-2026" type="button" role="tab" aria-controls="figaro-2026" aria-selected="false">Le Figaro<br>2026</button>
 				<button class="nav-link" id="tab-figaro-2025" data-bs-toggle="tab" data-bs-target="#figaro-2025" type="button" role="tab" aria-controls="figaro-2025" aria-selected="false">Le Figaro<br>2025</button>
-				<button class="nav-link" id="tab-figaro-2024" data-bs-toggle="tab" data-bs-target="#figaro-2024" type="button" role="tab" aria-controls="figaro-2024" aria-selected="false">Le Figaro<br>2024</button>
 				<button class="nav-link" id="tab-etudiant-2023" data-bs-toggle="tab" data-bs-target="#etudiant-2023" type="button" role="tab" aria-controls="etudiant 2023" aria-selected="false">L'Etudiant<br>2023</button>
 				<button class="nav-link" id="tab-etudiant-2022" data-bs-toggle="tab" data-bs-target="#etudiant-2022" type="button" role="tab" aria-controls="etudiant 2022" aria-selected="false">L'Etudiant<br>2022</button>
 			</div>
@@ -334,6 +334,48 @@
 			<!-- fermeture de l'onglet DAUR 2023 -->
 			</div>
 
+			<!-- ouverture de l'onglet FIGARO 2027 -->
+			<div class="tab-pane fade" id="figaro-2027" role="tabpanel" aria-labelledby="tab-figaro-2027">
+			<?php
+				$sql = "SELECT DISTINCT Figaro.Ecole, Figaro.Rang, Figaro.Point, Figaro.UrlFigaro
+						FROM Figaro
+						INNER JOIN EcoleConcours ON EcoleConcours.Ecole = Figaro.Ecole
+						WHERE Figaro.Ecole IS NOT NULL AND Figaro.An = '2027'
+						ORDER BY Figaro.Rang, Figaro.Ecole;";
+
+				if ($debug) echo "SQL = " . escapeHtml($sql) . "<br>";
+				try {
+					$result = $db->query($sql);
+
+					echo "<table id='tableau-figaro-2027'>";
+					echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='bi bi-cursor-fill' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.";
+					$idTableau = '"#tableau-figaro-2027","rang;note;école;descriptif Le Figaro"';
+					echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='bi bi-download'></i> csv</button></caption>";
+					echo "<thead class='text-center'><tr>";
+					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 86). Lorsque plusieurs écoles ont la même note, elles partagent alors le même rang.'></i></th>";
+					echo "<th>&nbsp;Note / 20&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Les écoles sont notées en 2027 de 0 à 20. Selon la méthode publiée par Le Figaro, cette note est la moyenne pondérée de trois notes : excellence académique (coefficient 2), ouverture à l&apos;international (coefficient 1) et employabilité et réussite professionnelle (coefficient 3).'></i></th>";
+					echo "<th>&nbsp;Ecole&nbsp;</th>";
+					echo "<th>&nbsp;Descriptif de l'école par Le Figaro</th>";
+					echo "</tr></thead>";
+
+					while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+						$jsEcole = encodeJs($row['Ecole']);
+						echo "<tr ondblclick='zoom(" . $jsEcole . ")'>";
+						echo "<td style='text-align:center'>" . escapeHtml($row['Rang']) . "</td>";
+						echo "<td style='text-align:center'>" . escapeHtml($row['Point']) . "</td>";
+						echo "<td style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;retour=" . rawurlencode($retourListe) . "&amp;ecole=" . rawurlencode($row['Ecole']) . "'><strong>" . escapeHtml($row['Ecole']) . "</strong></a></td>";
+						echo "<td style='padding-left:10px'><a href='" . escapeHtml($row['UrlFigaro']) . "' target='_blank' rel='noopener'>" . escapeHtml($row['Ecole']) . "</a></td>";
+						echo "</tr>";
+					}
+					echo "</table>";
+				}
+				catch(PDOException $erreur) {
+					echo "<div class='alert alert-warning'>Erreur SELECT Le Figaro 2027 : " . escapeHtml($erreur->getMessage()) . "</div>";
+				}
+			?>
+			<!-- fermeture de l'onglet FIGARO 2027 -->
+			</div>
+
 			<!-- ouverture de l'onglet FIGARO 2026 -->
 			<div class="tab-pane fade" id="figaro-2026" role="tabpanel" aria-labelledby="tab-figaro-2026">
 			<?php
@@ -429,59 +471,6 @@
 			<!-- fermeture de l'onglet FIGARO 2025 -->
 			</div>
 			
-			<!-- ouverture de l'onglet FIGARO 2024 -->
-			<div class="tab-pane fade" id="figaro-2024" role="tabpanel" aria-labelledby="tab-figaro-2024">
-			<?php
-				// exécution de la requête SQL pour le classement Figaro 2024
-				$sql = "SELECT DISTINCT Figaro.Ecole, Figaro.Rang, Figaro.Point, Figaro.UrlFigaro
-						FROM Figaro
-						INNER JOIN EcoleConcours ON EcoleConcours.Ecole LIKE CONCAT('%',Figaro.Ecole,'%')
-						WHERE Figaro.Ecole IS NOT NULL AND Figaro.An = '2023'
-						ORDER BY Figaro.Rang, Figaro.Ecole;";
-				
-				if ($debug) echo "SQL = " . $sql ."<br>";
-				try {
-					$result = $db->query($sql);
-
-					// affichage de l'en tête du tableau
-					echo "<table id='tableau-figaro-2024'>";
-					echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='bi bi-cursor-fill' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.";
-					$idTableau = '"#tableau-figaro-2024","rang,note,école,descriptif Le Figaro"';
-					echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(".$idTableau.")'><i class='bi bi-download'></i> csv</button></caption>";
-					echo "<thead class='text-center'>";
-					echo "<tr>";
-					echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Le Rang est le résultat du classement par note finale décroissante (de 1 à 87). Lorsque plusieurs écoles ont la même note, elles partagent alors le même rang.'></i></th>";
-					echo "<th>&nbsp;Note&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Les écoles sont notées en 2024 de 0 à 20. Cette note résulte de l&apos;évaluation de 14 critères.'></i></th>";
-					echo "<th>&nbsp;Ecole&nbsp;</th>";
-					echo "<th>&nbsp;Descriptif de l'école par Le Figaro</th>";
-					echo "</tr></thead>";
-
-					$class = "";
-
-					while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-						extract($row);
-
-						$class = "";
-		// 				$class = " class='nouvelEcole'";
-
-						// affichage de la ligne
-						$jsEcole = encodeJs($Ecole);
-						echo "<tr ondblclick='zoom(" . $jsEcole . ")'>";
-						echo "<td ".$class." style='text-align:center'>" . $Rang . "</td>";
-						echo "<td ".$class." style='text-align:center'>" . $Point . "</td>";
-						echo "<td ".$class." style='padding-left:10px'><a href='detail-resultat-admission-par-ecole.php?origine=classement&amp;retour=" . rawurlencode($retourListe) . "&amp;ecole=" . rawurlencode($Ecole) . "'><strong>" . escapeHtml($Ecole) . "</strong></a></td>";
-						echo "<td ".$class." style='padding-left:10px'><a href='" . $UrlFigaro . "' target=_blank>" . $Ecole . "</a></td>";
-						echo "</tr>";	
-					}
-					echo "</table>";
-				}
-				catch(PDOException $erreur)	{
-					echo "Erreur SELECT Note : " . $erreur->getMessage();
-				}
-			?>
-			<!-- fermeture de l'onglet FIGARO 2024 -->
-			</div>
-
 			<!-- ouverture de l'onglet ETUDIANT 2023 -->
 			<div class="tab-pane fade" id="etudiant-2023" role="tabpanel" aria-labelledby="tab-etudiant-2023">
 			<?php

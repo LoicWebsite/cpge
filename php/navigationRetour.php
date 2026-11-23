@@ -131,6 +131,7 @@ function destinationRetourNavigation(array $parametres, array $serveur = [], str
             $url = validerUrlNavigation($candidate);
         }
     }
+    $retourValide = $url !== null;
     if ($url === null) {
         // Une entrée directe ou un retour refusé doit conserver une destination exploitable.
         $criteres = $parametres;
@@ -142,9 +143,36 @@ function destinationRetourNavigation(array $parametres, array $serveur = [], str
     // Le libellé suit la destination validée, qui peut différer de l'origine annoncée.
     $pageRetour = parse_url($url, PHP_URL_PATH);
     $origineRetour = array_search($pageRetour, $origines, true);
+    $criteresFiliere = null;
+    $criteresEcole = null;
+    $libelleResultatsFiliere = 'Statistiques';
+    if ($origineRetour === 'filiere') {
+        parse_str(parse_url($url, PHP_URL_QUERY) ?? '', $contexteFiliere);
+        $criteresFiliere = urlPageNavigation('statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php',
+            array_intersect_key($contexteFiliere, array_flip(['reference', 'filiere', 'concours', 'ecole'])));
+        if (in_array($contexteFiliere['filiere'] ?? '', ['mp', 'mpi', 'pc', 'psi', 'pt', 'tsi', 'tpc', 'bcpst', 'tb'], true)) {
+            $libelleResultatsFiliere .= ' ' . strtoupper($contexteFiliere['filiere']);
+        }
+    }
+    if ($retourValide && $origineRetour === 'ecole') {
+        parse_str(parse_url($url, PHP_URL_QUERY) ?? '', $contexteEcole);
+        $criteresEcole = urlPageNavigation('statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php',
+            array_intersect_key($contexteEcole, array_flip(['ecole', 'recherche', 'anneeEcole'])));
+    }
     return [
         'url' => $url,
+        'criteresFiliere' => $criteresFiliere,
+        'criteresEcole' => $criteresEcole,
+        'libelleResultatsFiliere' => $libelleResultatsFiliere,
         'libelle' => $origineRetour !== false ? $libelles[$origineRetour] : 'Retour aux critères',
+        'filAriane' => [
+            'resultat-d-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php' => 'Filière',
+            'statistique-integration-ecole-d-ingenieur-par-filiere-cpge-post-prepa.php' => 'Filière',
+            'statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php' => 'Spécialité',
+            'classement-ecole-d-ingenieur.php' => 'Classement',
+            'statistique-attractivite-ecoles.php' => 'Attractivité',
+            'salaire-ingenieur-cpge-post-prepa.php' => 'Salaires',
+        ][$pageRetour] ?? 'École',
         'rubrique' => $origineRetour !== false ? [
             'filiere' => 'Statistiques', 'ecole' => 'Statistiques', 'specialite' => 'Spécialités',
             'classement' => 'Classement', 'attractivite' => 'Attractivité', 'salaire' => 'Salaires',
