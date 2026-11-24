@@ -213,8 +213,12 @@
 						<select class="form-select" id="specialiteMobile" aria-label="Choisir un mot-clé" onchange="synchroniserSpecialiteMobile()">
 							<option value="">Choisir dans la liste</option>
 							<?php
+							// Liste plate indentée : un parent (niveau 0) vaut « tout le domaine » et ses enfants
+							// (niveau 1) sont en retrait. Le préfixe « – » remplace un padding CSS, ignoré sur iOS.
+							// La valeur envoyée reste le libellé du domaine, sans préfixe ni numéro.
 							foreach ($suggestionsAffichees as $suggestion) {
-								echo "<option value='" . escapeHtml($suggestion) . "'>" . escapeHtml($suggestion) . "</option>";
+								$prefixe = $suggestion['niveau'] > 0 ? '– ' : '';
+								echo "<option value='" . escapeHtml($suggestion['nom']) . "'>" . $prefixe . escapeHtml($suggestion['nom']) . "</option>";
 							}
 							?>
 						</select>
@@ -222,8 +226,9 @@
 					</div>
 					<datalist id="domaines-specialite">
 						<?php
+						// La saisie assistée propose les libellés seuls, sans indentation.
 						foreach ($suggestionsAffichees as $suggestion) {
-							echo "<option value='" . escapeHtml($suggestion) . "'>";
+							echo "<option value='" . escapeHtml($suggestion['nom']) . "'>";
 						}
 						?>
 					</datalist>
@@ -532,14 +537,38 @@
 				return document.fonts ? document.fonts.ready : undefined;
 			}).then(function () {
 				window.requestAnimationFrame(function () {
-					window.requestAnimationFrame(recalerResultatsSpecialites);
+					window.requestAnimationFrame(function () {
+						recalerResultatsSpecialites();
+						maintenirAlignementResultats();
+					});
 				});
 			});
 		}
 
-		// Respecte la marge CSS du menu fixe pour la cible de l'ancre.
+		// Aligne le haut du bloc #resultats sous le menu fixe, avec un calcul explicite : scrollIntoView
+		// et scroll-margin ne sont pas pris en compte de la meme facon par tous les navigateurs.
 		function recalerResultatsSpecialites() {
-			document.getElementById('resultats').scrollIntoView({ block: 'start', behavior: 'instant' });
+			var cible = document.getElementById('resultats');
+			var marge = parseFloat(window.getComputedStyle(cible).scrollMarginTop) || 80;
+			window.scrollTo(0, Math.max(0, Math.round(cible.getBoundingClientRect().top + window.pageYOffset - marge)));
+		}
+
+		// Maintient l'alignement pendant que la page se stabilise (polices, resultats, mise en page finale).
+		// Safari n'a pas d'ancrage de defilement : sans cela, un changement de hauteur au-dessus des resultats
+		// fait glisser le bloc et masque les premieres ecoles. S'arrete des que l'utilisateur defile, ou apres 2 s.
+		function maintenirAlignementResultats() {
+			var debut = Date.now();
+			var observateur = typeof ResizeObserver === 'function' ? new ResizeObserver(function () {
+				if (Date.now() - debut > 2000) { arreter(); } else { recalerResultatsSpecialites(); }
+			}) : null;
+			var evenements = ['wheel', 'touchstart', 'keydown', 'mousedown'];
+			function arreter() {
+				if (observateur) { observateur.disconnect(); }
+				evenements.forEach(function (evenement) { window.removeEventListener(evenement, arreter); });
+			}
+			evenements.forEach(function (evenement) { window.addEventListener(evenement, arreter, { passive: true }); });
+			if (observateur) { observateur.observe(document.body); }
+			window.setTimeout(arreter, 2000);
 		}
 
 		// Affiche les details sur tous les ecrans uniquement avec des resultats,

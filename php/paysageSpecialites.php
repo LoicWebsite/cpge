@@ -12,27 +12,36 @@
  * domaines composes explicites et preserve les recherches generales ou ambigues.
  * Produit deux vues : libelle seul et libelle + groupe + diplome.
  * Les effectifs sont distincts par identifiant dans chaque domaine, non additionnables
- * entre domaines. L'identifiant 0 est reserve aux specialites sans correspondance.
+ * entre domaines. Un domaine parent (IdParent) reprend les specialites de ses enfants.
+ * L'identifiant 0 est reserve aux specialites sans correspondance.
  * Ce fichier ne produit aucune sortie HTML et ne modifie jamais la base.
  */
 require_once __DIR__ . '/specialiteRecherche.php';
 
 /**
  * Classe un corpus de lignes uniques par IdSpecialite selon les synonymes propres
- * a chaque domaine. Une specialite peut appartenir a plusieurs domaines.
+ * a chaque domaine. Une specialite peut appartenir a plusieurs domaines. Par defaut, un parent
+ * (IdParent) reprend ensuite les specialites et ecoles de ses enfants.
+ * Avec $deriverParents = false, chaque domaine ne garde que ses correspondances propres : c'est
+ * le classement a ecrire dans SpecialiteDomaineAffectation (charger_specialite_domaine.php), car
+ * un parent est derive a la lecture et ses enfants ne doivent jamais etre recopies dans la table.
  *
  * @param array $specialites Lignes avec IdSpecialite, IdDiplome, IdEcole et les libelles.
- * @param array $referentiel Lignes IdDomaine, Domaine, TermeRecherche, eventuellement null.
+ * @param array $referentiel Lignes IdDomaine, Code, IdParent, Domaine, TermeRecherche (Code et IdParent facultatifs).
  * @param bool $avecContexte Inclut le groupe et le diplome dans le texte compare.
- * @return array Totaux distincts, couverture et domaines avec listes d'identifiants.
+ * @param bool $deriverParents Fusionne les enfants dans leur parent (true) ou conserve les liens propres (false).
+ * @return array Totaux distincts, couverture et domaines. Chaque domaine :
+ *   ['id' => 21, 'nom' => 'Informatique', 'code' => '18', 'idParent' => null,
+ *    'specialites' => [identifiants distincts], 'ecoles' => [identifiants distincts]].
+ *   L'identifiant 0 (« Non classées ») regroupe les specialites sans aucun domaine.
  */
-function classerPaysageSpecialites(array $specialites, array $referentiel, bool $avecContexte = false): array {
+function classerPaysageSpecialites(array $specialites, array $referentiel, bool $avecContexte = false, bool $deriverParents = true): array {
     $domaines = [];
     $reglesDomaines = preparerDomainesSpecialites($referentiel);
     foreach ($reglesDomaines as $id => $domaine) {
-        $domaines[$id] = ['id' => $id, 'nom' => $domaine['nom'], 'specialites' => [], 'ecoles' => []];
+        $domaines[$id] = ['id' => $id, 'nom' => $domaine['nom'], 'code' => $domaine['code'], 'idParent' => $domaine['idParent'], 'specialites' => [], 'ecoles' => []];
     }
-    $domaines[0] = ['id' => 0, 'nom' => 'Non classées', 'specialites' => [], 'ecoles' => []];
+    $domaines[0] = ['id' => 0, 'nom' => 'Non classées', 'code' => '', 'idParent' => null, 'specialites' => [], 'ecoles' => []];
     $ecoles = [];
     $diplomes = [];
     $classees = 0;
@@ -63,6 +72,9 @@ function classerPaysageSpecialites(array $specialites, array $referentiel, bool 
             $domaines[$id]['ecoles'][$idEcole] = $idEcole;
         }
     }
+    if ($deriverParents) {
+        $domaines = fusionnerEnfantsDansParents($domaines, parentsDomainesSpecialites($referentiel));
+    }
     foreach ($domaines as &$domaine) {
         $domaine['specialites'] = array_values($domaine['specialites']);
         $domaine['ecoles'] = array_values($domaine['ecoles']);
@@ -84,18 +96,20 @@ function classerPaysageSpecialites(array $specialites, array $referentiel, bool 
  *
  * @param PDO $db Connexion fournie par openDatabase(), sans modification de configuration.
  * @param bool $calculerContexte Inclut la vue groupe + diplome, utile aux tests et rapports.
+ * @param bool $deriverParents false pour obtenir les liens propres de chaque domaine, sans les enfants
+ *   dans le parent (chargeur des affectations automatiques).
  * @return array Corpus, agregats libelle et, si demande, contexte.
  * @throws PDOException Si le corpus ou le referentiel ne peuvent pas etre lus.
  */
-function chargerPaysageSpecialites(PDO $db, bool $calculerContexte = true): array {
+function chargerPaysageSpecialites(PDO $db, bool $calculerContexte = true, bool $deriverParents = true): array {
     $specialites = chargerCorpusSpecialites($db);
     $referentiel = chargerReferentielSpecialites($db);
     $donnees = [
         'specialites' => $specialites,
-        'libelle' => classerPaysageSpecialites($specialites, $referentiel),
+        'libelle' => classerPaysageSpecialites($specialites, $referentiel, false, $deriverParents),
     ];
     if ($calculerContexte) {
-        $donnees['contexte'] = classerPaysageSpecialites($specialites, $referentiel, true);
+        $donnees['contexte'] = classerPaysageSpecialites($specialites, $referentiel, true, $deriverParents);
     }
     return $donnees;
 }
@@ -104,6 +118,10 @@ function chargerPaysageSpecialites(PDO $db, bool $calculerContexte = true): arra
  * Charge les agrégats du Panorama depuis les décisions persistées.
  * Seules les inclusions liées à un domaine actif sont comptées ; les exclusions
  * et les spécialités sans lien actif restent dans « Non classées ».
+ * Un parent reprend les inclusions de ses enfants (fusionnerEnfantsDansParents) : une
+ * exclusion directe sur un parent ne retire donc pas une spécialité incluse dans un enfant.
+ * Exemple : 100 spécialités pour Mobilités (26 en propre) et 419 pour Informatique (180 en propre) ;
+ * « en propre » = liens directs, c'est-à-dire les spécialités génériques sans lien vers un enfant.
  * La forme retournée est identique à la vue « libelle » de chargerPaysageSpecialites.
  *
  * @param PDO $db Connexion ouverte à la base CPGE.
@@ -116,10 +134,17 @@ function chargerPaysageSpecialitesAffectees(PDO $db): array {
     foreach ($referentiel as $ligne) {
         $id = (int) $ligne['IdDomaine'];
         if (!isset($domaines[$id])) {
-            $domaines[$id] = ['id' => $id, 'nom' => $ligne['Domaine'], 'specialites' => [], 'ecoles' => []];
+            $domaines[$id] = [
+                'id' => $id,
+                'nom' => $ligne['Domaine'],
+                'code' => (string) ($ligne['Code'] ?? ''),
+                'idParent' => !empty($ligne['IdParent']) ? (int) $ligne['IdParent'] : null,
+                'specialites' => [],
+                'ecoles' => [],
+            ];
         }
     }
-    $domaines[0] = ['id' => 0, 'nom' => 'Non classées', 'specialites' => [], 'ecoles' => []];
+    $domaines[0] = ['id' => 0, 'nom' => 'Non classées', 'code' => '', 'idParent' => null, 'specialites' => [], 'ecoles' => []];
 
     $corpusParId = [];
     $ecolesParSpecialite = [];
@@ -154,6 +179,8 @@ function chargerPaysageSpecialitesAffectees(PDO $db): array {
     }
     $stmt->closeCursor();
 
+    // Un parent reprend les specialites de ses enfants ; ses propres inclusions restent comptees.
+    $domaines = fusionnerEnfantsDansParents($domaines, parentsDomainesSpecialites($referentiel));
     foreach ($corpusParId as $idSpecialite => $_) {
         if (!isset($classes[$idSpecialite])) {
             $idEcole = $ecolesParSpecialite[$idSpecialite];

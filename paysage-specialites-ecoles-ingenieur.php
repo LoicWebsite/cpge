@@ -61,7 +61,7 @@ try {
             </dl>
             <noscript><p class="alert alert-warning">JavaScript est nécessaire pour afficher les graphiques interactifs.</p></noscript>
 
-            <p class="paysage-indication">Les chiffres indiquent le <strong>nombre de spécialités </strong> pour chaque domaine. Cliquez sur une bulle ou un domaine pour consulter exactement ces spécialités et les écoles qui les proposent.</p>
+            <p class="paysage-indication">Les chiffres indiquent le <strong>nombre de spécialités </strong> pour chaque domaine. Cliquez sur une bulle ou un domaine pour consulter exactement ces spécialités et les écoles qui les proposent. Survolez une bulle ou une ligne pour la mettre en avant (sur mobile, touchez une bulle une première fois pour l'agrandir, puis une seconde fois pour ouvrir la liste).</p>
             <div class="paysage-graphiques">
                 <section aria-labelledby="titre-carte">
                     <h2 id="titre-carte" class="h4">Carte des domaines</h2>
@@ -81,6 +81,7 @@ try {
                     <li>Les spécialités recensées sont celles de toutes les écoles accessibles aux CPGE. Les spécialités ont été rencensées en 2026 (sources : les sites Web des écoles).</li>
                     <li>Les spécialités correspondent aux spécialisations choisies par les étudiants en général en 3A ou en 2A. Elles se distinguent des enseignements fondamentaux et des orientations professionnelles (recherche, conseil, entrepreneuriat, etc.) qui peuvent compléter le parcours.</li>
                     <li>Chaque spécialité est comptée une seule fois par domaine. Une spécialité peut relever de plusieurs domaines. La surface des bulles représente le nombre de spécialités, leur position ne signifiant pas une proximité scientifique.</li>
+                    <li>Certains domaines regroupent des sous-domaines, reliés par un trait et placés sous le domaine principal : par exemple, Data / IA et Cybersécurité sous Informatique. Le domaine principal compte aussi les spécialités de ses sous-domaines, leurs effectifs ne s'additionnent donc pas.</li>
                     <?php if ($nombreSpecialitesNonClassees > 0): ?>
                         <li>Les graphiques excluent <?php echo number_format($nombreSpecialitesNonClassees, 0, ',', ' ') . $libelleSpecialitesNonClassees; ?> à un domaine.</li>
                     <?php endif; ?>

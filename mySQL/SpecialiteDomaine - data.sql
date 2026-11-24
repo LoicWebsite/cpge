@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : jeu. 12 nov. 2026 à 17:22
+-- Généré le : mar. 24 nov. 2026 à 15:43
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -25,33 +25,33 @@ SET time_zone = "+00:00";
 -- Déchargement des données de la table `SpecialiteDomaine`
 --
 
-INSERT INTO `SpecialiteDomaine` (`IdDomaine`, `Domaine`, `Description`, `Actif`) VALUES
-(1, 'Santé', 'Ingénierie biomédicale, dispositifs médicaux, santé et e-santé.', 1),
-(2, 'Bio', 'Biologie, biotechnologies, bio-ingénierie et vivant.', 1),
-(3, 'Agro', 'Agronomie, agriculture, alimentation et agroalimentaire.', 1),
-(4, 'Géosciences / Eau / Environnement', 'Géosciences, eau, environnement, climat et risques.', 1),
-(5, 'Chimie', 'Chimie, formulation et chimie durable.', 1),
-(6, 'Physique / Photonique / Quantique', 'Physique appliquée, optique, photonique et quantique.', 1),
-(7, 'Matériaux / Nano', 'Matériaux, polymères, composites, métallurgie et nanomatériaux.', 1),
-(8, 'Procédés', 'Génie des procédés, procédés chimiques et bioprocédés.', 1),
-(9, 'Énergie', 'Énergie, nucléaire, hydrogène, conversion et stockage.', 1),
-(10, 'Génie électrique', 'Électrotechnique, puissance, réseaux électriques et conversion.', 1),
-(11, 'Mobilités', 'Transport, mobilité et véhicules.', 1),
-(12, 'Automobile / Ferroviaire', 'Automobile, véhicules terrestres, ferroviaire et rail.', 1),
-(13, 'Aéronautique / Spatial', 'Aéronautique, avionique, espace et systèmes spatiaux.', 1),
-(14, 'Naval / Maritime', 'Construction navale, génie maritime, mer et océan.', 1),
-(15, 'BTP / Génie civil / Génie urbain', 'Construction, bâtiment, travaux publics et ville.', 1),
-(16, 'Mécanique', 'Mécanique, structures, fluides, conception et production.', 1),
-(17, 'Robotique / Mécatronique', 'Robotique, mécatronique, automatique et systèmes autonomes.', 1),
-(18, 'Électronique', 'Électronique, capteurs et microélectronique.', 1),
-(19, 'Systèmes embarqués', 'Systèmes embarqués, temps réel, IoT et objets connectés.', 1),
-(20, 'Télécoms / Réseaux', 'Télécommunications, réseaux et infrastructures numériques.', 1),
-(21, 'Informatique', 'Logiciel, web, mobile, cloud et systèmes d\'information.', 1),
-(22, 'Data / IA', 'Données, intelligence artificielle, modélisation et optimisation.', 1),
-(23, 'Cybersécurité', 'Sécurité informatique, infrastructures et DevSecOps.', 1),
-(24, 'Mathématiques / Finance de marché', 'Mathématiques appliquées, statistique, optimisation et finance quantitative.', 1),
-(25, 'Économie / Finance d\'entreprise', 'Économie, gestion, finance d\'entreprise et audit.', 1),
-(26, 'Génie industriel / Conception / Logistique / QHSE', 'Conception, production, logistique, qualité, sécurité et environnement.', 1);
+INSERT INTO `SpecialiteDomaine` (`IdDomaine`, `Code`, `IdParent`, `Domaine`, `Description`, `Actif`) VALUES
+(1, '1', NULL, 'Santé', 'Ingénierie biomédicale, dispositifs médicaux, santé et e-santé.', 1),
+(2, '2', NULL, 'Bio', 'Biologie, biotechnologies, bio-ingénierie et vivant.', 1),
+(3, '3', NULL, 'Agro', 'Agronomie, agriculture, alimentation et agroalimentaire.', 1),
+(4, '4', NULL, 'Géosciences / Eau / Environnement', 'Géosciences, eau, environnement, climat et risques.', 1),
+(5, '5', NULL, 'Chimie', 'Chimie, formulation et chimie durable.', 1),
+(6, '6', NULL, 'Physique / Photonique / Quantique', 'Physique appliquée, optique, photonique et quantique.', 1),
+(7, '7', NULL, 'Matériaux / Nano', 'Matériaux, polymères, composites, métallurgie et nanomatériaux.', 1),
+(8, '8', NULL, 'Procédés', 'Génie des procédés, procédés chimiques et bioprocédés.', 1),
+(9, '9', NULL, 'Énergie', 'Énergie, nucléaire, hydrogène, conversion et stockage.', 1),
+(10, '10', NULL, 'Génie électrique', 'Électrotechnique, puissance, réseaux électriques et conversion.', 1),
+(11, '11', NULL, 'Mobilités', 'Transport, mobilité et véhicules.', 1),
+(12, '11.1', 11, 'Automobile / Ferroviaire', 'Automobile, véhicules terrestres, ferroviaire et rail.', 1),
+(13, '11.2', 11, 'Aéronautique / Spatial', 'Aéronautique, avionique, espace et systèmes spatiaux.', 1),
+(14, '11.3', 11, 'Naval / Maritime', 'Construction navale, génie maritime, mer et océan.', 1),
+(15, '12', NULL, 'BTP / Génie civil / Génie urbain', 'Construction, bâtiment, travaux publics et ville.', 1),
+(16, '13', NULL, 'Mécanique', 'Mécanique, structures, fluides, conception et production.', 1),
+(17, '14', NULL, 'Robotique / Mécatronique', 'Robotique, mécatronique, automatique et systèmes autonomes.', 1),
+(18, '15', NULL, 'Électronique', 'Électronique, capteurs et microélectronique.', 1),
+(19, '16', NULL, 'Systèmes embarqués', 'Systèmes embarqués, temps réel, IoT et objets connectés.', 1),
+(20, '17', NULL, 'Télécoms / Réseaux', 'Télécommunications, réseaux et infrastructures numériques.', 1),
+(21, '18', NULL, 'Informatique', 'Logiciel, web, mobile, cloud et systèmes d\'information.', 1),
+(22, '18.1', 21, 'Data / IA', 'Données, intelligence artificielle, modélisation et optimisation.', 1),
+(23, '18.2', 21, 'Cybersécurité', 'Sécurité informatique, infrastructures et DevSecOps.', 1),
+(24, '19', NULL, 'Mathématiques / Finance de marché', 'Mathématiques appliquées, statistique, optimisation et finance quantitative.', 1),
+(25, '20', NULL, 'Économie / Finance d\'entreprise', 'Économie, gestion, finance d\'entreprise et audit.', 1),
+(26, '21', NULL, 'Génie industriel / Conception / Logistique / QHSE', 'Conception, production, logistique, qualité, sécurité et environnement.', 1);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

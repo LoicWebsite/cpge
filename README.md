@@ -51,7 +51,9 @@ Ces classements sont utilisés comme indicateurs complémentaires et ne constitu
 
 ### Données sur les écoles
 
-Les informations relatives aux écoles et à leurs spécialités sont recueillies à partir des informations publiques disponibles, notamment sur les sites des écoles.
+Les informations relatives aux écoles et à leurs spécialités sont recueillies à partir des informations publiques disponibles sur les sites Web des écoles.
+
+Certaines données sur les écoles et leurs diplômes sont issues des données certifiées de la CTI (Commission des Titres d'Ingénieur).
 
 ### Données d'insertion et de salaire
 

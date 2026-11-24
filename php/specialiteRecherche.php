@@ -7,6 +7,22 @@
  * seuls les termes prepares et les champs examines changent.
  * Les chargements SQL partages sont en lecture seule ; ce fichier ne produit ni
  * HTML ni JSON. Les pages conservent la presentation et le controleur gere HTTP.
+ *
+ * Hierarchie des domaines (table SpecialiteDomaine)
+ * -------------------------------------------------
+ * - Code : numero hierarchique en texte ('11', '11.1', '18.2'), unique. Il sert a l'ordre
+ *   d'affichage (tri naturel : 11.2 avant 11.10, 2 avant 10), jamais de cle de jointure.
+ * - IdParent : NULL pour un domaine racine, sinon IdDomaine du parent. Deux niveaux au maximum.
+ *   Exemple : Informatique (18) est le parent de Data / IA (18.1) et Cybersecurite (18.2).
+ * - Un parent est DERIVE : il vaut ses affectations directes plus celles de ses enfants
+ *   (fusionnerEnfantsDansParents, termesDomaineDepuisReferentiel). Choisir « Informatique »
+ *   signifie donc « toute l'informatique ». Aucune affectation n'est recopiee dans le parent.
+ * - Une decision « exclure » ne concerne que l'affectation directe d'un domaine : exclue du
+ *   parent mais incluse dans un enfant, une specialite apparait quand meme dans le parent.
+ * - Le libelle Domaine reste la cle fonctionnelle (liste de choix, liens, import) et
+ *   IdDomaine la cle etrangere : ni l'un ni l'autre ne change avec la hierarchie.
+ * Les lignes du referentiel (chargerReferentielSpecialites) portent IdDomaine, Code,
+ * IdParent, Domaine, TermeRecherche, Poids ; Code et IdParent sont facultatifs (fixtures de test).
  */
 
 // Transforme un libellé en forme comparable : accents, casse et ponctuation
@@ -104,13 +120,25 @@ function ajouterTerme(array &$termes, string $termeNormalise, int $poids): void 
  * Prepare les synonymes propres a chaque domaine. Les poids servent au classement
  * de la recherche, jamais a exclure un synonyme de l'appartenance au domaine.
  * Le meme dictionnaire alimente les bulles, la recherche stricte et les suggestions.
+ *
+ * Structure retournee, indexee par IdDomaine :
+ *   [11 => ['id' => 11, 'nom' => 'Mobilités', 'code' => '11', 'idParent' => null,
+ *           'termes' => ['transport' => 90, 'transports' => 90, ...],   // terme normalise => poids
+ *           'regles' => <dictionnaire pour analyserTexteSpecialite>]]
+ * Les synonymes propres ne comprennent pas ceux des enfants : voir termesDomaineDepuisReferentiel.
  */
 function preparerDomainesSpecialites(array $referentiel): array {
     $domaines = [];
     foreach ($referentiel as $ligne) {
         $id = (int) $ligne['IdDomaine'];
         if (!isset($domaines[$id])) {
-            $domaines[$id] = ['id' => $id, 'nom' => $ligne['Domaine'], 'termes' => []];
+            $domaines[$id] = [
+                'id' => $id,
+                'nom' => $ligne['Domaine'],
+                'code' => (string) ($ligne['Code'] ?? ''),
+                'idParent' => !empty($ligne['IdParent']) ? (int) $ligne['IdParent'] : null,
+                'termes' => [],
+            ];
         }
         ajouterTerme($domaines[$id]['termes'], normaliserRecherche((string) ($ligne['TermeRecherche'] ?? '')), max(1, (int) ($ligne['Poids'] ?? 60)));
     }
@@ -121,13 +149,110 @@ function preparerDomainesSpecialites(array $referentiel): array {
     return $domaines;
 }
 
-/** Retourne les synonymes d'un seul domaine, sans élargir aux domaines voisins. */
+/**
+ * Retourne les synonymes (terme normalise => poids) d'un domaine, sans elargir aux domaines voisins.
+ * Un parent reprend en plus ceux de ses enfants (IdParent), un enfant jamais ceux de son parent.
+ * Exemple : pour Informatique (synonyme « informatique »), avec Data / IA (« data ») et
+ * Cybersecurite (« cyber ») comme enfants, le resultat contient informatique, data et cyber ;
+ * pour Data / IA seul, il ne contient que data. Un terme present deux fois garde le poids maximal.
+ * Ordre stable : le parent d'abord, puis ses enfants par IdDomaine.
+ */
 function termesDomaineDepuisReferentiel(array $referentiel, int $idDomaine): array {
-    $lignesDomaine = array_filter($referentiel, static function (array $ligne) use ($idDomaine): bool {
-        return (int) $ligne['IdDomaine'] === $idDomaine;
+    $ids = [$idDomaine];
+    foreach ($referentiel as $ligne) {
+        if ((int) ($ligne['IdParent'] ?? 0) === $idDomaine) {
+            $ids[] = (int) $ligne['IdDomaine'];
+        }
+    }
+    $ids = array_values(array_unique($ids));
+    sort($ids);
+    $lignesDomaine = array_filter($referentiel, static function (array $ligne) use ($ids): bool {
+        return in_array((int) $ligne['IdDomaine'], $ids, true);
     });
     $domaines = preparerDomainesSpecialites($lignesDomaine);
-    return $domaines[$idDomaine]['termes'] ?? [];
+    $termes = [];
+    // Ordre stable : le parent d'abord, puis ses enfants par identifiant.
+    foreach (array_merge([$idDomaine], array_diff($ids, [$idDomaine])) as $id) {
+        foreach ($domaines[$id]['termes'] ?? [] as $terme => $poids) {
+            $termes[$terme] = max($termes[$terme] ?? 0, $poids);
+        }
+    }
+    return $termes;
+}
+
+/**
+ * Associe chaque domaine enfant a son parent d'apres la colonne IdParent du referentiel.
+ * Exemple : [12 => 11, 13 => 11, 14 => 11, 22 => 21, 23 => 21] (Mobilites = 11, Informatique = 21).
+ * Retourne un tableau vide tant que la hierarchie n'est pas renseignee.
+ */
+function parentsDomainesSpecialites(array $referentiel): array {
+    $parents = [];
+    foreach ($referentiel as $ligne) {
+        if (!empty($ligne['IdParent'])) {
+            $parents[(int) $ligne['IdDomaine']] = (int) $ligne['IdParent'];
+        }
+    }
+    return $parents;
+}
+
+/**
+ * Retire des affectations automatiques calculees les liens vers un parent deja couverts par un enfant.
+ * Le parent est derive : il reprend ses enfants sans lien propre, un lien direct serait redondant.
+ * Un lien d'enfant est effectif s'il est calcule et non bloque par une decision humaine, ou s'il vient
+ * d'une inclusion manuelle/Copilot. Les decisions humaines elles-memes ne sont jamais modifiees ici.
+ * Exemple : « Data et cybersecurite » calculee pour Informatique, Data / IA et Cybersecurite ne garde que
+ * les deux enfants ; « Informatique generale » (aucun lien d'enfant) garde son lien vers Informatique.
+ *
+ * @param array $affectations Liens calcules, indexes par "idSpecialite|idDomaine" : ['IdSpecialite' => 1, 'IdDomaine' => 21].
+ * @param array $parentDe Table idEnfant => idParent (parentsDomainesSpecialites).
+ * @param array $decisionsProtegees Paires "idSpecialite|idDomaine" avec decision manuelle/Copilot, inclusion ou exclusion.
+ * @param array $inclusionsProtegees Sous-ensemble des paires protegees dont la decision est « inclure ».
+ * @return array [liens conserves, nombre de liens retires]
+ */
+function retirerLiensParentsRedondants(array $affectations, array $parentDe, array $decisionsProtegees, array $inclusionsProtegees): array {
+    $parentsCouverts = []; // "idSpecialite|idParent" => true
+    foreach ($affectations as $cle => $affectation) {
+        if (isset($parentDe[$affectation['IdDomaine']]) && !isset($decisionsProtegees[$cle])) {
+            $parentsCouverts[$affectation['IdSpecialite'] . '|' . $parentDe[$affectation['IdDomaine']]] = true;
+        }
+    }
+    foreach ($inclusionsProtegees as $cle => $_) {
+        [$idSpecialite, $idDomaine] = array_map('intval', explode('|', $cle));
+        if (isset($parentDe[$idDomaine])) {
+            $parentsCouverts[$idSpecialite . '|' . $parentDe[$idDomaine]] = true;
+        }
+    }
+    $retires = 0;
+    foreach ($affectations as $cle => $affectation) {
+        if (isset($parentsCouverts[$cle])) {
+            unset($affectations[$cle]);
+            $retires++;
+        }
+    }
+    return [$affectations, $retires];
+}
+
+/**
+ * Un parent est derive : il reprend les specialites et les ecoles de ses enfants.
+ * Les listes doivent encore etre indexees par identifiant, avant array_values.
+ * Une specialite n'est comptee qu'une fois dans le parent, meme si elle est dans plusieurs enfants.
+ * Exemple : Informatique contient {1, 2}, Data / IA {2, 3}, Cybersecurite {4} ;
+ * apres fusion, Informatique contient {1, 2, 3, 4} et ses enfants sont inchanges.
+ *
+ * @param array $domaines Domaines par IdDomaine, chacun avec 'specialites' et 'ecoles' indexees par identifiant.
+ * @param array $parents Table idEnfant => idParent (parentsDomainesSpecialites).
+ * @return array Memes domaines, parents completes.
+ */
+function fusionnerEnfantsDansParents(array $domaines, array $parents): array {
+    foreach ($parents as $idEnfant => $idParent) {
+        if (!isset($domaines[$idEnfant], $domaines[$idParent])) continue;
+        foreach (['specialites', 'ecoles'] as $liste) {
+            foreach ($domaines[$idEnfant][$liste] as $identifiant) {
+                $domaines[$idParent][$liste][$identifiant] = $identifiant;
+            }
+        }
+    }
+    return $domaines;
 }
 
 // Accords en genre réguliers du français, appliqués dans les deux sens : sans
@@ -201,9 +326,10 @@ function chargerCorpusSpecialites(PDO $db): array {
 /**
  * Charge les domaines actifs, y compris ceux sans synonyme. L'ordre alphabetique
  * sert au Panorama ; l'ordre naturel preserve celui des termes de la recherche etendue.
+ * Chaque ligne : IdDomaine, Code, IdParent, Domaine, TermeRecherche (NULL sans synonyme), Poids.
  */
 function chargerReferentielSpecialites(PDO $db, bool $ordonner = true): array {
-    $sql = 'SELECT d.IdDomaine, d.Domaine, s.TermeRecherche, s.Poids
+    $sql = 'SELECT d.IdDomaine, d.Code, d.IdParent, d.Domaine, s.TermeRecherche, s.Poids
         FROM SpecialiteDomaine d LEFT JOIN SpecialiteSynonyme s ON s.IdDomaine = d.IdDomaine
         WHERE d.Actif = 1';
     if ($ordonner) $sql .= ' ORDER BY d.Domaine, s.TermeRecherche';
@@ -225,22 +351,37 @@ function termesCompatibles(string $premier, string $second): bool {
 /**
  * Reconnait un domaine compose explicitement nomme, en entier ou par un composant
  * separe par une barre oblique. Un nom simple complet conserve son elargissement
- * historique : Informatique, par exemple, doit aussi garder la cybersecurite.
+ * historique, sauf s'il designe un domaine parent (colonne IdParent) : il retient
+ * alors le parent et ses enfants, soit « tout le domaine ».
  * La comparaison accepte les variantes mais pas une simple
  * inclusion de mots. Si plusieurs domaines portent ce composant, aucun choix
  * arbitraire n'est fait : l'expansion historique reste alors applicable.
  * Les synonymes seuls ne servent pas a privilegier un domaine parent trop large.
+ *
+ * Retourne les noms normalises des domaines retenus (cles du tableau), vide pour l'expansion historique.
+ * Exemples : « informatique » -> ['informatique', 'data ia', 'cybersecurite'] (parent + enfants) ;
+ * « Data / IA » -> ['data ia'] (nom exact) ; « chimie » (sans enfants) -> [] (historique).
  */
 function domainesExplicitesRechercheEtendue(array $lignes, string $requeteNormalisee): array {
     $variantes = variantesTerme($requeteNormalisee);
     $noms = array_unique(array_column($lignes, 'Domaine'));
+    $nomsParId = [];
+    foreach ($lignes as $ligne) {
+        if (isset($ligne['IdDomaine'])) $nomsParId[(int) $ligne['IdDomaine']] = normaliserRecherche($ligne['Domaine']);
+    }
+    $familles = [];
+    foreach (parentsDomainesSpecialites($lignes) as $idEnfant => $idParent) {
+        if (!isset($nomsParId[$idEnfant], $nomsParId[$idParent])) continue;
+        $familles[$nomsParId[$idParent]][$nomsParId[$idParent]] = true;
+        $familles[$nomsParId[$idParent]][$nomsParId[$idEnfant]] = true;
+    }
     $exacts = [];
     $composants = [];
     foreach ($noms as $nom) {
         $normalise = normaliserRecherche($nom);
         if ($normalise === '') continue;
         if (strpos($nom, '/') === false) {
-            if (array_intersect($variantes, variantesTerme($normalise)) !== []) return [];
+            if (array_intersect($variantes, variantesTerme($normalise)) !== []) return $familles[$normalise] ?? [];
             continue;
         }
         if (array_intersect($variantes, variantesTerme($normalise)) !== []) {
@@ -312,18 +453,47 @@ function scorerSpecialite(array $ligne, array $regles, bool $rechercheStricte = 
     return [$score, array_values($correspondances)];
 }
 
-// Liste de mots-clés proposée dans le formulaire de recherche.
-//
-// Source unique : les libellés de SpecialiteDomaine. Chaque domaine est affiché
-// tel qu'il est éditorialement défini, même lorsque son libellé est composé.
-//
-// Chaque candidat n'est retenu que si l'un de ses synonymes ramène au moins une
-// spécialité : la liste ne peut donc pas proposer un mot-clé qui n'aboutirait à
-// aucun résultat. Le corpus des spécialités est petit (< 1 000 libellés) mais la
-// vérification est mise en cache pour ne pas la refaire à chaque affichage.
+/**
+ * Trie des domaines (tableaux portant 'code' et 'id') dans l'ordre de la hierarchie :
+ * tri « naturel » sur Code, de sorte que 2 < 10, 11 < 11.1 < 11.2 < 11.10 < 12.
+ * Un tri textuel donnerait 1, 10, 11, 11.1, 11.10, 11.2, 2. Sans Code (fixtures), l'ordre
+ * des identifiants est conserve. Le tri est stable : a code egal, l'ordre d'entree reste.
+ */
+function trierDomainesParCode(array $domaines): array {
+    $domaines = array_values($domaines);
+    usort($domaines, static function (array $premier, array $second): int {
+        $ordre = strnatcmp((string) ($premier['code'] ?? ''), (string) ($second['code'] ?? ''));
+        return $ordre !== 0 ? $ordre : (int) $premier['id'] <=> (int) $second['id'];
+    });
+    return $domaines;
+}
+
+/**
+ * Liste de mots-cles proposee dans le formulaire de recherche, dans l'ordre de la hierarchie.
+ *
+ * Source unique : les libelles de SpecialiteDomaine. Chaque domaine est affiche
+ * tel qu'il est editorialement defini, meme lorsque son libelle est compose.
+ *
+ * Regle de retention : un domaine n'est propose que si l'un de ses synonymes ramene au moins
+ * une specialite, la liste ne pouvant pas proposer un mot-cle sans resultat. Les synonymes
+ * d'un parent comprennent ceux de ses enfants (termesDomaineDepuisReferentiel) : « Informatique »
+ * est donc propose des qu'une specialite de Data / IA ou de Cybersecurite existe.
+ * Le corpus est petit (< 1 000 libelles) mais le resultat est mis en cache 12 h.
+ *
+ * Structure retournee (une entree par domaine propose, triee par Code) :
+ *   [['nom' => 'Informatique',  'niveau' => 0, 'code' => '18'],
+ *    ['nom' => 'Data / IA',     'niveau' => 1, 'code' => '18.1'],
+ *    ['nom' => 'Cybersécurité', 'niveau' => 1, 'code' => '18.2'],
+ *    ['nom' => 'Mathématiques / Finance de marché', 'niveau' => 0, 'code' => '19'], ...]
+ * 'nom' est la valeur envoyee a la recherche, 'niveau' vaut 0 (racine) ou 1 (enfant) et sert
+ * uniquement a l'indentation : le numero n'est pas affiche aux etudiants.
+ *
+ * Cache : fichier motscles_v4.json (v3 ne portait que des libelles, d'ou le changement de nom ;
+ * apres une evolution de la hierarchie, ajouter ?nocache=1 a la page pour le renouveler).
+ */
 function motsClesSpecialite(PDO $db, bool $sansCache = false): array {
     $cacheDir = sys_get_temp_dir() . '/cpge_specialite_cache';
-    $cacheFile = $cacheDir . '/motscles_v3.json';
+    $cacheFile = $cacheDir . '/motscles_v4.json';
     $cacheTtl = 43200; // 12h
 
     if (!$sansCache && is_file($cacheFile) && (time() - @filemtime($cacheFile)) <= $cacheTtl) {
@@ -337,16 +507,21 @@ function motsClesSpecialite(PDO $db, bool $sansCache = false): array {
     }
 
     // La liste utilise les memes dictionnaires et le meme test que le Panorama.
-    $candidats = preparerDomainesSpecialites(chargerReferentielSpecialites($db));
-    ksort($candidats);
+    $referentiel = chargerReferentielSpecialites($db);
+    $candidats = trierDomainesParCode(preparerDomainesSpecialites($referentiel));
     $specialites = array_map(static function (array $ligne): string {
         return normaliserRecherche((string) ($ligne['Specialite'] ?? ''));
     }, chargerCorpusSpecialites($db));
     $liste = [];
     foreach ($candidats as $candidat) {
+        $regles = preparerCorrespondanceSpecialite(termesDomaineDepuisReferentiel($referentiel, $candidat['id']));
         foreach ($specialites as $specialite) {
-            if (analyserTexteSpecialite($specialite, $candidat['regles'])['trouve']) {
-                $liste[] = trim((string) $candidat['nom']);
+            if (analyserTexteSpecialite($specialite, $regles)['trouve']) {
+                $liste[] = [
+                    'nom' => trim((string) $candidat['nom']),
+                    'niveau' => $candidat['idParent'] === null ? 0 : 1,
+                    'code' => $candidat['code'],
+                ];
                 break;
             }
         }

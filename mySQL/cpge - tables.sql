@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : dim. 22 nov. 2026 à 16:49
+-- Généré le : mar. 24 nov. 2026 à 15:46
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -336,6 +336,8 @@ CREATE TABLE `Specialite` (
 
 CREATE TABLE `SpecialiteDomaine` (
   `IdDomaine` int(5) NOT NULL,
+  `Code` varchar(5) NOT NULL,
+  `IdParent` int(5) DEFAULT NULL,
   `Domaine` varchar(100) NOT NULL,
   `Description` varchar(250) DEFAULT NULL,
   `Actif` tinyint(1) NOT NULL DEFAULT '1'
@@ -479,7 +481,9 @@ ALTER TABLE `Specialite`
 --
 ALTER TABLE `SpecialiteDomaine`
   ADD PRIMARY KEY (`IdDomaine`),
-  ADD UNIQUE KEY `uk_Domaine` (`Domaine`);
+  ADD UNIQUE KEY `uk_Domaine` (`Domaine`),
+  ADD UNIQUE KEY `uk_Code` (`Code`),
+  ADD KEY `idx_Domaine_Parent` (`IdParent`);
 
 --
 -- Index pour la table `SpecialiteDomaineAffectation`
@@ -525,6 +529,12 @@ ALTER TABLE `SpecialiteDomaine`
 --
 -- Contraintes pour les tables déchargées
 --
+
+--
+-- Contraintes pour la table `SpecialiteDomaine`
+--
+ALTER TABLE `SpecialiteDomaine`
+  ADD CONSTRAINT `fk_Domaine_Parent` FOREIGN KEY (`IdParent`) REFERENCES `SpecialiteDomaine` (`IdDomaine`);
 
 --
 -- Contraintes pour la table `SpecialiteDomaineAffectation`

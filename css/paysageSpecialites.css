@@ -2,6 +2,10 @@
  * Styles du Panorama des specialites, limites a .paysage et .page-paysage.
  * Reutilise Bootstrap et le menu commun sans modifier les autres statistiques.
  * Deux colonnes sur ordinateur, graphiques empiles sur tablette et mobile.
+ * Hierarchie : les enfants d'une famille de domaines sont plus clairs que leur parent
+ * et relies a lui par un trait (.paysage-trait) ; dans les barres, les enfants sont en retrait.
+ * Mise en avant : .carte-focus estompe les bulles, .paysage-loupe agrandit le domaine actif et
+ * .paysage-barre-active allume sa ligne dans la liste.
  * Les dimensions stables de la carte evitent les sauts lors des recalculs D3.
  */
 .page-paysage {
@@ -33,14 +37,33 @@
 .paysage-bulle, .paysage-bulle text, .paysage-bulle tspan { outline: none; text-decoration: none; }
 .paysage-bulle[role="link"] { cursor: pointer; }
 .paysage-bulle circle { stroke: #fff; stroke-width: 2; }
-.paysage-bulle[role="link"]:hover circle, .paysage-bulle[role="link"]:active circle, .paysage-bulle:focus-visible circle { stroke: #172f33; stroke-width: 4; }
+/* Enfants d'une famille : couleur du parent, plus claire, reliee au parent par un trait. */
+.paysage-bulle-enfant circle { fill-opacity: .72; }
+.paysage-trait { stroke-width: 3; stroke-opacity: .5; pointer-events: none; }
+/* Focus clavier : contour sombre ; au survol, la loupe (.paysage-loupe) montre la bulle. */
+.paysage-bulle:focus-visible circle { stroke: #172f33; stroke-width: 4; }
+/* Mise en avant : les autres bulles sont estompees, la bulle active est recouverte par la loupe. */
+.paysage-carte.carte-focus .paysage-bulle, .paysage-carte.carte-focus .paysage-trait { opacity: .3; transition: opacity .15s; }
+.paysage-carte.carte-focus .paysage-bulle-active { opacity: 1; }
+.paysage-loupe { pointer-events: none; user-select: none; }
+.paysage-loupe circle { stroke: #fff; stroke-width: 3; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .4)); }
+.paysage-loupe text { fill: #fff; text-anchor: middle; font-weight: 600; }
+.paysage-loupe .loupe-nom { font-size: 12px; }
+.paysage-loupe .loupe-valeur { font-size: 20px; font-weight: 700; }
+.paysage-loupe .loupe-invite { font-size: 11px; font-weight: 400; }
+/* Epinglee par un appui tactile, la loupe devient un lien (second appui). */
+.paysage-loupe-epinglee { pointer-events: auto; cursor: pointer; }
 .paysage-bulle text { fill: #fff; text-anchor: middle; pointer-events: none; font-weight: 600; }
 .paysage-bulle .bulle-valeur { font-size: 18px; font-weight: 700; }
 .paysage-section-entete > span { color: var(--paysage-secondaire); font-size: .875rem; }
 .paysage-barres { display: grid; gap: 5px; }
 .paysage .paysage-barre { border: 0; background: transparent; padding: 5px 4px; display: grid; grid-template-columns: minmax(0, 1fr) 92px 30px; align-items: center; gap: 10px; text-align: left; color: var(--paysage-texte); width: 100%; border-radius: 3px; font-size: .875rem; text-decoration: none; }
-.paysage a.paysage-barre:hover { background: #e8eff0; }
+.paysage a.paysage-barre:hover, .paysage .paysage-barre-active { background: #dce9eb; }
 .barre-libelle { overflow-wrap: anywhere; }
+/* Arbre : le parent en gras, les enfants en retrait avec une barre plus claire. */
+.paysage .paysage-barre-parent .barre-libelle { font-weight: 700; }
+.paysage .paysage-barre-enfant { padding-left: 24px; }
+.paysage-barre-enfant .barre-remplissage { opacity: .65; }
 .barre-piste { background: #e6ecee; height: 10px; border-radius: 2px; overflow: hidden; }
 .barre-remplissage { display: block; height: 100%; background: var(--domaine-couleur); }
 .barre-valeur { text-align: right; font-variant-numeric: tabular-nums; }

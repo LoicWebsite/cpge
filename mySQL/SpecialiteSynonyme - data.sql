@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:8889
--- Généré le : mer. 04 nov. 2026 à 17:47
+-- Généré le : mar. 24 nov. 2026 à 16:54
 -- Version du serveur : 5.7.44
 -- Version de PHP : 7.4.33
 
@@ -215,7 +215,6 @@ INSERT INTO `SpecialiteSynonyme` (`IdDomaine`, `TermeRecherche`, `Poids`) VALUES
 (15, 'urbanisme', 80),
 (15, 'ville', 80),
 (16, 'acoustique', 80),
-(16, 'conception', 50),
 (16, 'conception mecanique', 80),
 (16, 'fabrication', 70),
 (16, 'fluid dynamics', 80),
@@ -261,6 +260,7 @@ INSERT INTO `SpecialiteSynonyme` (`IdDomaine`, `TermeRecherche`, `Poids`) VALUES
 (20, 'telecoms', 100),
 (21, '3d', 70),
 (21, 'algorithme', 80),
+(21, 'android', 70),
 (21, 'audiovisuel', 80),
 (21, 'cloud', 70),
 (21, 'computational', 80),
@@ -268,12 +268,16 @@ INSERT INTO `SpecialiteSynonyme` (`IdDomaine`, `TermeRecherche`, `Poids`) VALUES
 (21, 'computing', 80),
 (21, 'cybersecurite', 50),
 (21, 'data', 50),
-(21, 'developpement', 40),
+(21, 'développement c', 70),
+(21, 'développement d applications', 70),
+(21, 'devops', 70),
 (21, 'digitale', 80),
 (21, 'donnees', 50),
+(21, 'full stack', 70),
 (21, 'information technology', 80),
 (21, 'informatique', 100),
 (21, 'intelligence artificielle', 50),
+(21, 'ios', 70),
 (21, 'java', 80),
 (21, 'logiciel', 90),
 (21, 'machine learning', 50),
@@ -282,6 +286,7 @@ INSERT INTO `SpecialiteSynonyme` (`IdDomaine`, `TermeRecherche`, `Poids`) VALUES
 (21, 'net', 80),
 (21, 'numerique', 80),
 (21, 'programmation', 70),
+(21, 'python', 70),
 (21, 'réalité virtuelle', 80),
 (21, 'securite informatique', 70),
 (21, 'software engineering', 80),
@@ -343,6 +348,7 @@ INSERT INTO `SpecialiteSynonyme` (`IdDomaine`, `TermeRecherche`, `Poids`) VALUES
 (26, 'ecoconception', 80),
 (26, 'excellence operationnelle', 80),
 (26, 'genie industriel', 100),
+(26, 'gestion de production', 70),
 (26, 'industrialisation', 80),
 (26, 'industrie 4 0', 80),
 (26, 'industrie du futur', 80),
@@ -351,8 +357,9 @@ INSERT INTO `SpecialiteSynonyme` (`IdDomaine`, `TermeRecherche`, `Poids`) VALUES
 (26, 'ingenierie de produits', 80),
 (26, 'ingenierie industrielle', 90),
 (26, 'logistique', 90),
+(26, 'management de la production', 70),
 (26, 'performance industrielle', 90),
-(26, 'production', 70),
+(26, 'pilotage de la production', 70),
 (26, 'production industrielle', 80),
 (26, 'qhse', 100),
 (26, 'qualite', 80),
