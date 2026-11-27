@@ -11,6 +11,7 @@
         'statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php',
         'classement-ecole-d-ingenieur.php',
         'statistique-attractivite-ecoles.php',
+        'selectivite-ecoles-ingenieur-par-filiere.php',
         'salaire-ingenieur-cpge-post-prepa.php'
     ];
     var pageCourante = window.location.pathname.split('/').pop();
