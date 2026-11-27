@@ -49,6 +49,21 @@ CREATE TABLE `Concours` (
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `ConcoursEtalonnage`
+--
+
+CREATE TABLE `ConcoursEtalonnage` (
+  `Filiere` varchar(16) NOT NULL,
+  `Concours` varchar(256) NOT NULL,
+  `Decalage` double DEFAULT NULL COMMENT 'ecart de niveau du concours (echelle logit) par rapport au concours de reference de la filiere ; NULL si non etalonne',
+  `Erreur` double DEFAULT NULL COMMENT 'incertitude (echelle logit) de ce decalage',
+  `NbReperes` int(5) NOT NULL DEFAULT '0' COMMENT 'nombre d ecoles-reperes (avec niveau moyen DAUR) utilisees',
+  `Reference` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1 pour le concours de reference de la filiere'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC COMMENT='calcule par php/calculerEtalonnage.php';
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `DAUR`
 --
 
@@ -383,6 +398,12 @@ ALTER TABLE `Attractivite`
 -- Index pour la table `Concours`
 --
 ALTER TABLE `Concours`
+  ADD PRIMARY KEY (`Filiere`,`Concours`);
+
+--
+-- Index pour la table `ConcoursEtalonnage`
+--
+ALTER TABLE `ConcoursEtalonnage`
   ADD PRIMARY KEY (`Filiere`,`Concours`);
 
 --
