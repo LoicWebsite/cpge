@@ -31,13 +31,18 @@
 	// mode "école" : comparer les filières entre elles pour une école donnée
 	$ecoleChoisie = trim($ecole);
 	$modeEcole = ($ecoleChoisie !== "");
+	// mode "Allstar" : toutes les écoles de toutes les filières dans un seul classement,
+	// une ligne par couple école + filière (filière entre parenthèses)
+	$modeAllstar = !$modeEcole && isset($_GET['filiere']) && strtolower(trim((string) $_GET['filiere'])) === 'allstar';
+	$libelleFiliere = $modeAllstar ? "toutes filières" : strtoupper($filiere);
 	$anneeLibelle = ($an === "toutes") ? "toutes les années (2016-2026)" : $an;
 
 	// en dessous de ce nombre d'intégrés, la médiane n'est pas représentative
-	$integresMinimum = 3;
+	// (5 en Allstar : beaucoup de couples école + filière n'ont que quelques intégrés)
+	$integresMinimum = $modeAllstar ? 5 : 3;
 
 	// URL canonique : on garde uniquement les paramètres qui modifient le contenu
-	$criteresPage = $modeEcole ? ['ecole' => $ecoleChoisie, 'an' => $an] : ['filiere' => $filiere, 'an' => $an];
+	$criteresPage = $modeEcole ? ['ecole' => $ecoleChoisie, 'an' => $an] : ['filiere' => $modeAllstar ? 'allstar' : $filiere, 'an' => $an];
 	$canonicalUrl = 'https://loic.website/CPGE/selectivite-ecoles-ingenieur-par-filiere.php?'
 		. http_build_query($criteresPage, '', '&', PHP_QUERY_RFC3986);
 	$retourListe = urlPageNavigation(basename(__FILE__), $criteresPage);
@@ -102,12 +107,13 @@
 			<p>Ce classement ordonne les écoles selon la <strong>sélectivité</strong> observée aux concours SCEI pour la filière de CPGE choisie.</p>
 			<ul>
 				<li><strong>Sélectivité médiane</strong> : rang du candidat médian parmi les intégrés, divisé par le nombre d'inscrits au concours. Par exemple 12 % signifie que la moitié des intégrés avaient un rang meilleur que 12 % des inscrits. <strong>Plus le pourcentage est faible, plus l'école est sélective.</strong> Ce critère sert au classement.</li>
-				<li><strong>Dernier intégré</strong> : rang du dernier intégré divisé par le nombre d'inscrits, lorsque le concours le publie. C'est un indicateur complémentaire, plus sensible aux désistements et aux appels de liste d'attente.</li>
+				<li><strong>Dernier intégré</strong> : rang du dernier intégré divisé par le nombre d'inscrits, lorsque le concours le publie. Il n'est affiché que s'il est publié pour au moins la moitié des intégrés de l'école et s'il est cohérent avec le rang médian (un dernier intégré meilleur que le médian est une erreur de saisie ou de source). C'est un indicateur complémentaire, plus sensible aux désistements et aux appels de liste d'attente.</li>
 				<li><strong>Classement</strong> : le tableau est classé par défaut sur le <strong>dernier intégré</strong>, qui indique jusqu'où l'on peut descendre pour entrer. Ce rang n'est pas publié par tous les concours (surtout pour les années récentes) : les écoles sans dernier intégré sont alors listées en fin de tableau, sans rang, classées par sélectivité médiane. Le bouton &darr; de la colonne « Sélectivité médiane » reclasse sur ce critère, disponible pour presque toutes les écoles. Un second clic inverse l'ordre. Le choix « Toutes les années » réduit le nombre d'écoles sans dernier intégré.</li>
+				<li><strong>Allstar</strong> : le choix « Allstar » dans la liste des filières classe ensemble toutes les écoles de toutes les filières. Chaque ligne est un couple école + filière, par exemple « Ecole Polytechnique (MP) ». Les concours communs à plusieurs filières (Groupe INSA, CESI, Ingeni'Up) donnent les mêmes chiffres dans chaque filière : ils ne sont pas repris dans l'Allstar, mais restent visibles filière par filière. Pour limiter le bruit, seuls les couples avec au moins 5 intégrés sur la période sont classés (3 dans les autres vues). Le pourcentage étant rapporté aux inscrits de chaque filière, ce classement reste un repère (voir la réserve sur la comparaison entre filières ci-dessous).</li>
 				<li>Un concours n'a pas le même nombre d'inscrits qu'un autre : on compare donc des rapports et non des rangs bruts.</li>
 				<li>Quand une école recrute par plusieurs concours ou plusieurs formations, les valeurs sont moyennées en pondérant par le nombre d'intégrés.</li>
 				<li>Les écoles avec moins de <?php echo $integresMinimum; ?> intégrés sur la période choisie ne sont pas classées (médiane peu représentative). Les écoles dont le concours ne publie pas de rang médian ne figurent pas non plus dans ce classement.</li>
-				<li>Les concours <strong>Inter-Filière</strong> (par exemple Polytech) classent ensemble les candidats de toutes les filières : leur rang n'est pas comparable au nombre d'inscrits d'une seule filière. Ils sont exclus, tout comme les lignes dont le rang médian dépasse le nombre d'inscrits. Certaines écoles peuvent donc être absentes de la liste d'une filière.</li>
+				<li>Les concours <strong>Inter-Filière</strong> (par exemple Polytech) classent ensemble les candidats de toutes les filières : leur rang n'est pas comparable au nombre d'inscrits d'une seule filière. Ils sont exclus, tout comme les lignes dont le rang médian dépasse le nombre d'inscrits et les concours réservés aux candidats étrangers (Polytechnique Etr., filières « Etranger »), dont le classement est séparé. Certaines écoles peuvent donc être absentes de la liste d'une filière.</li>
 				<li><strong>Petits concours</strong> : quand un concours ne classe qu'une faible part de ses inscrits (par exemple Avenir Prépas ou les concours d'architecture), le rapport rang / inscrits est très faible alors que le niveau d'entrée ne l'est pas forcément. Les écoles qui recrutent surtout par ces concours peuvent apparaître trop sélectives : à interpréter avec prudence.</li>
 				<li><strong>ENS</strong> (*) : les classés et les entrants ne portent que sur les candidats fonctionnarisables alors que les inscrits portent sur tous les candidats ; la sélectivité y est à interpréter avec prudence.</li>
 			</ul>
@@ -123,8 +129,9 @@
 				<select id="filiere" name="filiere" class="form-select" onchange="this.form.submit()"<?php echo $modeEcole ? " disabled title=\"Désactivé : toutes les filières sont comparées pour l'école choisie\"" : ""; ?>>
 				<?php
 					$filieresAffichees = ["mp" => "MP", "mpi" => "MPI", "pc" => "PC", "psi" => "PSI", "pt" => "PT", "tsi" => "TSI", "bcpst" => "BCPST", "tb" => "TB", "tpc" => "TPC"];
+					echo "<option value='allstar'" . ($modeAllstar ? " selected" : "") . ">Allstar (toutes les filières)</option>";
 					foreach ($filieresAffichees as $code => $libelle) {
-						echo "<option value='" . $code . "'" . ($code === $filiere ? " selected" : "") . ">" . $libelle . "</option>";
+						echo "<option value='" . $code . "'" . (!$modeAllstar && $code === $filiere ? " selected" : "") . ">" . $libelle . "</option>";
 					}
 				?>
 				</select>
@@ -174,29 +181,45 @@
 		if (!$modeEcole) {
 		// Agrégation par école. Le DISTINCT évite de compter deux fois une ligne de
 		// Note si le rattachement EcoleConcours existait en double.
-		$params = [':filiere' => $filiere, ':minimum' => $integresMinimum];
+		$params = [':minimum' => $integresMinimum];
+		$filtreFiliere = "";
+		if (!$modeAllstar) {
+			$filtreFiliere = " AND n.Filiere = :filiere";
+			$params[':filiere'] = $filiere;
+		} else {
+			// Allstar : un concours commun à plusieurs filières (Groupe INSA, CESI, Ingeni'Up...)
+			// recopie la même ligne dans chaque filière. On l'écarte pour ne pas créer de
+			// lignes jumelles (même école, mêmes chiffres, filières différentes).
+			$filtreFiliere = " AND NOT EXISTS (SELECT 1 FROM Note m
+					WHERE m.An = n.An AND m.Concours = n.Concours AND m.EcoleConcours = n.EcoleConcours
+						AND m.Inscrit = n.Inscrit AND m.Integre = n.Integre AND m.RangMedian = n.RangMedian
+						AND m.Filiere <> n.Filiere)";
+		}
 		$filtreAn = "";
 		if ($an !== "toutes") {
 			$filtreAn = " AND n.An = :an";
 			$params[':an'] = $an;
 		}
-		$sql = "SELECT ec.Ecole,
+		$sql = "SELECT ec.Ecole, n.Filiere,
 					SUM(n.Integre) AS Integres,
 					SUM(n.Integre * n.RangMedian) / SUM(n.Integre) AS RangMedianMoyen,
 					100 * SUM(n.Integre * n.RangMedian / n.Inscrit) / SUM(n.Integre) AS SelectiviteMediane,
-					100 * SUM(CASE WHEN n.Dernier > 0 THEN n.Integre * n.Dernier / n.Inscrit END)
-						/ SUM(CASE WHEN n.Dernier > 0 THEN n.Integre END) AS SelectiviteDernier
+					CASE WHEN SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre END) >= 0.5 * SUM(n.Integre)
+							THEN 100 * SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre * n.Dernier / n.Inscrit END)
+								/ SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre END)
+						END AS SelectiviteDernier
 				FROM Note n
 				INNER JOIN (SELECT DISTINCT Filiere, Concours, EcoleConcours, Ecole FROM EcoleConcours) ec
 					ON ec.Filiere = n.Filiere AND ec.Concours = n.Concours AND ec.EcoleConcours = n.EcoleConcours
-				WHERE n.Filiere = :filiere" . $filtreAn . "
+				WHERE 1 = 1" . $filtreFiliere . $filtreAn . "
 					AND ec.Ecole IS NOT NULL
 					AND n.Integre > 0 AND n.RangMedian > 0 AND n.Inscrit > 0
 					AND n.RangMedian <= n.Inscrit
 					AND n.Concours NOT LIKE '%Inter-Fili_re%'
-				GROUP BY ec.Ecole
+						AND n.Concours NOT LIKE '% Etr.%' AND n.EcoleConcours NOT LIKE '% Etr.%' AND n.EcoleConcours NOT LIKE '% Etranger%'
+				GROUP BY ec.Ecole, n.Filiere
 				HAVING SUM(n.Integre) >= :minimum
-				ORDER BY (SelectiviteDernier IS NULL), SelectiviteDernier ASC, SelectiviteMediane ASC, ec.Ecole ASC";
+				ORDER BY (SelectiviteDernier IS NULL), SelectiviteDernier ASC, SelectiviteMediane ASC, ec.Ecole ASC, n.Filiere ASC";
 		if ($debug) echo "SQL = " . escapeHtml($sql) . "<br>";
 
 		try {
@@ -210,12 +233,12 @@
 		}
 
 		if (empty($lignes)) {
-			echo "<div class='alert alert-info'>Aucune école n'a au moins " . $integresMinimum . " intégrés avec un rang médian publié en " . strtoupper($filiere) . " (" . escapeHtml($anneeLibelle) . ").</div>";
+			echo "<div class='alert alert-info'>Aucune école n'a au moins " . $integresMinimum . " intégrés avec un rang médian publié en " . $libelleFiliere . " (" . escapeHtml($anneeLibelle) . ").</div>";
 		} else {
 			$maxSelectivite = max(array_filter(array_column($lignes, 'SelectiviteDernier'), fn($v) => $v !== null) ?: [0.1]);
 			$idTableau = '"#tableau-selectivite","rang;école;sélectivité médiane (%);rang médian moyen;dernier intégré (%);intégrés"';
 
-			echo "<h2 class='h5'>" . count($lignes) . " écoles en " . strtoupper($filiere) . " &ndash; concours " . escapeHtml($anneeLibelle) . "</h2>";
+			echo "<h2 class='h5'>" . count($lignes) . ($modeAllstar ? " couples école (filière) &ndash; toutes filières confondues &ndash; concours " : " écoles en " . $libelleFiliere . " &ndash; concours ") . escapeHtml($anneeLibelle) . "</h2>";
 			echo "<table id='tableau-selectivite' data-direction='asc' data-rang='1'>";
 			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='bi bi-cursor-fill' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.";
 			echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(" . $idTableau . ")'><i class='bi bi-download'></i> csv</button></caption>";
@@ -241,14 +264,16 @@
 					$valeurPrecedente = $dernier;
 				}
 				$nomEcole = $ligne['Ecole'];
+				$filiereLigne = $modeAllstar ? strtolower($ligne['Filiere']) : $filiere;
+				$libelleLigne = $nomEcole . ($modeAllstar ? " (" . strtoupper($ligne['Filiere']) . ")" : "");
 				$ens = (bool) preg_match('/^(ENS\b|[ÉE]cole normale)/iu', $nomEcole);
 				$largeurJauge = ($dernier === null) ? 0 : max(2, (int) round(60 * $dernier / max($maxSelectivite, 0.1)));
 				$urlDetail = 'detail-resultat-admission-par-ecole.php?origine=selectivite&amp;retour=' . rawurlencode($retourListe)
-					. '&amp;ecole=' . rawurlencode($nomEcole) . '&amp;filiere=' . rawurlencode($filiere);
+					. '&amp;ecole=' . rawurlencode($nomEcole) . '&amp;filiere=' . rawurlencode($filiereLigne);
 
-				echo "<tr ondblclick='zoom(" . encodeJs($nomEcole) . ")'" . " data-mediane='" . number_format($mediane, 1, '.', '') . "' data-dernier='" . ($ligne['SelectiviteDernier'] !== null ? number_format((float) $ligne['SelectiviteDernier'], 1, '.', '') : '') . "'>";
+				echo "<tr ondblclick='zoom(" . encodeJs($nomEcole) . ", " . encodeJs($filiereLigne) . ")'" . " data-mediane='" . number_format($mediane, 1, '.', '') . "' data-dernier='" . ($ligne['SelectiviteDernier'] !== null ? number_format((float) $ligne['SelectiviteDernier'], 1, '.', '') : '') . "'>";
 				echo "<td style='text-align:center'>" . ($dernier === null ? "&ndash;" : $rang) . "</td>";
-				echo "<td style='padding-left:10px'><a href='" . $urlDetail . "'><strong>" . escapeHtml($nomEcole) . "</strong></a>" . ($ens ? " *" : "")
+				echo "<td style='padding-left:10px'><a href='" . $urlDetail . "'><strong>" . escapeHtml($libelleLigne) . "</strong></a>" . ($ens ? " *" : "")
 					. " <a href='?ecole=" . rawurlencode($nomEcole) . "&amp;an=" . rawurlencode($an) . "' title='Comparer les filières pour cette école' aria-label='Comparer les filières pour " . escapeHtml($nomEcole) . "'><i class='bi bi-bar-chart-steps'></i></a></td>";
 				echo "<td style='text-align:right; white-space:nowrap'>" . formater($mediane, 1) . "%&nbsp;</td>";
 				echo "<td style='text-align:right'>" . formater($ligne['RangMedianMoyen'], 0) . "&nbsp;</td>";
@@ -272,8 +297,10 @@
 						SUM(n.Place) AS Places,
 						SUM(n.Integre * n.RangMedian) / SUM(n.Integre) AS RangMedianMoyen,
 						100 * SUM(n.Integre * n.RangMedian / n.Inscrit) / SUM(n.Integre) AS SelectiviteMediane,
-						100 * SUM(CASE WHEN n.Dernier > 0 THEN n.Integre * n.Dernier / n.Inscrit END)
-							/ SUM(CASE WHEN n.Dernier > 0 THEN n.Integre END) AS SelectiviteDernier
+						CASE WHEN SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre END) >= 0.5 * SUM(n.Integre)
+							THEN 100 * SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre * n.Dernier / n.Inscrit END)
+								/ SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre END)
+						END AS SelectiviteDernier
 					FROM Note n
 					INNER JOIN (SELECT DISTINCT Filiere, Concours, EcoleConcours, Ecole FROM EcoleConcours) ec
 						ON ec.Filiere = n.Filiere AND ec.Concours = n.Concours AND ec.EcoleConcours = n.EcoleConcours
@@ -281,6 +308,7 @@
 						AND n.Integre > 0 AND n.RangMedian > 0 AND n.Inscrit > 0
 						AND n.RangMedian <= n.Inscrit
 						AND n.Concours NOT LIKE '%Inter-Fili_re%'
+						AND n.Concours NOT LIKE '% Etr.%' AND n.EcoleConcours NOT LIKE '% Etr.%' AND n.EcoleConcours NOT LIKE '% Etranger%'
 					GROUP BY n.Filiere
 					ORDER BY (SelectiviteDernier IS NULL), SelectiviteDernier DESC, SelectiviteMediane DESC";
 			if ($debug) echo "SQL = " . escapeHtml($sql) . "<br>";
@@ -386,10 +414,9 @@
 	<!-- navigation -->
 	<script>
 		// pour zoomer sur une école (fiche école, onglet admissions de la filière choisie)
-		function zoom(ecole) {
+		function zoom(ecole, filiereLigne) {
 			<?php
-				$baseZoom = 'detail-resultat-admission-par-ecole.php?origine=selectivite&filiere=' . rawurlencode($filiere) . '&ecole=';
-				echo 'window.location.href = NavigationRetour.urlDestination(' . encodeJs($baseZoom) . ' + encodeURIComponent(ecole));';
+				echo 'window.location.href = NavigationRetour.urlDestination(' . encodeJs('detail-resultat-admission-par-ecole.php?origine=selectivite&filiere=') . ' + encodeURIComponent(filiereLigne || ' . encodeJs($filiere) . ') + "&ecole=" + encodeURIComponent(ecole));';
 			?>
 		}
 
