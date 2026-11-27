@@ -107,9 +107,10 @@
 			<p>Ce classement ordonne les écoles selon la <strong>sélectivité</strong> observée aux concours SCEI pour la filière de CPGE choisie.</p>
 			<ul>
 				<li><strong>Sélectivité médiane</strong> : rang du candidat médian parmi les intégrés, divisé par le nombre d'inscrits au concours. Par exemple 12 % signifie que la moitié des intégrés avaient un rang meilleur que 12 % des inscrits. <strong>Plus le pourcentage est faible, plus l'école est sélective.</strong> Ce critère sert au classement.</li>
-				<li><strong>Dernier intégré</strong> : rang du dernier intégré divisé par le nombre d'inscrits, lorsque le concours le publie. Il n'est affiché que s'il est publié pour au moins la moitié des intégrés de l'école et s'il est cohérent avec le rang médian (un dernier intégré meilleur que le médian est une erreur de saisie ou de source). C'est un indicateur complémentaire, plus sensible aux désistements et aux appels de liste d'attente.</li>
+				<li><strong>Dernier intégré</strong> : rang du dernier intégré divisé par le nombre d'inscrits, lorsque le concours le publie. Il n'est affiché que s'il est publié pour au moins 90 % des intégrés de l'école (sinon la valeur ne représenterait qu'une partie des concours de l'école) et s'il est cohérent avec le rang médian (un dernier intégré meilleur que le médian est une erreur de saisie ou de source). C'est un indicateur complémentaire, plus sensible aux désistements et aux appels de liste d'attente.</li>
 				<li><strong>Classement</strong> : le tableau est classé par défaut sur le <strong>dernier intégré</strong>, qui indique jusqu'où l'on peut descendre pour entrer. Ce rang n'est pas publié par tous les concours (surtout pour les années récentes) : les écoles sans dernier intégré sont alors listées en fin de tableau, sans rang, classées par sélectivité médiane. Le bouton &darr; de la colonne « Sélectivité médiane » reclasse sur ce critère, disponible pour presque toutes les écoles. Un second clic inverse l'ordre. Le choix « Toutes les années » réduit le nombre d'écoles sans dernier intégré.</li>
 				<li><strong>Allstar</strong> : le choix « Allstar » dans la liste des filières classe ensemble toutes les écoles de toutes les filières. Chaque ligne est un couple école + filière, par exemple « Ecole Polytechnique (MP) ». Les concours communs à plusieurs filières (Groupe INSA, CESI, Ingeni'Up) donnent les mêmes chiffres dans chaque filière : ils ne sont pas repris dans l'Allstar, mais restent visibles filière par filière. Pour limiter le bruit, seuls les couples avec au moins 5 intégrés sur la période sont classés (3 dans les autres vues). Le pourcentage étant rapporté aux inscrits de chaque filière, ce classement reste un repère (voir la réserve sur la comparaison entre filières ci-dessous).</li>
+				<li><strong>Comparer à l'échelle de la promotion</strong> : la case à cocher au-dessus du tableau rapporte tous les rangs à la promotion complète de la filière (environ 7 000 candidats en MP, 5 000 en PC, 5 400 en PSI) au lieu des inscrits du concours. Elle corrige un biais : les concours ciblés comme Polytechnique n'ont que quelques centaines d'inscrits, déjà très forts, et paraissent donc moins sélectifs qu'ils ne sont. À utiliser pour comparer des écoles qui recrutent par des concours différents.</li>
 				<li>Un concours n'a pas le même nombre d'inscrits qu'un autre : on compare donc des rapports et non des rangs bruts.</li>
 				<li>Quand une école recrute par plusieurs concours ou plusieurs formations, les valeurs sont moyennées en pondérant par le nombre d'intégrés.</li>
 				<li>Les écoles avec moins de <?php echo $integresMinimum; ?> intégrés sur la période choisie ne sont pas classées (médiane peu représentative). Les écoles dont le concours ne publie pas de rang médian ne figurent pas non plus dans ce classement.</li>
@@ -170,6 +171,14 @@
 	</header>
 
 	<main class='container'>
+		<!-- bascule de la base de calcul : inscrits du concours / promotion complète de la filière -->
+		<div class="form-check mb-3">
+			<input class="form-check-input" type="checkbox" id="basePromo" onchange="appliquerBase(this.checked)">
+			<label class="form-check-label" for="basePromo">
+				Comparer à l'échelle de la promotion
+				<i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-html="true" title="Par défaut, les pourcentages sont rapportés aux inscrits du concours qui recrute. Un concours très ciblé (par exemple Polytechnique) a peu d'inscrits, tous très forts : un bon rang y paraît moins sélectif qu'il ne l'est. Cochez pour tout rapporter à la promotion complète de la filière."></i>
+			</label>
+		</div>
 	<?php
 		try {
 			$db = openDatabase();
@@ -177,6 +186,64 @@
 		catch(PDOException $erreur)	{
 			die('Erreur connexion base : ' . escapeHtml($erreur->getMessage()));
 		}
+
+		// Base "promotion complète" : pour chaque filière et chaque année, le plus grand nombre
+		// d'inscrits d'un concours propre à la filière. Les concours communs à plusieurs filières
+		// (même nombre d'inscrits recopié dans chacune) et les concours inter-filières ou
+		// étrangers sont écartés : leur effectif ne représente pas la filière.
+		$sousRequetePromo = "(SELECT n2.An, n2.Filiere, MAX(n2.Inscrit) AS Promo
+						FROM Note n2
+						LEFT JOIN (SELECT An, Concours, Inscrit FROM Note
+								GROUP BY An, Concours, Inscrit HAVING COUNT(DISTINCT Filiere) > 1) c
+							ON c.An = n2.An AND c.Concours = n2.Concours AND c.Inscrit = n2.Inscrit
+						WHERE c.An IS NULL
+							AND n2.Concours NOT LIKE '%Inter-Fili_re%' AND n2.Concours NOT LIKE '% Etr.%'
+						GROUP BY n2.An, n2.Filiere)";
+		$jointurePromo = "
+				LEFT JOIN " . $sousRequetePromo . " p
+					ON p.An = n.An AND p.Filiere = n.Filiere";
+
+		// Effectifs de référence par filière (ceux utilisés par la base "promotion"), pour la note
+		// de la case à cocher. Une année : valeur de l'année ; toutes les années : moyenne annuelle.
+		$effectifsPromo = [];
+		try {
+			$paramsPromo = [];
+			$filtrePromo = "";
+			if ($an !== "toutes") {
+				$filtrePromo = " WHERE p.An = :an";
+				$paramsPromo[':an'] = $an;
+			}
+			$stmtPromo = $db->prepare("SELECT p.Filiere, AVG(p.Promo) AS Promo FROM " . $sousRequetePromo . " p" . $filtrePromo . " GROUP BY p.Filiere");
+			$stmtPromo->execute($paramsPromo);
+			foreach ($stmtPromo->fetchAll(PDO::FETCH_ASSOC) as $lignePromo) {
+				$effectifsPromo[strtolower($lignePromo['Filiere'])] = (float) $lignePromo['Promo'];
+			}
+		} catch (PDOException $erreur) {
+			$effectifsPromo = [];
+		}
+		$detailEffectifs = [];
+		$totalPromo = 0;
+		foreach ($filieresAffichees as $codeEffectif => $libelleEffectif) {
+			if (!isset($effectifsPromo[$codeEffectif])) continue;
+			$totalPromo += $effectifsPromo[$codeEffectif];
+			$texteEffectif = $libelleEffectif . "&nbsp;" . str_replace(' ', '&nbsp;', formater(round($effectifsPromo[$codeEffectif]), 0));
+			$detailEffectifs[] = (!$modeEcole && !$modeAllstar && $codeEffectif === $filiere) ? "<strong>" . $texteEffectif . "</strong>" : $texteEffectif;
+		}
+		echo "<div id='note-base' class='alert alert-info py-2' hidden>";
+		echo "Pourcentages rapportés à la <strong>promotion complète de la filière</strong> (plus grand nombre d'inscrits d'un concours de la filière la même année) et non aux inscrits du concours. Approximation : un rang dans un concours ciblé est celui d'un groupe resserré, pas un rang national exact. Cette base <strong>avantage aussi les petits concours</strong> qui ne classent que quelques candidats (Avenir Prépas, architecture, certaines écoles spécialisées) : ils peuvent apparaître très sélectifs alors que leur classement n'est pas national. Elle est surtout fiable pour comparer les grandes écoles qui recrutent sur de gros concours ou des banques très ciblées (X, ENS, Mines-Ponts, Centrale).";
+		if (!empty($detailEffectifs)) {
+			echo "<br><strong>Effectifs de référence (" . ($an === "toutes" ? "moyenne annuelle 2016-2026" : "concours " . escapeHtml($an)) . ") :</strong> environ "
+				. str_replace(' ', '&nbsp;', formater(round($totalPromo), 0)) . "&nbsp;étudiants en tout, dont " . implode(" &middot; ", $detailEffectifs) . ".";
+		}
+		echo "</div>";
+
+		$colonnesPromo = ",
+					100 * SUM(n.Integre * n.RangMedian / p.Promo) / SUM(n.Integre) AS SelectivitePromoMediane,
+					CASE WHEN SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre END) >= 0.9 * SUM(n.Integre)
+							THEN 100 * SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre * n.Dernier / p.Promo END)
+								/ SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre END)
+						END AS SelectivitePromoDernier";
+		$jointureAllstar = "";
 
 		if (!$modeEcole) {
 		// Agrégation par école. Le DISTINCT évite de compter deux fois une ligne de
@@ -190,10 +257,13 @@
 			// Allstar : un concours commun à plusieurs filières (Groupe INSA, CESI, Ingeni'Up...)
 			// recopie la même ligne dans chaque filière. On l'écarte pour ne pas créer de
 			// lignes jumelles (même école, mêmes chiffres, filières différentes).
-			$filtreFiliere = " AND NOT EXISTS (SELECT 1 FROM Note m
-					WHERE m.An = n.An AND m.Concours = n.Concours AND m.EcoleConcours = n.EcoleConcours
-						AND m.Inscrit = n.Inscrit AND m.Integre = n.Integre AND m.RangMedian = n.RangMedian
-						AND m.Filiere <> n.Filiere)";
+			// (jointure calculée une seule fois plutôt qu'un NOT EXISTS par ligne de Note)
+			$jointureAllstar = "
+				LEFT JOIN (SELECT An, Concours, EcoleConcours, Inscrit, Integre, RangMedian FROM Note
+						GROUP BY An, Concours, EcoleConcours, Inscrit, Integre, RangMedian HAVING COUNT(DISTINCT Filiere) > 1) j
+					ON j.An = n.An AND j.Concours = n.Concours AND j.EcoleConcours = n.EcoleConcours
+						AND j.Inscrit = n.Inscrit AND j.Integre = n.Integre AND j.RangMedian = n.RangMedian";
+			$filtreFiliere = " AND j.An IS NULL";
 		}
 		$filtreAn = "";
 		if ($an !== "toutes") {
@@ -204,13 +274,14 @@
 					SUM(n.Integre) AS Integres,
 					SUM(n.Integre * n.RangMedian) / SUM(n.Integre) AS RangMedianMoyen,
 					100 * SUM(n.Integre * n.RangMedian / n.Inscrit) / SUM(n.Integre) AS SelectiviteMediane,
-					CASE WHEN SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre END) >= 0.5 * SUM(n.Integre)
+					CASE WHEN SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre END) >= 0.9 * SUM(n.Integre)
 							THEN 100 * SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre * n.Dernier / n.Inscrit END)
 								/ SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre END)
-						END AS SelectiviteDernier
+						END AS SelectiviteDernier" . $colonnesPromo . "
 				FROM Note n
 				INNER JOIN (SELECT DISTINCT Filiere, Concours, EcoleConcours, Ecole FROM EcoleConcours) ec
 					ON ec.Filiere = n.Filiere AND ec.Concours = n.Concours AND ec.EcoleConcours = n.EcoleConcours
+				" . $jointurePromo . $jointureAllstar . "
 				WHERE 1 = 1" . $filtreFiliere . $filtreAn . "
 					AND ec.Ecole IS NOT NULL
 					AND n.Integre > 0 AND n.RangMedian > 0 AND n.Inscrit > 0
@@ -271,13 +342,15 @@
 				$urlDetail = 'detail-resultat-admission-par-ecole.php?origine=selectivite&amp;retour=' . rawurlencode($retourListe)
 					. '&amp;ecole=' . rawurlencode($nomEcole) . '&amp;filiere=' . rawurlencode($filiereLigne);
 
-				echo "<tr ondblclick='zoom(" . encodeJs($nomEcole) . ", " . encodeJs($filiereLigne) . ")'" . " data-mediane='" . number_format($mediane, 1, '.', '') . "' data-dernier='" . ($ligne['SelectiviteDernier'] !== null ? number_format((float) $ligne['SelectiviteDernier'], 1, '.', '') : '') . "'>";
+				echo "<tr ondblclick='zoom(" . encodeJs($nomEcole) . ", " . encodeJs($filiereLigne) . ")'" . " data-mediane='" . number_format($mediane, 1, '.', '') . "' data-dernier='" . ($ligne['SelectiviteDernier'] !== null ? number_format((float) $ligne['SelectiviteDernier'], 1, '.', '') : '')
+					. "' data-mediane-promo='" . ($ligne['SelectivitePromoMediane'] !== null ? number_format((float) $ligne['SelectivitePromoMediane'], 1, '.', '') : '')
+					. "' data-dernier-promo='" . ($ligne['SelectivitePromoDernier'] !== null ? number_format((float) $ligne['SelectivitePromoDernier'], 1, '.', '') : '') . "'>";
 				echo "<td style='text-align:center'>" . ($dernier === null ? "&ndash;" : $rang) . "</td>";
 				echo "<td style='padding-left:10px'><a href='" . $urlDetail . "'><strong>" . escapeHtml($libelleLigne) . "</strong></a>" . ($ens ? " *" : "")
 					. " <a href='?ecole=" . rawurlencode($nomEcole) . "&amp;an=" . rawurlencode($an) . "' title='Comparer les filières pour cette école' aria-label='Comparer les filières pour " . escapeHtml($nomEcole) . "'><i class='bi bi-bar-chart-steps'></i></a></td>";
-				echo "<td style='text-align:right; white-space:nowrap'>" . formater($mediane, 1) . "%&nbsp;</td>";
+				echo "<td style='text-align:right; white-space:nowrap'>" . "<span class='v'>" . formater($mediane, 1) . "%</span>&nbsp;</td>";
 				echo "<td style='text-align:right'>" . formater($ligne['RangMedianMoyen'], 0) . "&nbsp;</td>";
-				echo "<td style='text-align:right'>" . ($ligne['SelectiviteDernier'] !== null ? formater($ligne['SelectiviteDernier'], 1) . "%&nbsp;<span class='jauge-selectivite' style='width:" . $largeurJauge . "px' aria-hidden='true'></span>" : "") . "</td>";
+				echo "<td style='text-align:right'>" . ($ligne['SelectiviteDernier'] !== null ? "<span class='v'>" . formater($ligne['SelectiviteDernier'], 1) . "%</span>&nbsp;<span class='jauge-selectivite' style='width:" . $largeurJauge . "px' aria-hidden='true'></span>" : "") . "</td>";
 				echo "<td style='text-align:center'>" . (int) $ligne['Integres'] . "</td>";
 				echo "</tr>";
 			}
@@ -297,13 +370,14 @@
 						SUM(n.Place) AS Places,
 						SUM(n.Integre * n.RangMedian) / SUM(n.Integre) AS RangMedianMoyen,
 						100 * SUM(n.Integre * n.RangMedian / n.Inscrit) / SUM(n.Integre) AS SelectiviteMediane,
-						CASE WHEN SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre END) >= 0.5 * SUM(n.Integre)
+						CASE WHEN SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre END) >= 0.9 * SUM(n.Integre)
 							THEN 100 * SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre * n.Dernier / n.Inscrit END)
 								/ SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre END)
-						END AS SelectiviteDernier
+						END AS SelectiviteDernier" . $colonnesPromo . "
 					FROM Note n
 					INNER JOIN (SELECT DISTINCT Filiere, Concours, EcoleConcours, Ecole FROM EcoleConcours) ec
 						ON ec.Filiere = n.Filiere AND ec.Concours = n.Concours AND ec.EcoleConcours = n.EcoleConcours
+					" . $jointurePromo . "
 					WHERE ec.Ecole = :ecole" . $filtreAn . "
 						AND n.Integre > 0 AND n.RangMedian > 0 AND n.Inscrit > 0
 						AND n.RangMedian <= n.Inscrit
@@ -365,7 +439,9 @@
 					$urlDetail = 'detail-resultat-admission-par-ecole.php?origine=selectivite&amp;retour=' . rawurlencode($retourListe)
 						. '&amp;ecole=' . rawurlencode($ecoleChoisie) . '&amp;filiere=' . rawurlencode($codeFiliere);
 
-					echo "<tr ondblclick='zoomFiliere(" . encodeJs($codeFiliere) . ")'" . $styleLigne . " data-mediane='" . number_format($mediane, 1, '.', '') . "' data-dernier='" . ($ligne['SelectiviteDernier'] !== null ? number_format((float) $ligne['SelectiviteDernier'], 1, '.', '') : '') . "'>";
+					echo "<tr ondblclick='zoomFiliere(" . encodeJs($codeFiliere) . ")'" . $styleLigne . " data-mediane='" . number_format($mediane, 1, '.', '') . "' data-dernier='" . ($ligne['SelectiviteDernier'] !== null ? number_format((float) $ligne['SelectiviteDernier'], 1, '.', '') : '')
+					. "' data-mediane-promo='" . ($ligne['SelectivitePromoMediane'] !== null ? number_format((float) $ligne['SelectivitePromoMediane'], 1, '.', '') : '')
+					. "' data-dernier-promo='" . ($ligne['SelectivitePromoDernier'] !== null ? number_format((float) $ligne['SelectivitePromoDernier'], 1, '.', '') : '') . "'>";
 					echo "<td style='padding-left:10px'><a href='" . $urlDetail . "'><strong>" . escapeHtml(strtoupper($ligne['Filiere'])) . "</strong></a>";
 					if ($i === $accessible && $ecartNet) {
 						echo " <span class='badge bg-success' title='Selon le dernier intégré'>la plus accessible</span>";
@@ -374,9 +450,9 @@
 						echo " <small><i class='bi bi-exclamation-triangle' data-bs-toggle='tooltip' title='Moins de " . $integresMinimum . " intégrés : valeur peu représentative, exclue de la comparaison.'></i></small>";
 					}
 					echo "</td>";
-					echo "<td style='text-align:right; white-space:nowrap'>" . formater($mediane, 1) . "%&nbsp;</td>";
+					echo "<td style='text-align:right; white-space:nowrap'>" . "<span class='v'>" . formater($mediane, 1) . "%</span>&nbsp;</td>";
 					echo "<td style='text-align:right'>" . formater($ligne['RangMedianMoyen'], 0) . "&nbsp;</td>";
-					echo "<td style='text-align:right'>" . ($ligne['SelectiviteDernier'] !== null ? formater($ligne['SelectiviteDernier'], 1) . "%&nbsp;<span class='jauge-selectivite' style='width:" . $largeurJauge . "px' aria-hidden='true'></span>" : "") . "</td>";
+					echo "<td style='text-align:right'>" . ($ligne['SelectiviteDernier'] !== null ? "<span class='v'>" . formater($ligne['SelectiviteDernier'], 1) . "%</span>&nbsp;<span class='jauge-selectivite' style='width:" . $largeurJauge . "px' aria-hidden='true'></span>" : "") . "</td>";
 					echo "<td style='text-align:center'>" . (int) $ligne['Places'] . "</td>";
 					echo "<td style='text-align:center'>" . (int) $ligne['Integres'] . "</td>";
 					echo "</tr>";
@@ -432,6 +508,7 @@
 		// Premier clic : ordre par défaut du tableau ; second clic : ordre inverse.
 		// Les lignes sans valeur (dernier intégré non publié) restent toujours en fin de tableau.
 		var etatTri = {colonne: 'dernier', direction: null};
+		var etatBase = 'concours'; // 'concours' (inscrits du concours) ou 'promo' (promotion complète)
 
 		function trierSelectivite(bouton) {
 			appliquerTri(bouton.closest('table'), bouton.dataset.tri, null);
@@ -451,7 +528,7 @@
 
 			var tbody = table.tBodies[0];
 			var lignes = Array.from(tbody.rows);
-			var valeur = function (ligne) { var v = parseFloat(ligne.dataset[colonne]); return isNaN(v) ? null : v; };
+			var valeur = function (ligne) { var v = parseFloat(ligne.dataset[colonne + (etatBase === 'promo' ? 'Promo' : '')]); return isNaN(v) ? null : v; };
 			// tri stable : l'ordre initial du tableau départage les égalités
 			var ordreInitial = new Map(lignes.map(function (l, i) { return [l, i]; }));
 			lignes.sort(function (a, b) {
@@ -477,6 +554,34 @@
 			majBoutons(table, colonne, direction);
 		}
 
+		// Bascule de la base de calcul : met à jour les pourcentages affichés, les jauges et
+		// le classement (renuméroté sur la base choisie).
+		function appliquerBase(promo) {
+			var table = document.querySelector('#tableau-selectivite, #tableau-comparaison');
+			if (!table) return;
+			etatBase = promo ? 'promo' : 'concours';
+			var suffixe = promo ? 'Promo' : '';
+			var lignes = Array.from(table.tBodies[0].rows);
+			var format = function (v) { return v.toFixed(1).replace('.', ',') + '%'; };
+			var maxDernier = 0.1;
+			lignes.forEach(function (l) {
+				var d = parseFloat(l.dataset['dernier' + suffixe]);
+				if (!isNaN(d) && d > maxDernier) maxDernier = d;
+			});
+			lignes.forEach(function (l) {
+				var m = parseFloat(l.dataset['mediane' + suffixe]);
+				var d = parseFloat(l.dataset['dernier' + suffixe]);
+				var cases = l.querySelectorAll('span.v');
+				if (cases[0]) cases[0].textContent = isNaN(m) ? '' : format(m);
+				if (cases[1]) cases[1].textContent = isNaN(d) ? '' : format(d);
+				var jauge = l.querySelector('.jauge-selectivite');
+				if (jauge) jauge.style.width = (isNaN(d) ? 0 : Math.max(2, Math.round(60 * d / maxDernier))) + 'px';
+			});
+			document.getElementById('note-base').hidden = !promo;
+			document.getElementById('basePromo').checked = promo;
+			appliquerTri(table, etatTri.colonne, etatTri.direction || table.dataset.direction);
+		}
+
 		// boutons : actif en bleu avec le sens du tri
 		function majBoutons(table, colonne, direction) {
 			table.querySelectorAll('button[data-tri]').forEach(function (b) {
@@ -490,6 +595,8 @@
 		// tri par défaut : dernier intégré (déjà appliqué par le serveur) ; restauration du tri
 		// choisi au retour depuis une fiche école
 		document.addEventListener('DOMContentLoaded', function () {
+			// un rechargement peut restaurer la case cochée : on réaligne l'affichage
+			if (document.getElementById('basePromo').checked) appliquerBase(true);
 			var parametres = new URLSearchParams(window.location.search);
 			var table = document.querySelector('#tableau-selectivite, #tableau-comparaison');
 			if (!table) return;
@@ -503,9 +610,10 @@
 			} else {
 				appliquerTri(table, colonne, direction);
 			}
+			if (parametres.get('base') === 'promo') appliquerBase(true);
 		});
 		NavigationRetour.configurer(function () {
-			return {tri: etatTri.colonne, direction: etatTri.direction};
+			return {tri: etatTri.colonne, direction: etatTri.direction, base: etatBase === 'promo' ? 'promo' : ''};
 		});
 
 		// pour changer le texte et le symbole du bouton détail
