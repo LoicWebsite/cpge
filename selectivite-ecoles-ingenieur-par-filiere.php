@@ -35,14 +35,38 @@
 	// une ligne par couple école + filière (filière entre parenthèses)
 	$modeAllstar = !$modeEcole && isset($_GET['filiere']) && strtolower(trim((string) $_GET['filiere'])) === 'allstar';
 	$libelleFiliere = $modeAllstar ? "toutes filières" : strtoupper($filiere);
+
+	// filtre par spécialité : seules les écoles qui proposent une spécialité du domaine choisi
+	// (un domaine parent reprend ses domaines enfants, comme sur le Panorama des spécialités)
+	$domaineChoisi = (!$modeEcole && isset($_GET['domaine']) && ctype_digit((string) $_GET['domaine'])) ? (int) $_GET['domaine'] : 0;
+	$nomDomaine = "";
+	$listeDomaines = [];
+	try {
+		$listeDomaines = openDatabase()->query("SELECT IdDomaine, IdParent, Domaine FROM SpecialiteDomaine
+				WHERE Actif = 1 ORDER BY COALESCE(IdParent, IdDomaine), (IdParent IS NOT NULL), IdDomaine")->fetchAll(PDO::FETCH_ASSOC);
+	} catch (PDOException $erreur) {
+		$listeDomaines = [];
+	}
+	foreach ($listeDomaines as $ligneDomaine) {
+		if ((int) $ligneDomaine['IdDomaine'] === $domaineChoisi) $nomDomaine = $ligneDomaine['Domaine'];
+	}
+	if ($nomDomaine === "") $domaineChoisi = 0;
 	$anneeLibelle = ($an === "toutes") ? "toutes les années (2016-2026)" : $an;
 
 	// en dessous de ce nombre d'intégrés, la médiane n'est pas représentative
 	// (5 en Allstar : beaucoup de couples école + filière n'ont que quelques intégrés)
 	$integresMinimum = $modeAllstar ? 5 : 3;
 
+	// Fiabilité du rang : un rang n'est comparable au nombre d'inscrits que si le classement
+	// porte sur la plupart des admissibles. Quand seule une petite partie des admissibles est
+	// classée (candidats ayant demandé l'école : Avenir Prépas, Banque CCINP, E3A "autres écoles"...),
+	// "6e sur 17 classés" ne veut pas dire "dans les 6 premiers de 355 inscrits". Les lignes dont
+	// moins de 40 % des admissibles sont classés sont donc écartées (si l'information existe).
+	$partClassesMinimum = 0.4;
+
 	// URL canonique : on garde uniquement les paramètres qui modifient le contenu
 	$criteresPage = $modeEcole ? ['ecole' => $ecoleChoisie, 'an' => $an] : ['filiere' => $modeAllstar ? 'allstar' : $filiere, 'an' => $an];
+	if ($domaineChoisi > 0) $criteresPage['domaine'] = $domaineChoisi;
 	$canonicalUrl = 'https://loic.website/CPGE/selectivite-ecoles-ingenieur-par-filiere.php?'
 		. http_build_query($criteresPage, '', '&', PHP_QUERY_RFC3986);
 	$retourListe = urlPageNavigation(basename(__FILE__), $criteresPage);
@@ -109,13 +133,14 @@
 				<li><strong>Sélectivité médiane</strong> : rang du candidat médian parmi les intégrés, divisé par le nombre d'inscrits au concours. Par exemple 12 % signifie que la moitié des intégrés avaient un rang meilleur que 12 % des inscrits. <strong>Plus le pourcentage est faible, plus l'école est sélective.</strong> Ce critère sert au classement.</li>
 				<li><strong>Dernier intégré</strong> : rang du dernier intégré divisé par le nombre d'inscrits, lorsque le concours le publie. Il n'est affiché que s'il est publié pour au moins 90 % des intégrés de l'école (sinon la valeur ne représenterait qu'une partie des concours de l'école) et s'il est cohérent avec le rang médian (un dernier intégré meilleur que le médian est une erreur de saisie ou de source). C'est un indicateur complémentaire, plus sensible aux désistements et aux appels de liste d'attente.</li>
 				<li><strong>Classement</strong> : le tableau est classé par défaut sur le <strong>dernier intégré</strong>, qui indique jusqu'où l'on peut descendre pour entrer. Ce rang n'est pas publié par tous les concours (surtout pour les années récentes) : les écoles sans dernier intégré sont alors listées en fin de tableau, sans rang, classées par sélectivité médiane. Le bouton &darr; de la colonne « Sélectivité médiane » reclasse sur ce critère, disponible pour presque toutes les écoles. Un second clic inverse l'ordre. Le choix « Toutes les années » réduit le nombre d'écoles sans dernier intégré.</li>
+				<li><strong>Spécialité</strong> : la liste « Spécialité » ne garde que les écoles qui proposent au moins une spécialité du domaine choisi (Informatique, Data / IA, Mathématiques / Finance de marché, Économie / Finance d'entreprise, etc.). Un domaine général reprend ses sous-domaines (Informatique inclut Data / IA et Cybersécurité). Elle se combine avec la filière, l'Allstar et l'année. Attention : la sélectivité reste celle du recrutement de l'école dans sa filière (concours), pas celle de la spécialité elle-même : une école peut recruter via un concours généraliste puis proposer plusieurs spécialités. Les écoles dont les spécialités ne sont pas référencées sur le site n'apparaissent pas dans ce filtre.</li>
 				<li><strong>Allstar</strong> : le choix « Allstar » dans la liste des filières classe ensemble toutes les écoles de toutes les filières. Chaque ligne est un couple école + filière, par exemple « Ecole Polytechnique (MP) ». Les concours communs à plusieurs filières (Groupe INSA, CESI, Ingeni'Up) donnent les mêmes chiffres dans chaque filière : ils ne sont pas repris dans l'Allstar, mais restent visibles filière par filière. Pour limiter le bruit, seuls les couples avec au moins 5 intégrés sur la période sont classés (3 dans les autres vues). Le pourcentage étant rapporté aux inscrits de chaque filière, ce classement reste un repère (voir la réserve sur la comparaison entre filières ci-dessous).</li>
-				<li><strong>Comparer à l'échelle de la promotion</strong> : la case à cocher au-dessus du tableau rapporte tous les rangs à la promotion complète de la filière (environ 7 000 candidats en MP, 5 000 en PC, 5 400 en PSI) au lieu des inscrits du concours. Elle corrige un biais : les concours ciblés comme Polytechnique n'ont que quelques centaines d'inscrits, déjà très forts, et paraissent donc moins sélectifs qu'ils ne sont. À utiliser pour comparer des écoles qui recrutent par des concours différents.</li>
+				<li><strong>Comparer à l'échelle de la promotion</strong> : la case à cocher au-dessus du tableau rapporte tous les rangs à la promotion complète de la filière (environ 7 000 candidats en MP, 5 000 en PC, 5 400 en PSI) au lieu des inscrits du concours. Elle corrige un biais : les concours ciblés comme Polytechnique n'ont que quelques centaines d'inscrits, déjà très forts, et paraissent donc moins sélectifs qu'ils ne sont. Elle ne s'applique qu'aux concours à sélection réelle à l'écrit (au plus 50 % d'admissibles) et d'effectif significatif (au moins 5 % de la promotion) : pour les petits concours peu sélectifs (CESI, IPSA, ICAM...), le pourcentage du concours est conservé. À utiliser pour comparer des écoles qui recrutent par des concours différents.</li>
 				<li>Un concours n'a pas le même nombre d'inscrits qu'un autre : on compare donc des rapports et non des rangs bruts.</li>
 				<li>Quand une école recrute par plusieurs concours ou plusieurs formations, les valeurs sont moyennées en pondérant par le nombre d'intégrés.</li>
 				<li>Les écoles avec moins de <?php echo $integresMinimum; ?> intégrés sur la période choisie ne sont pas classées (médiane peu représentative). Les écoles dont le concours ne publie pas de rang médian ne figurent pas non plus dans ce classement.</li>
 				<li>Les concours <strong>Inter-Filière</strong> (par exemple Polytech) classent ensemble les candidats de toutes les filières : leur rang n'est pas comparable au nombre d'inscrits d'une seule filière. Ils sont exclus, tout comme les lignes dont le rang médian dépasse le nombre d'inscrits et les concours réservés aux candidats étrangers (Polytechnique Etr., filières « Etranger »), dont le classement est séparé. Certaines écoles peuvent donc être absentes de la liste d'une filière.</li>
-				<li><strong>Petits concours</strong> : quand un concours ne classe qu'une faible part de ses inscrits (par exemple Avenir Prépas ou les concours d'architecture), le rapport rang / inscrits est très faible alors que le niveau d'entrée ne l'est pas forcément. Les écoles qui recrutent surtout par ces concours peuvent apparaître trop sélectives : à interpréter avec prudence.</li>
+				<li><strong>Petits concours</strong> : quand un concours ne classe qu'une faible part de ses admissibles (par exemple Avenir Prépas, la Banque CCINP ou les « autres écoles » E3A, où seuls les candidats ayant demandé l'école sont classés), un rang comme « 6<sup>e</sup> sur 17 classés » est sans rapport avec le nombre d'inscrits. Ces lignes (moins de 40 % des admissibles classés) sont écartées, ainsi que les écoles dont c'est le seul recrutement renseigné (ENSTIB Épinal, ESITC Caen, ISMANS en MP, par exemple). Elles restent visibles dans les statistiques d'admission de chaque école.</li>
 				<li><strong>ENS</strong> (*) : les classés et les entrants ne portent que sur les candidats fonctionnarisables alors que les inscrits portent sur tous les candidats ; la sélectivité y est à interpréter avec prudence.</li>
 			</ul>
 			<p><strong>Comparer les filières pour une école</strong> : choisissez une école dans la liste pour voir, filière par filière, la sélectivité à l'entrée. Le pourcentage est rapporté aux inscrits de chaque filière : la filière où il est le plus élevé est celle où l'école est la plus accessible, à rang relatif égal. Les effectifs (candidats, niveau moyen) diffèrent d'une filière à l'autre : le résultat est un repère, pas une garantie. Regardez aussi le nombre d'intégrés : une école qui prend peu de candidats d'une filière y est plus difficile d'accès que le pourcentage ne le laisse croire.</p>
@@ -133,6 +158,19 @@
 					echo "<option value='allstar'" . ($modeAllstar ? " selected" : "") . ">Allstar (toutes les filières)</option>";
 					foreach ($filieresAffichees as $code => $libelle) {
 						echo "<option value='" . $code . "'" . (!$modeAllstar && $code === $filiere ? " selected" : "") . ">" . $libelle . "</option>";
+					}
+				?>
+				</select>
+			</div>
+			<div class="col-auto">
+				<label for="domaine" class="form-label mb-0">Spécialité</label>
+				<select id="domaine" name="domaine" class="form-select" onchange="this.form.submit()"<?php echo $modeEcole ? " disabled title=\"Désactivé : la comparaison par école porte sur toutes ses filières\"" : ""; ?>>
+					<option value="0">&mdash; Toutes les spécialités &mdash;</option>
+				<?php
+					foreach ($listeDomaines as $ligneDomaine) {
+						$estEnfant = !empty($ligneDomaine['IdParent']);
+						echo "<option value='" . (int) $ligneDomaine['IdDomaine'] . "'" . ((int) $ligneDomaine['IdDomaine'] === $domaineChoisi ? " selected" : "") . ">"
+							. ($estEnfant ? "&nbsp;&nbsp;&nbsp;&rarr; " : "") . escapeHtml($ligneDomaine['Domaine']) . "</option>";
 					}
 				?>
 				</select>
@@ -230,17 +268,27 @@
 			$detailEffectifs[] = (!$modeEcole && !$modeAllstar && $codeEffectif === $filiere) ? "<strong>" . $texteEffectif . "</strong>" : $texteEffectif;
 		}
 		echo "<div id='note-base' class='alert alert-info py-2' hidden>";
-		echo "Pourcentages rapportés à la <strong>promotion complète de la filière</strong> (plus grand nombre d'inscrits d'un concours de la filière la même année) et non aux inscrits du concours. Approximation : un rang dans un concours ciblé est celui d'un groupe resserré, pas un rang national exact. Cette base <strong>avantage aussi les petits concours</strong> qui ne classent que quelques candidats (Avenir Prépas, architecture, certaines écoles spécialisées) : ils peuvent apparaître très sélectifs alors que leur classement n'est pas national. Elle est surtout fiable pour comparer les grandes écoles qui recrutent sur de gros concours ou des banques très ciblées (X, ENS, Mines-Ponts, Centrale).";
+		echo "Pourcentages rapportés à la <strong>promotion complète de la filière</strong> (plus grand nombre d'inscrits d'un concours de la filière la même année) et non aux inscrits du concours. Approximation : un rang dans un concours ciblé est celui d'un groupe resserré, pas un rang national exact. Elle n'est appliquée que lorsque c'est justifié : concours couvrant au moins la moitié de la promotion, ou concours à sélection réelle à l'écrit (au plus 50 % d'admissibles) regroupant au moins 5 % de la promotion (X, ENS, Mines-Ponts, Centrale, Navale...). Pour les autres concours (petits effectifs, peu de sélection à l'écrit), le pourcentage du concours est conservé : un rang \"3<sup>e</sup> sur 30\" n'est pas un rang national.";
 		if (!empty($detailEffectifs)) {
 			echo "<br><strong>Effectifs de référence (" . ($an === "toutes" ? "moyenne annuelle 2016-2026" : "concours " . escapeHtml($an)) . ") :</strong> environ "
 				. str_replace(' ', '&nbsp;', formater(round($totalPromo), 0)) . "&nbsp;étudiants en tout, dont " . implode(" &middot; ", $detailEffectifs) . ".";
 		}
 		echo "</div>";
 
+		// Dénominateur de la base "promotion", ligne par ligne. Rapporter le rang à la promotion
+		// complète n'est justifié que si le groupe des inscrits est le haut du panier national :
+		//  - le concours couvre au moins la moitié de la promotion (les deux bases se confondent), ou
+		//  - la sélection à l'écrit est réelle (au plus 50 % d'admissibles) et le groupe pèse au
+		//    moins 5 % de la promotion (écarte les concours de quelques dizaines de candidats).
+		// Sinon (concours peu sélectif à l'écrit, petit groupe, admissibles inconnus), on garde le
+		// nombre d'inscrits du concours : « 3e sur 30 » ne devient pas « 3e sur 7 000 ».
+		$denominateurPromo = "CASE WHEN n.Inscrit >= 0.5 * p.Promo THEN p.Promo
+							WHEN n.Admissible > 0 AND n.Admissible <= 0.5 * n.Inscrit AND n.Inscrit >= 0.05 * p.Promo THEN p.Promo
+							ELSE n.Inscrit END";
 		$colonnesPromo = ",
-					100 * SUM(n.Integre * n.RangMedian / p.Promo) / SUM(n.Integre) AS SelectivitePromoMediane,
+					100 * SUM(n.Integre * n.RangMedian / (" . $denominateurPromo . ")) / SUM(n.Integre) AS SelectivitePromoMediane,
 					CASE WHEN SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre END) >= 0.9 * SUM(n.Integre)
-							THEN 100 * SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre * n.Dernier / p.Promo END)
+							THEN 100 * SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre * n.Dernier / (" . $denominateurPromo . ") END)
 								/ SUM(CASE WHEN n.Dernier > 0 AND n.Dernier >= n.RangMedian THEN n.Integre END)
 						END AS SelectivitePromoDernier";
 		$jointureAllstar = "";
@@ -270,6 +318,21 @@
 			$filtreAn = " AND n.An = :an";
 			$params[':an'] = $an;
 		}
+		// Filtre par spécialité : écoles ayant au moins une spécialité retenue (Decision = inclure)
+		// dans le domaine choisi ou dans l'un de ses domaines enfants.
+		$filtreDomaine = "";
+		if ($domaineChoisi > 0) {
+			$filtreDomaine = " AND ec.Ecole IN (SELECT e.Ecole
+					FROM SpecialiteDomaineAffectation sa
+					INNER JOIN SpecialiteDomaine sd ON sd.IdDomaine = sa.IdDomaine
+					INNER JOIN Specialite sp ON sp.IdSpecialite = sa.IdSpecialite
+					INNER JOIN Diplome di ON di.IdDiplome = sp.IdDiplome
+					INNER JOIN Ecole e ON e.IdEcole = di.IdEcole
+					WHERE sa.Decision = 'inclure' AND sd.Actif = 1
+						AND (sd.IdDomaine = :domaine1 OR sd.IdParent = :domaine2))";
+			$params[':domaine1'] = $domaineChoisi;
+			$params[':domaine2'] = $domaineChoisi;
+		}
 		$sql = "SELECT ec.Ecole, n.Filiere,
 					SUM(n.Integre) AS Integres,
 					SUM(n.Integre * n.RangMedian) / SUM(n.Integre) AS RangMedianMoyen,
@@ -282,10 +345,11 @@
 				INNER JOIN (SELECT DISTINCT Filiere, Concours, EcoleConcours, Ecole FROM EcoleConcours) ec
 					ON ec.Filiere = n.Filiere AND ec.Concours = n.Concours AND ec.EcoleConcours = n.EcoleConcours
 				" . $jointurePromo . $jointureAllstar . "
-				WHERE 1 = 1" . $filtreFiliere . $filtreAn . "
+				WHERE 1 = 1" . $filtreFiliere . $filtreAn . $filtreDomaine . "
 					AND ec.Ecole IS NOT NULL
 					AND n.Integre > 0 AND n.RangMedian > 0 AND n.Inscrit > 0
 					AND n.RangMedian <= n.Inscrit
+					AND (n.Admissible IS NULL OR n.Admissible = 0 OR n.Classe >= " . $partClassesMinimum . " * n.Admissible)
 					AND n.Concours NOT LIKE '%Inter-Fili_re%'
 						AND n.Concours NOT LIKE '% Etr.%' AND n.EcoleConcours NOT LIKE '% Etr.%' AND n.EcoleConcours NOT LIKE '% Etranger%'
 				GROUP BY ec.Ecole, n.Filiere
@@ -304,12 +368,12 @@
 		}
 
 		if (empty($lignes)) {
-			echo "<div class='alert alert-info'>Aucune école n'a au moins " . $integresMinimum . " intégrés avec un rang médian publié en " . $libelleFiliere . " (" . escapeHtml($anneeLibelle) . ").</div>";
+			echo "<div class='alert alert-info'>Aucune école n'a au moins " . $integresMinimum . " intégrés avec un rang médian publié en " . $libelleFiliere . ($domaineChoisi > 0 ? ", spécialité " . escapeHtml($nomDomaine) : "") . " (" . escapeHtml($anneeLibelle) . ").</div>";
 		} else {
 			$maxSelectivite = max(array_filter(array_column($lignes, 'SelectiviteDernier'), fn($v) => $v !== null) ?: [0.1]);
 			$idTableau = '"#tableau-selectivite","rang;école;sélectivité médiane (%);rang médian moyen;dernier intégré (%);intégrés"';
 
-			echo "<h2 class='h5'>" . count($lignes) . ($modeAllstar ? " couples école (filière) &ndash; toutes filières confondues &ndash; concours " : " écoles en " . $libelleFiliere . " &ndash; concours ") . escapeHtml($anneeLibelle) . "</h2>";
+			echo "<h2 class='h5'>" . count($lignes) . ($modeAllstar ? " couples école (filière) &ndash; toutes filières confondues &ndash; concours " : " écoles en " . $libelleFiliere . " &ndash; concours ") . escapeHtml($anneeLibelle) . ($domaineChoisi > 0 ? " &ndash; spécialité " . escapeHtml($nomDomaine) : "") . "</h2>";
 			echo "<table id='tableau-selectivite' data-direction='asc' data-rang='1'>";
 			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='bi bi-cursor-fill' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.";
 			echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(" . $idTableau . ")'><i class='bi bi-download'></i> csv</button></caption>";
@@ -381,6 +445,7 @@
 					WHERE ec.Ecole = :ecole" . $filtreAn . "
 						AND n.Integre > 0 AND n.RangMedian > 0 AND n.Inscrit > 0
 						AND n.RangMedian <= n.Inscrit
+					AND (n.Admissible IS NULL OR n.Admissible = 0 OR n.Classe >= " . $partClassesMinimum . " * n.Admissible)
 						AND n.Concours NOT LIKE '%Inter-Fili_re%'
 						AND n.Concours NOT LIKE '% Etr.%' AND n.EcoleConcours NOT LIKE '% Etr.%' AND n.EcoleConcours NOT LIKE '% Etranger%'
 					GROUP BY n.Filiere

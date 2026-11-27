@@ -16,7 +16,7 @@ function pagesNavigationRetour(): array {
         'statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php' => ['ecole', 'recherche', 'anneeEcole'],
         'classement-ecole-d-ingenieur.php' => [],
         'statistique-attractivite-ecoles.php' => ['tri', 'direction'],
-        'selectivite-ecoles-ingenieur-par-filiere.php' => ['filiere', 'an', 'ecole', 'tri', 'direction', 'base'],
+        'selectivite-ecoles-ingenieur-par-filiere.php' => ['filiere', 'an', 'ecole', 'tri', 'direction', 'base', 'domaine'],
         'salaire-ingenieur-cpge-post-prepa.php' => ['promotion', 'horizon', 'etablissement', 'col', 'filtre', 'tri', 'direction'],
         // Fiche école : destination de retour de la page de méthode de l'estimation (onglet filière en ancre).
         'detail-resultat-admission-par-ecole.php' => ['ecole', 'origine', 'diplome', 'filiere', 'concours', 'reference', 'an', 'specialite', 'strict'],
