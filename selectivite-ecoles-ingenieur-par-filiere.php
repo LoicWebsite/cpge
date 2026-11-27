@@ -103,7 +103,7 @@
 			<ul>
 				<li><strong>Sélectivité médiane</strong> : rang du candidat médian parmi les intégrés, divisé par le nombre d'inscrits au concours. Par exemple 12 % signifie que la moitié des intégrés avaient un rang meilleur que 12 % des inscrits. <strong>Plus le pourcentage est faible, plus l'école est sélective.</strong> Ce critère sert au classement.</li>
 				<li><strong>Dernier intégré</strong> : rang du dernier intégré divisé par le nombre d'inscrits, lorsque le concours le publie. C'est un indicateur complémentaire, plus sensible aux désistements et aux appels de liste d'attente.</li>
-				<li><strong>Changer le classement</strong> : le tableau est classé par défaut sur la sélectivité médiane, disponible pour presque toutes les écoles. Le bouton &darr; de la colonne « Dernier intégré » reclasse sur ce critère, qui indique jusqu'où l'on peut descendre pour entrer. Ce rang n'est pas publié par tous les concours (surtout pour les années récentes) : les écoles sans dernier intégré restent alors en fin de tableau, sans rang. Un second clic inverse l'ordre.</li>
+				<li><strong>Classement</strong> : le tableau est classé par défaut sur le <strong>dernier intégré</strong>, qui indique jusqu'où l'on peut descendre pour entrer. Ce rang n'est pas publié par tous les concours (surtout pour les années récentes) : les écoles sans dernier intégré sont alors listées en fin de tableau, sans rang, classées par sélectivité médiane. Le bouton &darr; de la colonne « Sélectivité médiane » reclasse sur ce critère, disponible pour presque toutes les écoles. Un second clic inverse l'ordre. Le choix « Toutes les années » réduit le nombre d'écoles sans dernier intégré.</li>
 				<li>Un concours n'a pas le même nombre d'inscrits qu'un autre : on compare donc des rapports et non des rangs bruts.</li>
 				<li>Quand une école recrute par plusieurs concours ou plusieurs formations, les valeurs sont moyennées en pondérant par le nombre d'intégrés.</li>
 				<li>Les écoles avec moins de <?php echo $integresMinimum; ?> intégrés sur la période choisie ne sont pas classées (médiane peu représentative). Les écoles dont le concours ne publie pas de rang médian ne figurent pas non plus dans ce classement.</li>
@@ -196,7 +196,7 @@
 					AND n.Concours NOT LIKE '%Inter-Fili_re%'
 				GROUP BY ec.Ecole
 				HAVING SUM(n.Integre) >= :minimum
-				ORDER BY SelectiviteMediane ASC, ec.Ecole ASC";
+				ORDER BY (SelectiviteDernier IS NULL), SelectiviteDernier ASC, SelectiviteMediane ASC, ec.Ecole ASC";
 		if ($debug) echo "SQL = " . escapeHtml($sql) . "<br>";
 
 		try {
@@ -212,7 +212,7 @@
 		if (empty($lignes)) {
 			echo "<div class='alert alert-info'>Aucune école n'a au moins " . $integresMinimum . " intégrés avec un rang médian publié en " . strtoupper($filiere) . " (" . escapeHtml($anneeLibelle) . ").</div>";
 		} else {
-			$maxSelectivite = max(array_column($lignes, 'SelectiviteMediane'));
+			$maxSelectivite = max(array_filter(array_column($lignes, 'SelectiviteDernier'), fn($v) => $v !== null) ?: [0.1]);
 			$idTableau = '"#tableau-selectivite","rang;école;sélectivité médiane (%);rang médian moyen;dernier intégré (%);intégrés"';
 
 			echo "<h2 class='h5'>" . count($lignes) . " écoles en " . strtoupper($filiere) . " &ndash; concours " . escapeHtml($anneeLibelle) . "</h2>";
@@ -220,7 +220,7 @@
 			echo "<caption style='caption-side:top;'><small>Double cliquer &nbsp;<i class='bi bi-cursor-fill' aria-hidden='true'></i>&nbsp; sur une école pour voir ses statistiques d'admissions.";
 			echo "<br>Cliquer sur le bouton pour télécharger le classement au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(" . $idTableau . ")'><i class='bi bi-download'></i> csv</button></caption>";
 			echo "<thead class='text-center'><tr>";
-			echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Classement par sélectivité médiane croissante. Les écoles dont la sélectivité médiane affichée est identique partagent le même rang.'></i></th>";
+			echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Classement par dernier intégré croissant (par défaut). Les écoles sans dernier intégré publié sont listées en fin de tableau, sans rang, classées par sélectivité médiane. Les écoles dont la valeur affichée est identique partagent le même rang.'></i></th>";
 			echo "<th>&nbsp;Ecole&nbsp;</th>";
 			echo "<th>&nbsp;<button type='button' class='btn btn-secondary btn-sm' data-tri='mediane' title='Trier par sélectivité médiane' onclick='trierSelectivite(this)'>&darr;</button>&nbsp;&nbsp;Sélectivité médiane&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Rang médian des intégrés divisé par le nombre d&apos;inscrits. Plus la valeur est faible, plus l&apos;école est sélective.'></i></th>";
 			echo "<th>&nbsp;Rang médian&nbsp;<br>moyen&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Rang médian brut des intégrés, moyenné par école (pondéré par les intégrés). Il dépend du nombre d&apos;inscrits du concours : à ne comparer qu&apos;avec prudence.'></i></th>";
@@ -234,24 +234,25 @@
 			foreach ($lignes as $ligne) {
 				$position++;
 				$mediane = round((float)$ligne['SelectiviteMediane'], 1);
+				$dernier = ($ligne['SelectiviteDernier'] === null) ? null : round((float)$ligne['SelectiviteDernier'], 1);
 				// égalité sur la valeur affichée : même rang
-				if ($mediane !== $valeurPrecedente) {
+				if ($dernier !== null && $dernier !== $valeurPrecedente) {
 					$rang = $position;
-					$valeurPrecedente = $mediane;
+					$valeurPrecedente = $dernier;
 				}
 				$nomEcole = $ligne['Ecole'];
 				$ens = (bool) preg_match('/^(ENS\b|[ÉE]cole normale)/iu', $nomEcole);
-				$largeurJauge = max(2, (int) round(60 * $mediane / max($maxSelectivite, 0.1)));
+				$largeurJauge = ($dernier === null) ? 0 : max(2, (int) round(60 * $dernier / max($maxSelectivite, 0.1)));
 				$urlDetail = 'detail-resultat-admission-par-ecole.php?origine=selectivite&amp;retour=' . rawurlencode($retourListe)
 					. '&amp;ecole=' . rawurlencode($nomEcole) . '&amp;filiere=' . rawurlencode($filiere);
 
 				echo "<tr ondblclick='zoom(" . encodeJs($nomEcole) . ")'" . " data-mediane='" . number_format($mediane, 1, '.', '') . "' data-dernier='" . ($ligne['SelectiviteDernier'] !== null ? number_format((float) $ligne['SelectiviteDernier'], 1, '.', '') : '') . "'>";
-				echo "<td style='text-align:center'>" . $rang . "</td>";
+				echo "<td style='text-align:center'>" . ($dernier === null ? "&ndash;" : $rang) . "</td>";
 				echo "<td style='padding-left:10px'><a href='" . $urlDetail . "'><strong>" . escapeHtml($nomEcole) . "</strong></a>" . ($ens ? " *" : "")
 					. " <a href='?ecole=" . rawurlencode($nomEcole) . "&amp;an=" . rawurlencode($an) . "' title='Comparer les filières pour cette école' aria-label='Comparer les filières pour " . escapeHtml($nomEcole) . "'><i class='bi bi-bar-chart-steps'></i></a></td>";
-				echo "<td style='text-align:right; white-space:nowrap'>" . formater($mediane, 1) . "%&nbsp;<span class='jauge-selectivite' style='width:" . $largeurJauge . "px' aria-hidden='true'></span></td>";
+				echo "<td style='text-align:right; white-space:nowrap'>" . formater($mediane, 1) . "%&nbsp;</td>";
 				echo "<td style='text-align:right'>" . formater($ligne['RangMedianMoyen'], 0) . "&nbsp;</td>";
-				echo "<td style='text-align:right'>" . ($ligne['SelectiviteDernier'] !== null ? formater($ligne['SelectiviteDernier'], 1) . "%&nbsp;" : "") . "</td>";
+				echo "<td style='text-align:right'>" . ($ligne['SelectiviteDernier'] !== null ? formater($ligne['SelectiviteDernier'], 1) . "%&nbsp;<span class='jauge-selectivite' style='width:" . $largeurJauge . "px' aria-hidden='true'></span>" : "") . "</td>";
 				echo "<td style='text-align:center'>" . (int) $ligne['Integres'] . "</td>";
 				echo "</tr>";
 			}
@@ -281,7 +282,7 @@
 						AND n.RangMedian <= n.Inscrit
 						AND n.Concours NOT LIKE '%Inter-Fili_re%'
 					GROUP BY n.Filiere
-					ORDER BY SelectiviteMediane DESC";
+					ORDER BY (SelectiviteDernier IS NULL), SelectiviteDernier DESC, SelectiviteMediane DESC";
 			if ($debug) echo "SQL = " . escapeHtml($sql) . "<br>";
 			try {
 				$stmt = $db->prepare($sql);
@@ -305,12 +306,13 @@
 				$valeursRepresentees = [];
 				foreach ($lignes as $i => $ligne) {
 					if ((int) $ligne['Integres'] >= $integresMinimum) {
+						if ($ligne['SelectiviteDernier'] === null) continue;
 						if ($accessible === null) $accessible = $i;
-						$valeursRepresentees[] = (float) $ligne['SelectiviteMediane'];
+						$valeursRepresentees[] = (float) $ligne['SelectiviteDernier'];
 					}
 				}
 				$ecartNet = (count($valeursRepresentees) >= 2) && ($valeursRepresentees[0] >= 1.2 * $valeursRepresentees[1]);
-				$maxSelectivite = max(array_column($lignes, 'SelectiviteMediane'));
+				$maxSelectivite = max(array_filter(array_column($lignes, 'SelectiviteDernier'), fn($v) => $v !== null) ?: [0.1]);
 				$idTableau = '"#tableau-comparaison","filière;sélectivité médiane (%);rang médian moyen;dernier intégré (%);places;intégrés"';
 
 				echo "<table id='tableau-comparaison' data-direction='desc'>";
@@ -328,8 +330,9 @@
 				foreach ($lignes as $i => $ligne) {
 					$codeFiliere = strtolower($ligne['Filiere']);
 					$mediane = round((float)$ligne['SelectiviteMediane'], 1);
+				$dernier = ($ligne['SelectiviteDernier'] === null) ? null : round((float)$ligne['SelectiviteDernier'], 1);
 					$peuRepresentatif = ((int) $ligne['Integres'] < $integresMinimum);
-					$largeurJauge = max(2, (int) round(60 * $mediane / max($maxSelectivite, 0.1)));
+					$largeurJauge = ($dernier === null) ? 0 : max(2, (int) round(60 * $dernier / max($maxSelectivite, 0.1)));
 					$styleLigne = $peuRepresentatif ? " style='color:#888'" : "";
 					$urlDetail = 'detail-resultat-admission-par-ecole.php?origine=selectivite&amp;retour=' . rawurlencode($retourListe)
 						. '&amp;ecole=' . rawurlencode($ecoleChoisie) . '&amp;filiere=' . rawurlencode($codeFiliere);
@@ -337,15 +340,15 @@
 					echo "<tr ondblclick='zoomFiliere(" . encodeJs($codeFiliere) . ")'" . $styleLigne . " data-mediane='" . number_format($mediane, 1, '.', '') . "' data-dernier='" . ($ligne['SelectiviteDernier'] !== null ? number_format((float) $ligne['SelectiviteDernier'], 1, '.', '') : '') . "'>";
 					echo "<td style='padding-left:10px'><a href='" . $urlDetail . "'><strong>" . escapeHtml(strtoupper($ligne['Filiere'])) . "</strong></a>";
 					if ($i === $accessible && $ecartNet) {
-						echo " <span class='badge bg-success' title='Selon la sélectivité médiane'>la plus accessible</span>";
+						echo " <span class='badge bg-success' title='Selon le dernier intégré'>la plus accessible</span>";
 					}
 					if ($peuRepresentatif) {
 						echo " <small><i class='bi bi-exclamation-triangle' data-bs-toggle='tooltip' title='Moins de " . $integresMinimum . " intégrés : valeur peu représentative, exclue de la comparaison.'></i></small>";
 					}
 					echo "</td>";
-					echo "<td style='text-align:right; white-space:nowrap'>" . formater($mediane, 1) . "%&nbsp;<span class='jauge-selectivite' style='width:" . $largeurJauge . "px' aria-hidden='true'></span></td>";
+					echo "<td style='text-align:right; white-space:nowrap'>" . formater($mediane, 1) . "%&nbsp;</td>";
 					echo "<td style='text-align:right'>" . formater($ligne['RangMedianMoyen'], 0) . "&nbsp;</td>";
-					echo "<td style='text-align:right'>" . ($ligne['SelectiviteDernier'] !== null ? formater($ligne['SelectiviteDernier'], 1) . "%&nbsp;" : "") . "</td>";
+					echo "<td style='text-align:right'>" . ($ligne['SelectiviteDernier'] !== null ? formater($ligne['SelectiviteDernier'], 1) . "%&nbsp;<span class='jauge-selectivite' style='width:" . $largeurJauge . "px' aria-hidden='true'></span>" : "") . "</td>";
 					echo "<td style='text-align:center'>" . (int) $ligne['Places'] . "</td>";
 					echo "<td style='text-align:center'>" . (int) $ligne['Integres'] . "</td>";
 					echo "</tr>";
@@ -401,7 +404,7 @@
 		// Tri local du tableau sans rechargement de page (comme la page attractivité).
 		// Premier clic : ordre par défaut du tableau ; second clic : ordre inverse.
 		// Les lignes sans valeur (dernier intégré non publié) restent toujours en fin de tableau.
-		var etatTri = {colonne: 'mediane', direction: null};
+		var etatTri = {colonne: 'dernier', direction: null};
 
 		function trierSelectivite(bouton) {
 			appliquerTri(bouton.closest('table'), bouton.dataset.tri, null);
@@ -422,7 +425,7 @@
 			var tbody = table.tBodies[0];
 			var lignes = Array.from(tbody.rows);
 			var valeur = function (ligne) { var v = parseFloat(ligne.dataset[colonne]); return isNaN(v) ? null : v; };
-			// tri stable : l'ordre initial (sélectivité médiane puis nom) départage les égalités
+			// tri stable : l'ordre initial du tableau départage les égalités
 			var ordreInitial = new Map(lignes.map(function (l, i) { return [l, i]; }));
 			lignes.sort(function (a, b) {
 				var va = valeur(a), vb = valeur(b);
@@ -444,7 +447,11 @@
 				});
 			}
 
-			// boutons : actif en bleu avec le sens du tri
+			majBoutons(table, colonne, direction);
+		}
+
+		// boutons : actif en bleu avec le sens du tri
+		function majBoutons(table, colonne, direction) {
 			table.querySelectorAll('button[data-tri]').forEach(function (b) {
 				var actif = (b.dataset.tri === colonne);
 				b.textContent = (actif && direction === 'asc') ? '\u2191' : '\u2193';
@@ -453,16 +460,25 @@
 			});
 		}
 
-		// restauration du tri au retour depuis une fiche école
+		// tri par défaut : dernier intégré (déjà appliqué par le serveur) ; restauration du tri
+		// choisi au retour depuis une fiche école
 		document.addEventListener('DOMContentLoaded', function () {
 			var parametres = new URLSearchParams(window.location.search);
 			var table = document.querySelector('#tableau-selectivite, #tableau-comparaison');
-			if (!table || parametres.get('tri') !== 'dernier') return;
+			if (!table) return;
+			var defaut = table.dataset.direction;
+			var colonne = (parametres.get('tri') === 'mediane') ? 'mediane' : 'dernier';
 			var direction = parametres.get('direction');
-			appliquerTri(table, 'dernier', (direction === 'asc' || direction === 'desc') ? direction : null);
+			if (direction !== 'asc' && direction !== 'desc') direction = defaut;
+			if (colonne === 'dernier' && direction === defaut) {
+				etatTri = {colonne: 'dernier', direction: defaut};
+				majBoutons(table, 'dernier', defaut);
+			} else {
+				appliquerTri(table, colonne, direction);
+			}
 		});
 		NavigationRetour.configurer(function () {
-			return etatTri.colonne === 'dernier' ? {tri: 'dernier', direction: etatTri.direction} : {};
+			return {tri: etatTri.colonne, direction: etatTri.direction};
 		});
 
 		// pour changer le texte et le symbole du bouton détail
