@@ -1,3 +1,14 @@
+// nettoie le texte d'une cellule pour le CSV : les espaces insécables (&nbsp;) et les
+// retours à la ligne deviennent des espaces simples, et une valeur contenant le
+// séparateur ou un guillemet est entourée de guillemets (RFC 4180)
+function csvCellule(texte) {
+    let valeur = String(texte).replace(/[\s\u00a0]+/g, ' ').trim();
+    if (/[;"]/.test(valeur)) {
+        valeur = '"' + valeur.replace(/"/g, '""') + '"';
+    }
+    return valeur;
+}
+
 // transforme la table HTML au format CSV
 function tableToCSV(idTableau, enTete) {
 
@@ -9,7 +20,7 @@ function tableToCSV(idTableau, enTete) {
     let rows = tableau.getElementsByTagName('tr');
 
     // traitement de l'entête du tableau si pas passé en paramètre
-    if (enTete !== "") {
+    if (enTete) {
         csv_data.push(enTete);
     } else {
         let head = tableau.querySelector('thead');
@@ -17,7 +28,7 @@ function tableToCSV(idTableau, enTete) {
             let cols = head.querySelectorAll('th');
             let csvrow = [];
             for (let col of cols) {
-                csvrow.push(col.textContent.trim());
+                csvrow.push(csvCellule(col.textContent));
             }
             csv_data.push(csvrow.join(";"));
         }
@@ -35,7 +46,7 @@ function tableToCSV(idTableau, enTete) {
 
             // data-csv permet de restreindre l'export à une partie du contenu
             // affiché (ex. une cellule combinant plusieurs informations visuelles)
-            csvrow.push(cols[j].hasAttribute('data-csv') ? cols[j].getAttribute('data-csv') : cols[j].textContent);
+            csvrow.push(csvCellule(cols[j].hasAttribute('data-csv') ? cols[j].getAttribute('data-csv') : cols[j].textContent));
         }
 
         // Combine each column value with comma
@@ -55,8 +66,10 @@ function downloadCSVFile(csv_data, idTableau) {
 
     // Create CSV file object and feed
     // our csv_data into it
-    CSVFile = new Blob([csv_data], {
-        type: "text/csv"
+    // Le BOM UTF-8 (\uFEFF) permet à Excel de reconnaître l'encodage : sans lui, les
+    // accents s'affichent mal (« Ã© » au lieu de « é »).
+    CSVFile = new Blob(["\uFEFF" + csv_data], {
+        type: "text/csv;charset=utf-8"
     });
 
     // Create to temporary link to initiate
