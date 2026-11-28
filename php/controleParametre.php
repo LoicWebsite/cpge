@@ -52,7 +52,7 @@
 	$rechercher = isset($_GET['rechercher']) && (string)$_GET['rechercher'] === '1';
 	$origineParametre = isset($_GET['origine']) ? (string)$_GET['origine'] : '';
 	// Ces valeurs pilotent uniquement le libellé et la destination du bouton retour.
-	$origine = in_array($origineParametre, ['specialite', 'attractivite', 'classement', 'salaire', 'filiere', 'ecole'], true)
+	$origine = in_array($origineParametre, ['specialite', 'attractivite', 'selectivite', 'classement', 'salaire', 'filiere', 'ecole'], true)
 		? $origineParametre
 		: '';
 

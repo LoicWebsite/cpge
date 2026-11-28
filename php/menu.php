@@ -35,6 +35,8 @@
 				$menu = "classement";
 			} elseif ($page == "statistique-attractivite-ecoles") {
 				$menu = "attractivite";
+			} elseif ($page == "selectivite-ecoles-ingenieur-par-filiere") {
+				$menu = "selectivite";
 			} elseif ($page == "salaire-ingenieur-cpge-post-prepa") {
 				$menu = "salaire";
 			}
@@ -83,11 +85,12 @@
 
 				// dropdown for classement + attractivité + salaires
 				echo "<li class='nav-item dropdown'>";
-				$parentActive = ($menu == "classement" || $menu == "attractivite" || $menu == "salaire");
+				$parentActive = ($menu == "classement" || $menu == "attractivite" || $menu == "selectivite" || $menu == "salaire");
 				echo "<a class='nav-link dropdown-toggle" . ($parentActive ? " active" : "") . "' href='#' id='classementDropdown' role='button' data-bs-toggle='dropdown' aria-expanded='false'>Palamarès</a>";
 				echo "<ul class='dropdown-menu' aria-labelledby='classementDropdown'>";
 				echo "<li><a class='dropdown-item" . ($menu == "classement" ? " active" : "") . "' href='classement-ecole-d-ingenieur.php' onclick='collapseMenu(this);'>Classement</a></li>";
 				echo "<li><a class='dropdown-item" . ($menu == "attractivite" ? " active" : "") . "' href='statistique-attractivite-ecoles.php' onclick='collapseMenu(this);'>Attractivité</a></li>";
+				echo "<li><a class='dropdown-item" . ($menu == "selectivite" ? " active" : "") . "' href='selectivite-ecoles-ingenieur-par-filiere.php' onclick='collapseMenu(this);'>Sélectivité</a></li>";
 				echo "<li><a class='dropdown-item" . ($menu == "salaire" ? " active" : "") . "' href='salaire-ingenieur-cpge-post-prepa.php' onclick='collapseMenu(this);'>Salaires</a></li>";
 				echo "</ul>";
 				echo "</li>"; // close dropdown list item

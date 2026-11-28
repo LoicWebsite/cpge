@@ -16,6 +16,7 @@ function pagesNavigationRetour(): array {
         'statistique-integration-ecole-d-ingenieur-par-ecole-cpge-post-prepa.php' => ['ecole', 'recherche', 'anneeEcole'],
         'classement-ecole-d-ingenieur.php' => [],
         'statistique-attractivite-ecoles.php' => ['tri', 'direction'],
+        'selectivite-ecoles-ingenieur-par-filiere.php' => ['filiere', 'an', 'ecole', 'tri', 'direction', 'domaine', 'concours'],
         'salaire-ingenieur-cpge-post-prepa.php' => ['promotion', 'horizon', 'etablissement', 'col', 'filtre', 'tri', 'direction'],
         // Fiche école : destination de retour de la page de méthode de l'estimation (onglet filière en ancre).
         'detail-resultat-admission-par-ecole.php' => ['ecole', 'origine', 'diplome', 'filiere', 'concours', 'reference', 'an', 'specialite', 'strict'],
@@ -88,6 +89,7 @@ function destinationRetourNavigation(array $parametres, array $serveur = [], str
         'specialite' => 'statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php',
         'classement' => 'classement-ecole-d-ingenieur.php',
         'attractivite' => 'statistique-attractivite-ecoles.php',
+        'selectivite' => 'selectivite-ecoles-ingenieur-par-filiere.php',
         'salaire' => 'salaire-ingenieur-cpge-post-prepa.php',
     ];
     $libelles = [
@@ -96,6 +98,7 @@ function destinationRetourNavigation(array $parametres, array $serveur = [], str
         'specialite' => 'Retour à la recherche par spécialité',
         'classement' => 'Retour au classement',
         'attractivite' => "Retour à l'attractivité",
+        'selectivite' => 'Retour à la sélectivité',
         'salaire' => 'Retour aux salaires',
     ];
     $origine = is_string($parametres['origine'] ?? null) ? $parametres['origine'] : $origineDefaut;
@@ -171,11 +174,12 @@ function destinationRetourNavigation(array $parametres, array $serveur = [], str
             'statistique-integration-ecole-d-ingenieur-par-specialite-cpge-post-prepa.php' => 'Spécialité',
             'classement-ecole-d-ingenieur.php' => 'Classement',
             'statistique-attractivite-ecoles.php' => 'Attractivité',
+            'selectivite-ecoles-ingenieur-par-filiere.php' => 'Sélectivité',
             'salaire-ingenieur-cpge-post-prepa.php' => 'Salaires',
         ][$pageRetour] ?? 'École',
         'rubrique' => $origineRetour !== false ? [
             'filiere' => 'Statistiques', 'ecole' => 'Statistiques', 'specialite' => 'Spécialités',
-            'classement' => 'Classement', 'attractivite' => 'Attractivité', 'salaire' => 'Salaires',
+            'classement' => 'Classement', 'attractivite' => 'Attractivité', 'selectivite' => 'Sélectivité', 'salaire' => 'Salaires',
         ][$origineRetour] : 'Critères',
     ];
 }

@@ -15,7 +15,7 @@ require_once __DIR__ . '/estimation.php';
 // table). Résoudre la liste ici, puis filtrer Note avec un simple IN (...),
 // permet un vrai lookup indexé.
 function obtenirEcolesConcoursRecherchees(PDO $db, string $ecole, string $origine): array {
-	if (!in_array($origine, ['specialite', 'classement', 'attractivite', 'salaire', 'ecole'], true)) {
+	if (!in_array($origine, ['specialite', 'classement', 'attractivite', 'selectivite', 'salaire', 'ecole'], true)) {
 		return [$ecole];
 	}
 	$stmt = $db->prepare("SELECT EcoleConcours FROM EcoleConcours WHERE Ecole = :ecole");
