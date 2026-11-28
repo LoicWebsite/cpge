@@ -27,6 +27,31 @@ function identifiantOnglet(string $cle): string {
 	return 'onglet-' . preg_replace('/[^a-z0-9\-]/', '', strtolower($cle));
 }
 
+function badgesVoiesFormation(?string $voies): string {
+	if ($voies === null || $voies === '') {
+		return '';
+	}
+	$libelles = [
+		'FISE' => 'FISE : formation initiale sous statut étudiant.',
+		'FISA' => 'FISA : formation initiale sous statut apprenti.',
+		'FISEA' => 'FISEA : formation initiale sous statut étudiant puis apprenti.',
+	];
+	$codes = explode(',', $voies);
+	foreach ($codes as $code) {
+		if (!isset($libelles[$code]) && $code !== 'FC') {
+			throw new UnexpectedValueException('Voie de formation non reconnue : ' . $code);
+		}
+	}
+	$html = '';
+	foreach ($libelles as $code => $libelle) {
+		if (in_array($code, $codes, true)) {
+			$html .= " <span class='badge-voie badge rounded-pill bg-white border text-secondary fw-normal'"
+				. " data-bs-toggle='tooltip' title='" . escapeHtml($libelle) . "'>" . $code . "</span>";
+		}
+	}
+	return $html;
+}
+
 function obtenirNomEcoleFiche(PDO $db, string $ecole): string {
 	$stmt = $db->prepare("SELECT DISTINCT Ecole FROM EcoleConcours WHERE EcoleConcours = :ecole AND Ecole IS NOT NULL AND Ecole <> ''");
 	$stmt->execute([':ecole' => $ecole]);

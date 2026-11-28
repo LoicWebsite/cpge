@@ -18,7 +18,7 @@ function afficherSpecialites(PDO $db, string $ecole, bool $debug = false, ?int $
 	}
 
 	// LEFT JOIN : un diplôme dont les spécialités ne sont pas encore collectées reste visible
-	$sql = "SELECT d.IdDiplome, d.Diplome, d.UrlFormation,
+	$sql = "SELECT d.IdDiplome, d.Diplome, d.UrlFormation, d.VoiesPossibles,
 				   s.Groupe, s.Specialite, s.TypeEtude, s.AnneeChoix
 			FROM Ecole e
 			JOIN Diplome d ON d.IdEcole = e.IdEcole
@@ -90,7 +90,8 @@ function afficherReservesSpecialites(): void {
 	echo "<div class='border-top mt-4 pt-3'>";
 	echo "<ul class='text-muted small mb-0'>";
 	echo "<li>Le choix de la spécialité intervient le plus souvent en 3<sup>e</sup> et dernière année, parfois dès la 2<sup>e</sup>.</li>";
-	echo "<li>Les spécialités listées correspondent au parcours sous statut étudiant (FISE). Elles ne sont pas toutes accessibles en apprentissage (FISA).</li>";
+	echo "<li>FISE : statut étudiant ; FISA : apprentissage ; FISEA : cursus étudiant puis apprenti.</li>";
+	echo "<li>Les badges indiquent les voies possibles du diplôme, sans garantir que chaque spécialité est accessible dans chacune de ces voies.</li>";
 	echo "<li>Dans les écoles multi-campus, toutes les spécialités ne sont pas proposées sur chaque campus.</li>";
 	echo "<li>En cas de doute, se référer au site de l'école (en haut de cette page).</li>";
 	echo "</ul>";
@@ -107,6 +108,7 @@ function regrouperSpecialites(array $lignes): array {
 				'id'      => $id,
 				'nom'     => ($ligne['Diplome'] !== null && $ligne['Diplome'] !== '') ? $ligne['Diplome'] : 'Diplôme d\'ingénieur',
 				'url'     => (string) $ligne['UrlFormation'],
+				'voies'   => $ligne['VoiesPossibles'],
 				'groupes' => [],
 			];
 		}
@@ -120,10 +122,10 @@ function regrouperSpecialites(array $lignes): array {
 }
 
 // Titre d'un diplôme, cliquable vers la page de formation de l'école quand elle est connue.
-// Sur les 2/3 des écoles le diplôme unique porte le nom de l'école : le titre ne dirait rien
-// de plus que le bandeau de la page, on ne garde alors que le lien vers la formation.
+// Sans badge, un diplôme unique portant le nom de l'école ne répète pas le bandeau.
 function afficherTitreDiplome(array $diplome, string $ecole, int $nombreDiplomes): void {
-	if ($nombreDiplomes === 1 && memeLibelle($diplome['nom'], $ecole)) {
+	$badges = badgesVoiesFormation($diplome['voies']);
+	if ($nombreDiplomes === 1 && memeLibelle($diplome['nom'], $ecole) && $badges === '') {
 		if ($diplome['url'] !== '') {
 			echo "<p class='mb-2'><a class='small' href='" . escapeHtml($diplome['url']) . "' target='_blank' rel='noopener'>";
 			echo "<i class='bi bi-box-arrow-up-right'></i>&nbsp; Détail de la formation sur le site de l'école</a></p>";
@@ -136,7 +138,7 @@ function afficherTitreDiplome(array $diplome, string $ecole, int $nombreDiplomes
 	} else {
 		echo escapeHtml($diplome['nom']);
 	}
-	echo "</h3>";
+	echo $badges . "</h3>";
 }
 
 // Comparaison de libellés tolérante à la casse et à la ponctuation.
@@ -204,11 +206,13 @@ function afficherSpecialitesRepliees(array $diplomes, string $anneeUnique, ?int 
 		echo "<button class='accordion-button" . ($ouvrir ? "" : " collapsed") . "' type='button'"
 		   . " data-bs-toggle='collapse' data-bs-target='#" . $idPanneau . "'"
 		   . " aria-expanded='" . ($ouvrir ? 'true' : 'false') . "' aria-controls='" . $idPanneau . "'>";
-		echo "<i class='bi bi-mortarboard'></i>&nbsp; " . escapeHtml($diplome['nom']);
+		echo "<span class='d-flex flex-wrap align-items-center gap-2'>";
+		echo "<span><i class='bi bi-mortarboard'></i>&nbsp; " . escapeHtml($diplome['nom']) . "</span>";
+		echo badgesVoiesFormation($diplome['voies']);
 		if ($nombre > 0) {
-			echo " <span class='badge rounded-pill bg-white border text-secondary fw-normal ms-2'>" . $nombre . "</span>";
+			echo " <span class='badge rounded-pill bg-white border text-secondary fw-normal'>" . $nombre . "</span>";
 		}
-		echo "</button></h3>";
+		echo "</span></button></h3>";
 		echo "<div id='" . $idPanneau . "' class='accordion-collapse collapse" . ($ouvrir ? " show" : "") . "'"
 		   . " data-bs-parent='#accordeon-specialites'>";
 		echo "<div class='accordion-body'>";

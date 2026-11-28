@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.3
+-- version 5.2.2
 -- https://www.phpmyadmin.net/
 --
--- Hôte : localhost:8889
--- Généré le : mar. 24 nov. 2026 à 15:46
--- Version du serveur : 5.7.44
--- Version de PHP : 7.4.33
+-- Hôte : localhost
+-- Généré le : sam. 28 nov. 2026 à 15:23
+-- Version du serveur : 5.5.61-38.13-log
+-- Version de PHP : 8.3.37
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `CPGE`
+-- Base de données : `cpge`
 --
 
 -- --------------------------------------------------------
@@ -71,7 +71,8 @@ CREATE TABLE `Diplome` (
   `IdDiplome` int(5) NOT NULL,
   `Diplome` varchar(250) NOT NULL,
   `UrlFormation` varchar(512) DEFAULT NULL,
-  `CodeDiplomeCTI` varchar(10) CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL
+  `CodeDiplomeCTI` varchar(10) CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL,
+  `VoiesPossibles` set('FISE','FISA','FISEA','FC') CHARACTER SET ascii COLLATE ascii_bin DEFAULT NULL COMMENT 'Voies declarees par la CTI ; NULL = non verifie'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -160,7 +161,7 @@ CREATE TABLE `Figaro` (
 
 CREATE TABLE `Filiere` (
   `Filiere` varchar(16) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
