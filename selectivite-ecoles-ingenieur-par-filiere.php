@@ -23,6 +23,9 @@
 	// fonctions communes du site
 	include "php/fonctionConcours.php";
 
+	// familles de concours partageant leurs écrits (Mines-Ponts / Mines-Télécom / TPE)
+	require_once "php/etalonnage.php";
+
 	// filière par défaut : MP (la plus représentée)
 	if ($filiere === "") {
 		$filiere = "mp";
@@ -51,6 +54,38 @@
 		if ((int) $ligneDomaine['IdDomaine'] === $domaineChoisi) $nomDomaine = $ligneDomaine['Domaine'];
 	}
 	if ($nomDomaine === "") $domaineChoisi = 0;
+
+	// Choix d'un concours : vue des pourcentages bruts, exacts seulement entre écoles d'un même
+	// concours. Les concours qui partagent leurs écrits (même groupe de candidats) sont regroupés.
+	$concoursChoisi = $modeEcole ? "" : trim((string) $concours);
+	$optionsConcours = [];
+	try {
+		$sqlConcours = "SELECT DISTINCT n.Concours FROM Note n
+				WHERE n.Concours NOT LIKE '%Inter-Fili_re%' AND n.Concours NOT LIKE '% Etr.%'
+					AND n.Integre > 0 AND n.RangMedian > 0";
+		$paramsConcours = [];
+		if (!$modeAllstar) {
+			$sqlConcours .= " AND n.Filiere = :filiere";
+			$paramsConcours[':filiere'] = $filiere;
+		}
+		if ($an !== "toutes") {
+			$sqlConcours .= " AND n.An = :an";
+			$paramsConcours[':an'] = $an;
+		}
+		$stmtConcours = openDatabase()->prepare($sqlConcours);
+		$stmtConcours->execute($paramsConcours);
+		foreach ($stmtConcours->fetchAll(PDO::FETCH_COLUMN) as $nomConcours) {
+			$optionsConcours[familleEcrits($nomConcours)] = true;
+		}
+	} catch (PDOException $erreur) {
+		$optionsConcours = [];
+	}
+	$optionsConcours = array_keys($optionsConcours);
+	sort($optionsConcours, SORT_NATURAL | SORT_FLAG_CASE);
+	// concours demandé mais sans résultat pour cette filière et cette année : retour à l'échelle commune, avec un message
+	$concoursIntrouvable = ($concoursChoisi !== "" && !in_array($concoursChoisi, $optionsConcours, true)) ? $concoursChoisi : "";
+	if ($concoursIntrouvable !== "") $concoursChoisi = "";
+	$membresConcours = ($concoursChoisi !== "") ? membresFamille($concoursChoisi) : [];
 	$anneeLibelle = ($an === "toutes") ? "toutes les années (2016-2026)" : $an;
 
 	// en dessous de ce nombre d'intégrés, la médiane n'est pas représentative
@@ -65,7 +100,7 @@
 	$partClassesMinimum = 0.4;
 
 	// Attributs data-* d'une ligne : valeurs de l'échelle étalonnée et leur fourchette, lues par le
-	// JavaScript quand la case « échelle commune » est cochée.
+	// JavaScript en vue « échelle commune » (vue par défaut).
 	function attributsEtal(array $ligne): string {
 		$nb = fn($cle) => ($ligne[$cle] !== null) ? number_format((float) $ligne[$cle], 1, '.', '') : '';
 		return " data-mediane-etal='" . $nb('SelectiviteEtalMediane') . "' data-mediane-etal-bas='" . $nb('EtalBasMediane')
@@ -77,6 +112,7 @@
 	// URL canonique : on garde uniquement les paramètres qui modifient le contenu
 	$criteresPage = $modeEcole ? ['ecole' => $ecoleChoisie, 'an' => $an] : ['filiere' => $modeAllstar ? 'allstar' : $filiere, 'an' => $an];
 	if ($domaineChoisi > 0) $criteresPage['domaine'] = $domaineChoisi;
+	if ($concoursChoisi !== "") $criteresPage['concours'] = $concoursChoisi;
 	$canonicalUrl = 'https://loic.website/CPGE/selectivite-ecoles-ingenieur-par-filiere.php?'
 		. http_build_query($criteresPage, '', '&', PHP_QUERY_RFC3986);
 	$retourListe = urlPageNavigation(basename(__FILE__), $criteresPage);
@@ -104,6 +140,10 @@
 	<style>
 		th, td {font-size:100%}
 		/* petite jauge : plus elle est courte, plus l'école est sélective */
+		/* trait de fourchette (vue étalonnée) : plage 95 % et valeur, échelle logarithmique commune à la colonne */
+		.barre-fourchette {display:none; position:relative; width:90px; height:8px; background:#e9ecef; border-radius:4px; vertical-align:middle; margin-left:6px;}
+		.barre-fourchette .plage {position:absolute; top:0; height:100%; background:rgba(72,61,139,.35); border-radius:4px;}
+		.barre-fourchette .point {position:absolute; top:-2px; width:3px; height:12px; margin-left:-1px; background:DarkSlateBlue; border-radius:1px;}
 		.jauge-selectivite {display:inline-block; height:8px; border-radius:4px; background:DarkSlateBlue; vertical-align:middle; margin-left:6px;}
 	</style>
   </head>
@@ -152,19 +192,20 @@
 			</ul>
 
 			<h2 class="h6 mt-3">2. Comparer des écoles qui recrutent sur des concours différents</h2>
-			<p>Un pourcentage n'est comparable <strong>exactement</strong> qu'entre écoles d'un même concours (même liste de candidats). Entre concours, un « 5 % » dans la banque X-ENS, réservée à des candidats d'élite, ne vaut pas un « 5 % » dans un petit concours ouvert à tous. La case <strong>« Comparer sur une échelle commune »</strong> corrige cet écart de niveau :</p>
+			<p>Un pourcentage n'est comparable <strong>exactement</strong> qu'entre écoles d'un même concours (même liste de candidats). Entre concours, un « 5 % » dans la banque X-ENS, réservée à des candidats d'élite, ne vaut pas un « 5 % » dans un petit concours ouvert à tous. La vue par défaut, <strong>« Échelle commune »</strong>, corrige cet écart de niveau ; la liste <strong>« Vue »</strong> permet de choisir à la place un seul concours, pour voir ses pourcentages bruts (exacts entre ses écoles). Mines-Ponts, Mines-Télécom et TPE, qui partagent les mêmes épreuves écrites donc le même groupe de candidats, sont regroupés. Principe de l'échelle commune :</p>
 			<ol>
 				<li>chaque rang est converti en échelle logit (un « log des chances »), où les écarts deviennent additifs ;</li>
-				<li>le <strong>niveau moyen DAUR</strong> des écoles sert de repère national commun : on mesure, pour chaque concours, de combien les rangs de ses écoles s'écartent de ce que leur niveau prévoit. Cet écart est le <em>décalage</em> du concours (le niveau DAUR ne classe aucune école, il ne règle qu'un coefficient par concours) ;</li>
-				<li>on retire ce décalage des rangs de toutes les écoles du concours, par rapport au plus large concours de la filière (proche de la promotion entière) ;</li>
-				<li>la valeur est affichée avec une <strong>fourchette à 95 %</strong> entre crochets.</li>
+				<li>le <strong>niveau moyen DAUR</strong> des écoles sert de repère national commun : on mesure, pour chaque concours, de combien les rangs de ses écoles s'écartent de ce que leur niveau prévoit. Cet écart est le <em>décalage</em> du concours (le niveau DAUR ne classe aucune école, il ne règle qu'un coefficient par concours). Les concours qui partagent les mêmes épreuves écrites, donc le même groupe de candidats (Mines-Ponts, Mines-Télécom, TPE-EIVP), reçoivent un décalage commun ;</li>
+				<li>on retire ce décalage des rangs de toutes les écoles du concours, par rapport à un concours de référence unique pour toutes les filières (le plus large concours étalonné, proche de la promotion entière), afin que les filières restent comparables entre elles ;</li>
+				<li>la valeur est affichée avec une <strong>fourchette à 95 %</strong>, sous forme d'un trait à côté du pourcentage : si les traits de deux écoles se recouvrent largement, on ne peut pas dire laquelle est la plus sélective.</li>
 			</ol>
 			<p>L'étalonnage est une estimation : deux écoles de concours différents dont les valeurs diffèrent de <strong>moins de 2 fois</strong> ne sont pas significativement différentes. Un concours ayant trop peu d'écoles-repères (moins de 3) est « non étalonné » : il n'est pas classé dans cette vue. Les décalages sont recalculés à chaque mise à jour des données, sur les 4 dernières années. Contrôle : en retirant une école et en la prédisant avec les autres, l'erreur reste de l'ordre de 0,5 en logit.</p>
 
 			<h2 class="h6 mt-3">3. Les filtres</h2>
 			<ul>
 				<li><strong>Filière ou Allstar</strong> : Allstar classe ensemble tous les couples école + filière (par exemple « Ecole Polytechnique (MP) »), avec au moins 5 intégrés par couple. Les concours communs à plusieurs filières (Groupe INSA, CESI, Ingeni'Up), qui recopient la même ligne partout, n'y figurent pas.</li>
-				<li><strong>Concours</strong> : une année, ou toutes les années (moyenne pondérée par les intégrés, plus stable).</li>
+				<li><strong>Vue</strong> : « Échelle commune » (par défaut) compare toutes les écoles avec une fourchette ; choisir un concours n'affiche que les écoles qui y recrutent, avec leurs pourcentages bruts.</li>
+				<li><strong>Année du concours</strong> : une année, ou toutes les années (moyenne pondérée par les intégrés, plus stable).</li>
 				<li><strong>Spécialité</strong> : ne garde que les écoles qui proposent au moins une spécialité du domaine choisi (un domaine général reprend ses sous-domaines). La sélectivité reste celle du recrutement de l'école dans sa filière, pas celle de la spécialité. Les écoles dont les spécialités ne sont pas référencées sur le site n'apparaissent pas.</li>
 				<li><strong>Comparer les filières pour une école</strong> : pour une école, la sélectivité filière par filière, de la plus accessible à la plus sélective, avec le nombre de places et d'intégrés. Le badge « la plus accessible » n'apparaît que si l'écart avec la filière suivante est net (au moins 20 %). Penser aussi au nombre de places : peu de places rend l'entrée plus difficile que le pourcentage ne le laisse croire.</li>
 			</ul>
@@ -177,7 +218,7 @@
 			</ul>
 
 			<h2 class="h6 mt-3">5. Limites</h2>
-			<p>Le niveau moyen DAUR dont dépend l'échelle commune est publié sans formule détaillée ; son rattachement aux écoles est automatique. Les listes de candidats d'un même concours ne sont pas toujours identiques (par exemple les options de Polytechnique et les ENS dans la banque X-ENS), ce que l'étalonnage ne corrige pas. Lisez le haut du classement par <strong>blocs</strong>, pas au rang près.</p>
+			<p>Le niveau moyen DAUR dont dépend l'échelle commune est publié sans formule détaillée ; son rattachement aux écoles est automatique. Les listes de candidats d'un même concours ne sont pas toujours identiques (par exemple les options de Polytechnique et les ENS dans la banque X-ENS), ce que l'étalonnage ne corrige pas. Mines-Ponts et Mines-Télécom partagent les mêmes écrits mais pas les oraux (celui de Mines-Ponts est réputé plus sélectif) : à écrits égaux, les rangs peuvent être décalés d'un facteur d'environ 1,5 entre les deux, sans qu'aucune correction n'en tienne compte (observé sur peu d'écoles). Lisez le haut du classement par <strong>blocs</strong>, pas au rang près.</p>
 			<br>
 		</div>
 
@@ -209,7 +250,22 @@
 				</select>
 			</div>
 			<div class="col-auto">
-				<label for="an" class="form-label mb-0">Concours</label>
+				<label for="concours" class="form-label mb-0">Vue</label>
+				<select id="concours" name="concours" class="form-select" onchange="this.form.submit()"<?php echo $modeEcole ? " disabled title=\"Désactivé : la comparaison par école porte sur toutes ses filières\"" : ""; ?>>
+					<option value="">Échelle commune (tous les concours)</option>
+					<?php if (!empty($optionsConcours)) { ?>
+					<optgroup label="Pourcentage brut d'un seul concours">
+					<?php
+						foreach ($optionsConcours as $nomOption) {
+							echo "<option value='" . escapeHtml($nomOption) . "'" . ($nomOption === $concoursChoisi ? " selected" : "") . ">" . escapeHtml($nomOption) . "</option>";
+						}
+					?>
+					</optgroup>
+					<?php } ?>
+				</select>
+			</div>
+			<div class="col-auto">
+				<label for="an" class="form-label mb-0">Année du concours</label>
 				<select id="an" name="an" class="form-select" onchange="this.form.submit()">
 				<?php
 					foreach ($allowed_years as $annee) {
@@ -242,14 +298,6 @@
 	</header>
 
 	<main class='container'>
-		<!-- bascule : pourcentage du concours / échelle commune étalonnée -->
-		<div class="form-check mb-3" id="bloc-etal">
-			<input class="form-check-input" type="checkbox" id="baseEtal" onchange="appliquerEchelle(this.checked)">
-			<label class="form-check-label" for="baseEtal">
-				Comparer sur une échelle commune (étalonnée)
-				<i class="bi bi-info-circle-fill" data-bs-toggle="tooltip" data-bs-html="true" title="Par défaut, un pourcentage est rapporté aux inscrits de son concours : il ne se compare exactement qu'entre écoles du même concours. Cochez pour corriger l'écart de niveau entre concours (repère : niveau moyen DAUR) et voir une fourchette à 95 %. Deux écoles de concours différents à moins de 2 fois d'écart ne sont pas significativement différentes."></i>
-			</label>
-		</div>
 	<?php
 		try {
 			$db = openDatabase();
@@ -286,7 +334,7 @@
 		$nonEtalonne = $etalDisponible ? "et.Decalage IS NULL" : "1 = 1";
 
 		// Effectifs de référence par filière (plus grand concours propre à la filière), pour la note
-		// de la case à cocher. Une année : valeur de l'année ; toutes les années : moyenne annuelle.
+		// de la vue échelle commune. Une année : valeur de l'année ; toutes les années : moyenne annuelle.
 		$effectifsPromo = [];
 		try {
 			$paramsPromo = [];
@@ -312,14 +360,20 @@
 			$detailEffectifs[] = (!$modeEcole && !$modeAllstar && $codeEffectif === $filiere) ? "<strong>" . $texteEffectif . "</strong>" : $texteEffectif;
 		}
 		echo "<div id='note-base' class='alert alert-info py-2' hidden>";
-		echo "Pourcentages <strong>étalonnés sur une échelle commune</strong> : chaque rang est corrigé de l'écart de niveau de son concours (un « 5 % » dans un petit concours peu sélectif ne vaut pas un « 5 % » dans une banque d'élite). Cet écart est estimé avec le niveau moyen DAUR des écoles qui y recrutent ; il ne sert qu'à régler un coefficient par concours, jamais à classer une école. L'échelle de référence est le plus large concours de la filière (proche de la promotion entière). La fourchette entre crochets (95 %) donne l'incertitude de cet étalonnage, d'un facteur 2 environ dans chaque sens au minimum : <strong>deux écoles de concours différents dont les valeurs diffèrent de moins de 2 fois ne sont pas significativement différentes</strong>. Un concours comptant trop peu d'écoles-repères n'est pas étalonné (« non étalonné ») : son pourcentage reste celui du concours. Les comparaisons au sein d'un même concours restent exactes.";
+		echo "Pourcentages <strong>étalonnés sur une échelle commune</strong> : chaque rang est corrigé de l'écart de niveau de son concours (un « 5 % » dans un petit concours peu sélectif ne vaut pas un « 5 % » dans une banque d'élite). Cet écart est estimé avec le niveau moyen DAUR des écoles qui y recrutent ; il ne sert qu'à régler un coefficient par concours, jamais à classer une école. L'échelle de référence est la même pour toutes les filières : le plus large des concours étalonnés (proche de la promotion entière), ce qui rend comparables les valeurs de filières différentes. Le <strong>trait</strong> à côté de chaque valeur montre la fourchette à 95 % (échelle logarithmique commune à la colonne ; le trait fin vertical marque la valeur) : <strong>des traits qui se recouvrent largement désignent des écoles non distinguables</strong>. Cette fourchette donne l'incertitude de cet étalonnage, d'un facteur 2 environ dans chaque sens au minimum : <strong>deux écoles de concours différents dont les valeurs diffèrent de moins de 2 fois ne sont pas significativement différentes</strong>. Un concours comptant trop peu d'écoles-repères n'est pas étalonné (« non étalonné ») : son pourcentage reste celui du concours. Les comparaisons au sein d'un même concours restent exactes.";
 		if (!empty($detailEffectifs)) {
 			echo "<br><strong>Effectifs de référence (" . ($an === "toutes" ? "moyenne annuelle 2016-2026" : "concours " . escapeHtml($an)) . ") :</strong> environ "
 				. str_replace(' ', '&nbsp;', formater(round($totalPromo), 0)) . "&nbsp;étudiants en tout, dont " . implode(" &middot; ", $detailEffectifs) . ".";
 		}
 		echo "</div>";
-		if (!$etalDisponible) {
-			echo "<script>document.getElementById('bloc-etal').hidden = true;</script>";
+		if ($concoursIntrouvable !== "") {
+			echo "<div class='alert alert-warning py-2'>Le concours « " . escapeHtml($concoursIntrouvable) . " » n'a pas de résultat pour cette filière et cette année : l'échelle commune est affichée à la place. Choisissez un autre concours dans la liste « Vue ».</div>";
+		}
+		if ($concoursChoisi !== "") {
+			echo "<div class='alert alert-secondary py-2'>Pourcentages <strong>bruts du concours « " . escapeHtml($concoursChoisi) . " »</strong> : rang rapporté aux inscrits de ce concours. Ils ne se comparent qu'entre écoles qui recrutent par ce concours"
+				. (count($membresConcours) > 1 ? " (ces concours partagent les mêmes épreuves écrites, donc le même groupe de candidats)" : "") . ". Pour comparer des écoles de concours différents, choisissez l'échelle commune dans la liste « Vue ».</div>";
+		} elseif (!$etalDisponible) {
+			echo "<div class='alert alert-warning py-2'>L'échelle commune n'est pas disponible (table <code>ConcoursEtalonnage</code> absente) : les pourcentages affichés sont bruts, rapportés aux inscrits de chaque concours, et ne se comparent pas entre concours différents.</div>";
 		}
 
 		// Valeurs étalonnées : rang converti en logit, corrigé du décalage du concours, puis reconverti
@@ -395,6 +449,13 @@
 			$params[':domaine1'] = $domaineChoisi;
 			$params[':domaine2'] = $domaineChoisi;
 		}
+		// Un seul concours (ou une famille d'écrits communs) : pourcentages bruts de ce concours.
+		$filtreConcours = "";
+		foreach ($membresConcours as $i => $nomMembre) {
+			$filtreConcours .= ($filtreConcours === "" ? "" : ", ") . ":cc" . $i;
+			$params[":cc" . $i] = $nomMembre;
+		}
+		if ($filtreConcours !== "") $filtreConcours = " AND n.Concours IN (" . $filtreConcours . ")";
 		$sql = "SELECT ec.Ecole, n.Filiere,
 					SUM(n.Integre) AS Integres,
 					SUM(n.Integre * n.RangMedian) / SUM(n.Integre) AS RangMedianMoyen,
@@ -407,7 +468,7 @@
 				INNER JOIN (SELECT DISTINCT Filiere, Concours, EcoleConcours, Ecole FROM EcoleConcours) ec
 					ON ec.Filiere = n.Filiere AND ec.Concours = n.Concours AND ec.EcoleConcours = n.EcoleConcours
 				" . $jointureEtal . $jointureBassin . $jointureAllstar . "
-				WHERE 1 = 1" . $filtreFiliere . $filtreAn . $filtreDomaine . "
+				WHERE 1 = 1" . $filtreFiliere . $filtreAn . $filtreDomaine . $filtreConcours . "
 					AND ec.Ecole IS NOT NULL
 					AND n.Integre > 0 AND n.RangMedian > 0 AND n.Inscrit > 0
 					AND n.RangMedian <= n.Inscrit
@@ -442,7 +503,7 @@
 			echo "<thead class='text-center'><tr>";
 			echo "<th>&nbsp;Rang&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Classement sur le critère dont le bouton &darr; est en bleu (le dernier intégré par défaut). Les valeurs égales partagent le même rang ; les écoles sans valeur sont en fin de tableau, sans rang.'></i></th>";
 			echo "<th>&nbsp;Ecole&nbsp;</th>";
-			echo "<th>&nbsp;<button type='button' class='btn btn-secondary btn-sm' data-tri='mediane' title='Trier par sélectivité médiane' onclick='trierSelectivite(this)'>&darr;</button>&nbsp;&nbsp;Sélectivité médiane&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Rang du candidat médian parmi les intégrés, divisé par les inscrits du concours. Plus c&apos;est bas, plus l&apos;école est sélective. Avec la case « échelle commune » : valeur corrigée de l&apos;écart de niveau entre concours, suivie d&apos;une fourchette à 95 %.'></i></th>";
+			echo "<th>&nbsp;<button type='button' class='btn btn-secondary btn-sm' data-tri='mediane' title='Trier par sélectivité médiane' onclick='trierSelectivite(this)'>&darr;</button>&nbsp;&nbsp;Sélectivité médiane&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Rang du candidat médian parmi les intégrés, divisé par les inscrits du concours. Plus c&apos;est bas, plus l&apos;école est sélective. En vue « échelle commune » (par défaut) : valeur corrigée de l&apos;écart de niveau entre concours, suivie d&apos;une fourchette à 95 %.'></i></th>";
 			echo "<th>&nbsp;Rang médian&nbsp;<br>moyen&nbsp;<i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Position réelle du candidat médian dans la liste du concours, moyennée par école. Elle dépend de la taille du concours : ne pas la comparer d&apos;un concours à l&apos;autre.'></i></th>";
 			echo "<th>&nbsp;<button type='button' class='btn btn-secondary btn-sm' data-tri='dernier' title='Trier par dernier intégré' onclick='trierSelectivite(this)'>&darr;</button>&nbsp;&nbsp;Dernier intégré&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Rang du dernier candidat admis, divisé par les inscrits. Indique jusqu&apos;où l&apos;on peut descendre pour entrer, mais il est sensible aux désistements. Vide s&apos;il n&apos;est pas publié pour au moins 90 % des intégrés.'></i></th>";
 			echo "<th>&nbsp;Intégrés&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Nombre d&apos;intégrés pris en compte sur la période. Moins de 3 (5 en Allstar) : l&apos;école n&apos;est pas classée ; moins de 5 : valeur fragile.'></i></th>";
@@ -473,9 +534,9 @@
 				echo "<td style='text-align:center'>" . ($dernier === null ? "&ndash;" : $rang) . "</td>";
 				echo "<td style='padding-left:10px'><a href='" . $urlDetail . "'><strong>" . escapeHtml($libelleLigne) . "</strong></a>" . ($ens ? " *" : "") . (!empty($ligne['BassinRestreint']) ? $triangleBassin : "")
 					. " <a href='?ecole=" . rawurlencode($nomEcole) . "&amp;an=" . rawurlencode($an) . "' title='Comparer les filières pour cette école' aria-label='Comparer les filières pour " . escapeHtml($nomEcole) . "'><i class='bi bi-bar-chart-steps'></i></a></td>";
-				echo "<td style='text-align:right; white-space:nowrap'>" . "<span class='v'>" . formater($mediane, 1) . "%</span><small class='fourchette text-muted'></small>&nbsp;</td>";
+				echo "<td style='text-align:right; white-space:nowrap'>" . "<span class='v'>" . formater($mediane, 1) . "%</span><small class='fourchette text-muted'></small><span class='barre-fourchette'><span class='plage'></span><span class='point'></span></span>&nbsp;</td>";
 				echo "<td style='text-align:right'>" . formater($ligne['RangMedianMoyen'], 0) . "&nbsp;</td>";
-				echo "<td style='text-align:right'>" . ($ligne['SelectiviteDernier'] !== null ? "<span class='v'>" . formater($ligne['SelectiviteDernier'], 1) . "%</span><small class='fourchette text-muted'></small>&nbsp;<span class='jauge-selectivite' style='width:" . $largeurJauge . "px' aria-hidden='true'></span>" : "") . "</td>";
+				echo "<td style='text-align:right'>" . ($ligne['SelectiviteDernier'] !== null ? "<span class='v'>" . formater($ligne['SelectiviteDernier'], 1) . "%</span><small class='fourchette text-muted'></small><span class='barre-fourchette'><span class='plage'></span><span class='point'></span></span>&nbsp;<span class='jauge-selectivite' style='width:" . $largeurJauge . "px' aria-hidden='true'></span>" : "") . "</td>";
 				echo "<td style='text-align:center'>" . (int) $ligne['Integres'] . "</td>";
 				echo "</tr>";
 			}
@@ -548,7 +609,7 @@
 				echo "<br>Cliquer sur le bouton pour télécharger le tableau au format CSV : </small><button type='button' class='btn btn-secondary btn-sm' onclick='tableToCSV(" . $idTableau . ")'><i class='bi bi-download'></i> csv</button></caption>";
 				echo "<thead class='text-center'><tr>";
 				echo "<th>&nbsp;Filière&nbsp;</th>";
-				echo "<th>&nbsp;<button type='button' class='btn btn-secondary btn-sm' data-tri='mediane' title='Trier par sélectivité médiane' onclick='trierSelectivite(this)'>&darr;</button>&nbsp;&nbsp;Sélectivité médiane&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Rang du candidat médian parmi les intégrés, divisé par les inscrits du concours. Plus la valeur est élevée, plus l&apos;école est accessible dans cette filière. Avec la case « échelle commune » : valeur corrigée, suivie d&apos;une fourchette à 95 %.'></i></th>";
+				echo "<th>&nbsp;<button type='button' class='btn btn-secondary btn-sm' data-tri='mediane' title='Trier par sélectivité médiane' onclick='trierSelectivite(this)'>&darr;</button>&nbsp;&nbsp;Sélectivité médiane&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Rang du candidat médian parmi les intégrés, divisé par les inscrits du concours. Plus la valeur est élevée, plus l&apos;école est accessible dans cette filière. En vue « échelle commune » (par défaut) : valeur corrigée, suivie d&apos;une fourchette à 95 %.'></i></th>";
 				echo "<th>&nbsp;Rang médian&nbsp;<br>moyen&nbsp;</th>";
 				echo "<th>&nbsp;<button type='button' class='btn btn-secondary btn-sm' data-tri='dernier' title='Trier par dernier intégré' onclick='trierSelectivite(this)'>&darr;</button>&nbsp;&nbsp;Dernier intégré&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Rang du dernier candidat admis, divisé par les inscrits. Indique jusqu&apos;où l&apos;on peut descendre pour entrer, mais il est sensible aux désistements. Vide s&apos;il n&apos;est pas publié pour au moins 90 % des intégrés.'></i></th>";
 				echo "<th>&nbsp;Places&nbsp;<br><i class='bi bi-info-circle-fill' data-bs-toggle='tooltip' data-bs-html='true' title='Places offertes sur la période choisie. Peu de places rend l&apos;entrée plus difficile que le pourcentage ne le laisse croire.'></i></th>";
@@ -575,9 +636,9 @@
 						echo " <small><i class='bi bi-exclamation-triangle' data-bs-toggle='tooltip' title='Moins de " . $integresMinimum . " intégrés : valeur peu représentative, exclue de la comparaison.'></i></small>";
 					}
 					echo "</td>";
-					echo "<td style='text-align:right; white-space:nowrap'>" . "<span class='v'>" . formater($mediane, 1) . "%</span><small class='fourchette text-muted'></small>&nbsp;</td>";
+					echo "<td style='text-align:right; white-space:nowrap'>" . "<span class='v'>" . formater($mediane, 1) . "%</span><small class='fourchette text-muted'></small><span class='barre-fourchette'><span class='plage'></span><span class='point'></span></span>&nbsp;</td>";
 					echo "<td style='text-align:right'>" . formater($ligne['RangMedianMoyen'], 0) . "&nbsp;</td>";
-					echo "<td style='text-align:right'>" . ($ligne['SelectiviteDernier'] !== null ? "<span class='v'>" . formater($ligne['SelectiviteDernier'], 1) . "%</span><small class='fourchette text-muted'></small>&nbsp;<span class='jauge-selectivite' style='width:" . $largeurJauge . "px' aria-hidden='true'></span>" : "") . "</td>";
+					echo "<td style='text-align:right'>" . ($ligne['SelectiviteDernier'] !== null ? "<span class='v'>" . formater($ligne['SelectiviteDernier'], 1) . "%</span><small class='fourchette text-muted'></small><span class='barre-fourchette'><span class='plage'></span><span class='point'></span></span>&nbsp;<span class='jauge-selectivite' style='width:" . $largeurJauge . "px' aria-hidden='true'></span>" : "") . "</td>";
 					echo "<td style='text-align:center'>" . (int) $ligne['Places'] . "</td>";
 					echo "<td style='text-align:center'>" . (int) $ligne['Integres'] . "</td>";
 					echo "</tr>";
@@ -633,6 +694,8 @@
 		// Premier clic : ordre par défaut du tableau ; second clic : ordre inverse.
 		// Les lignes sans valeur (dernier intégré non publié) restent toujours en fin de tableau.
 		var etatTri = {colonne: 'dernier', direction: null};
+		var concoursChoisi = <?php echo encodeJs($concoursChoisi); ?>;
+		var etalDisponible = <?php echo $etalDisponible ? 'true' : 'false'; ?>;
 		var echelle = 'concours'; // 'concours' (pourcentage du concours) ou 'etal' (échelle étalonnée)
 
 		function trierSelectivite(bouton) {
@@ -700,25 +763,57 @@
 				var d = nombre(l, 'dernier' + suffixe);
 				if (d !== null && d > maxDernier) maxDernier = d;
 			});
+			// échelle commune des traits (logarithmique), par colonne : de la plus basse borne à la plus haute
+			var bornes = {};
+			['mediane', 'dernier'].forEach(function (nom) {
+				var lo = Infinity, hi = 0;
+				lignes.forEach(function (l) {
+					if (l.dataset.nonEtalonne === '1') return;
+					var b = nombre(l, nom + 'EtalBas'), h = nombre(l, nom + 'EtalHaut');
+					if (b !== null && b > 0 && b < lo) lo = b;
+					if (h !== null && h > hi) hi = h;
+				});
+				bornes[nom] = (lo < hi) ? [Math.log(lo), Math.log(hi)] : null;
+			});
+			var position = function (nom, v) {
+				var b = bornes[nom];
+				return b ? Math.min(100, Math.max(0, 100 * (Math.log(Math.max(v, 1e-6)) - b[0]) / (b[1] - b[0]))) : 0;
+			};
 			lignes.forEach(function (l) {
 				var cases = l.querySelectorAll('span.v');
 				var fourchettes = l.querySelectorAll('small.fourchette');
+				var barres = l.querySelectorAll('span.barre-fourchette');
 				['mediane', 'dernier'].forEach(function (nom, i) {
 					var v = nombre(l, nom + suffixe);
 					if (cases[i]) cases[i].textContent = (v === null) ? '' : format(v);
-					if (!fourchettes[i]) return;
-					var bas = nombre(l, nom + 'Etal' + 'Bas'), haut = nombre(l, nom + 'Etal' + 'Haut');
-					if (!etal || v === null) { fourchettes[i].textContent = ''; return; }
-					fourchettes[i].textContent = (l.dataset.nonEtalonne === '1' || bas === null || haut === null)
-						? ' (non étalonné)'
-						: ' [' + bas.toFixed(1).replace('.', ',') + '–' + haut.toFixed(1).replace('.', ',') + ']';
+					var bas = nombre(l, nom + 'EtalBas'), haut = nombre(l, nom + 'EtalHaut');
+					var barre = barres[i];
+					if (barre) barre.style.display = 'none';
+					if (fourchettes[i]) fourchettes[i].textContent = '';
+					if (!etal || v === null) return;
+					var etalonne = !(l.dataset.nonEtalonne === '1' || bas === null || haut === null);
+					if (!etalonne) {
+						if (fourchettes[i]) fourchettes[i].textContent = ' (non étalonné)';
+						return;
+					}
+					if (barre && bornes[nom]) {
+						var g = position(nom, bas), d = position(nom, haut);
+						barre.querySelector('.plage').style.left = g + '%';
+						barre.querySelector('.plage').style.width = Math.max(1, d - g) + '%';
+						barre.querySelector('.point').style.left = position(nom, v) + '%';
+						barre.title = 'Fourchette à 95 % : ' + bas.toFixed(1).replace('.', ',') + ' à ' + haut.toFixed(1).replace('.', ',') + ' %';
+						barre.style.display = 'inline-block';
+					}
 				});
+				// le trait de fourchette remplace la jauge de la colonne « dernier intégré »
 				var d = nombre(l, 'dernier' + suffixe);
 				var jauge = l.querySelector('.jauge-selectivite');
-				if (jauge) jauge.style.width = (d === null ? 0 : Math.max(2, Math.round(60 * d / maxDernier))) + 'px';
+				if (jauge) {
+					jauge.style.display = etal ? 'none' : '';
+					jauge.style.width = (d === null ? 0 : Math.max(2, Math.round(60 * d / maxDernier))) + 'px';
+				}
 			});
 			document.getElementById('note-base').hidden = !etal;
-			document.getElementById('baseEtal').checked = etal;
 			appliquerTri(table, etatTri.colonne, etatTri.direction || table.dataset.direction);
 		}
 
@@ -735,8 +830,6 @@
 		// tri par défaut : dernier intégré (déjà appliqué par le serveur) ; restauration du tri
 		// choisi au retour depuis une fiche école
 		document.addEventListener('DOMContentLoaded', function () {
-			// un rechargement peut restaurer la case cochée : on réaligne l'affichage
-			if (document.getElementById('baseEtal').checked) appliquerEchelle(true);
 			var parametres = new URLSearchParams(window.location.search);
 			var table = document.querySelector('#tableau-selectivite, #tableau-comparaison');
 			if (!table) return;
@@ -750,10 +843,11 @@
 			} else {
 				appliquerTri(table, colonne, direction);
 			}
-			if (parametres.get('base') === 'etal') appliquerEchelle(true);
+			// vue par défaut : échelle commune (sauf concours choisi ou table d'étalonnage absente)
+			if (concoursChoisi === '' && etalDisponible) appliquerEchelle(true);
 		});
 		NavigationRetour.configurer(function () {
-			return {tri: etatTri.colonne, direction: etatTri.direction, base: echelle === 'etal' ? 'etal' : ''};
+			return {tri: etatTri.colonne, direction: etatTri.direction};
 		});
 
 		// pour changer le texte et le symbole du bouton détail

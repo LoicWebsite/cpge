@@ -17,12 +17,39 @@
  *    concours reçoit un décalage : la moyenne, pondérée par les intégrés, de l'écart entre le y
  *    observé de ses écoles-repères et b * niveau ;
  *  - un concours comptant moins de $reperesMin écoles-repères n'est pas étalonné ;
- *  - les décalages sont exprimés par rapport à un concours de référence par filière, le plus
- *    large (donc le plus proche de la promotion entière).
+ *  - les décalages sont exprimés par rapport à UN SEUL concours de référence pour toutes les
+ *    filières : le plus large des concours étalonnés (donc le plus proche de la promotion entière).
+ *    Une référence par filière fausserait les comparaisons entre filières (Allstar, comparaison par
+ *    école) : chaque filière serait mesurée avec une règle différente. Comme la pente b et l'échelle
+ *    du niveau DAUR sont communes à toutes les filières, les décalages sont comparables entre elles.
  *
  * Le niveau DAUR ne classe aucune école : il ne sert qu'à régler UN coefficient par concours.
  * Les fonctions de ce fichier sont pures (aucun accès base) pour pouvoir être testées.
  */
+
+/**
+ * Concours qui partagent les MÊMES épreuves écrites, donc le même groupe de candidats : leurs
+ * décalages sont estimés ensemble (un seul décalage par famille et par filière). Seuls les oraux
+ * diffèrent. Pour Mines-Ponts, Mines-Télécom et TPE-EIVP, l'écrit est commun (les candidats
+ * admissibles aux deux concours ne passent que les oraux Mines-Ponts, dont les résultats sont
+ * transmis au Mines-Télécom). À compléter si d'autres concours partagent leurs écrits.
+ */
+const FAMILLES_ECRITS = [
+	'Mines-Ponts / Mines-Télécom / TPE' => ['Concours Commun MINES-PONTS', 'Concours Mines - Télécom', 'CONCOURS COMMUN TPE'],
+];
+
+/** Nom de la famille d'écrits d'un concours (ou le concours lui-même s'il n'en a pas). */
+function familleEcrits(string $concours): string {
+	foreach (FAMILLES_ECRITS as $famille => $membres) {
+		if (in_array($concours, $membres, true)) return $famille;
+	}
+	return $concours;
+}
+
+/** Concours réels d'une famille d'écrits (ou le concours seul s'il n'appartient à aucune famille). */
+function membresFamille(string $nom): array {
+	return FAMILLES_ECRITS[$nom] ?? [$nom];
+}
 
 /**
  * Rend un nom comparable : minuscules, sans accents ni ponctuation, mots séparés par un espace.
@@ -101,11 +128,13 @@ function transformerNiveau(float $niveau): float {
 function calculerEtalonnage(array $lignes, array $niveaux, int $reperesMin = 3, float $plancher = 0.35): array {
 	$groupes = [];
 	$reperes = [];
+	$membres = []; // concours réels de chaque groupe (famille d'écrits)
 	foreach ($lignes as $ligne) {
-		$cle = $ligne['Filiere'] . "\x1f" . $ligne['Concours'];
+		$cle = $ligne['Filiere'] . "\x1f" . familleEcrits($ligne['Concours']);
 		if (!isset($groupes[$cle])) {
-			$groupes[$cle] = ['Filiere' => $ligne['Filiere'], 'Concours' => $ligne['Concours'], 'poidsInscrit' => 0.0, 'poids' => 0.0];
+			$groupes[$cle] = ['Filiere' => $ligne['Filiere'], 'Concours' => familleEcrits($ligne['Concours']), 'poidsInscrit' => 0.0, 'poids' => 0.0];
 		}
+		$membres[$cle][$ligne['Concours']] = true;
 		$groupes[$cle]['poids'] += $ligne['Poids'];
 		$groupes[$cle]['poidsInscrit'] += $ligne['Poids'] * $ligne['Inscrit'];
 		if (isset($niveaux[$ligne['Ecole']])) {
@@ -162,12 +191,15 @@ function calculerEtalonnage(array $lignes, array $niveaux, int $reperesMin = 3, 
 	}
 	$sigma = $poidsTotal > 0 ? sqrt($carres / $poidsTotal) : 0.0;
 
-	// concours de référence par filière : le plus large (inscrits moyens) parmi les étalonnés
-	$reference = [];
+	// concours de référence unique : le plus large (inscrits moyens) parmi tous les concours étalonnés
+	$cleRef = null;
+	$inscritsRef = -1.0;
 	foreach ($utilisables as $cle => $_) {
-		$filiere = $groupes[$cle]['Filiere'];
 		$inscrits = $groupes[$cle]['poidsInscrit'] / $groupes[$cle]['poids'];
-		if (!isset($reference[$filiere]) || $inscrits > $reference[$filiere][1]) $reference[$filiere] = [$cle, $inscrits];
+		if ($inscrits > $inscritsRef) {
+			$inscritsRef = $inscrits;
+			$cleRef = $cle;
+		}
 	}
 
 	$resultat = [];
@@ -176,18 +208,19 @@ function calculerEtalonnage(array $lignes, array $niveaux, int $reperesMin = 3, 
 		$nbReperes = isset($reperes[$cle]) ? count(array_unique(array_column($reperes[$cle], 'Ecole'))) : 0;
 		$decalage = $erreur = null;
 		$estReference = 0;
-		if (isset($utilisables[$cle]) && isset($reference[$filiere])) {
-			$cleRef = $reference[$filiere][0];
+		if (isset($utilisables[$cle]) && $cleRef !== null) {
 			$decalage = $decalages[$cle] - $decalages[$cleRef];
 			$nbRef = count(array_unique(array_column($utilisables[$cleRef], 'Ecole')));
-			$erreur = sqrt($sigma ** 2 / $nbReperes + ($cle === $cleRef ? 0.0 : $sigma ** 2 / $nbRef + 0.0));
+			$erreur = sqrt($sigma ** 2 / $nbReperes + ($cle === $cleRef ? 0.0 : $sigma ** 2 / $nbRef));
 			$erreur = max($erreur, $plancher);
 			$estReference = ($cle === $cleRef) ? 1 : 0;
 		}
-		$resultat[] = [
-			'Filiere' => $filiere, 'Concours' => $groupe['Concours'],
-			'Decalage' => $decalage, 'Erreur' => $erreur, 'NbReperes' => $nbReperes, 'Reference' => $estReference,
-		];
+		foreach (array_keys($membres[$cle]) as $concours) {
+			$resultat[] = [
+				'Filiere' => $filiere, 'Concours' => $concours,
+				'Decalage' => $decalage, 'Erreur' => $erreur, 'NbReperes' => $nbReperes, 'Reference' => $estReference,
+			];
+		}
 	}
 	usort($resultat, fn($a, $b) => [$a['Filiere'], $a['Concours']] <=> [$b['Filiere'], $b['Concours']]);
 	return ['pente' => $pente, 'sigma' => $sigma, 'groupes' => $resultat];
